@@ -1,0 +1,176 @@
+@import 'tailwindcss';
+
+/*
+  Design tokens.
+
+  Palette: deep charcoal ground, warm off-white type, a metallic mid-grey for
+  metadata, and a single restrained yellow drawn from Giallo Inti. The yellow is
+  reserved for status, focus and one accent rule per screen — never for large fills.
+*/
+@theme {
+  --color-ink: #0a0a0b;
+  --color-ink-raised: #101012;
+  --color-ink-panel: #16161a;
+  --color-bone: #f3f0ea;
+  --color-bone-dim: #cfccc6;
+  --color-steel: #8b8b91;
+  --color-steel-dim: #6a6a70;
+  --color-giallo: #f2c230;
+  --color-giallo-deep: #c99a12;
+
+  /* Hairline rules. Defined here so `border-line` / `bg-line` exist as utilities. */
+  --color-line: rgb(243 240 234 / 0.12);
+  --color-line-strong: rgb(243 240 234 / 0.24);
+
+  --font-sans:
+    var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-display:
+    var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+
+  --spacing-gutter: 1.5rem;
+}
+
+@layer base {
+  :root {
+    --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+    color-scheme: dark;
+  }
+
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: var(--color-giallo);
+    color: #000;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-giallo);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+
+  /* Only remove the ring for pointer users; keyboard focus always shows. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+@layer components {
+  /* Small uppercase label used for eyebrows and metadata keys. */
+  .label-xs {
+    font-size: 0.6875rem;
+    line-height: 1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--color-steel);
+  }
+
+  /* Editorial headline scale. Tight tracking, generous size, no gradients. */
+  .display-1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+    font-size: clamp(2.5rem, 7.2vw, 5.25rem);
+    text-wrap: balance;
+  }
+
+  .display-2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.03;
+    font-size: clamp(2rem, 4.6vw, 3.25rem);
+    text-wrap: balance;
+  }
+
+  .display-3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.022em;
+    line-height: 1.1;
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    text-wrap: balance;
+  }
+
+  .prose-body p {
+    color: var(--color-bone-dim);
+    line-height: 1.7;
+    font-size: 1rem;
+    max-width: 62ch;
+  }
+
+  @media (min-width: 768px) {
+    .prose-body p {
+      font-size: 1.0625rem;
+    }
+  }
+
+  .prose-body p + p {
+    margin-top: 1.15rem;
+  }
+
+  /* Hairline rules. Kept as a component so weight is consistent everywhere. */
+  .rule {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.32s var(--ease-out);
+  }
+
+  .link-underline:hover,
+  .link-underline:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /*
+    Neutral placeholder treatment for listings without photography yet.
+    Deliberately abstract: fine diagonal hatching over the panel colour, no
+    illustration, no stock image.
+  */
+  .photo-pending {
+    background-color: var(--color-ink-panel);
+    background-image: repeating-linear-gradient(
+      -45deg,
+      rgb(243 240 234 / 0.055) 0 1px,
+      transparent 1px 10px
+    );
+  }
+}
