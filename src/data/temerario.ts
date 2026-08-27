@@ -5,11 +5,10 @@ const DIR = '/images/vehicles/lamborghini-temerario-giallo-inti';
 /**
  * Lamborghini Temerario, configuration code AKTT2X.
  *
- * This is the only non-sample record in the data set. Every option below is transcribed
- * from the vehicle's official Lamborghini Car Configurator summary, which is held in
- * `private-source/` and is not published. Deliberately absent, because they are not
- * known to this site: VIN, price, mileage, registration, location, seller, owner,
- * history and any transaction date.
+ * Every option below is transcribed from the vehicle's official Lamborghini Car
+ * Configurator summary, which is held in `private-source/` and is not published.
+ * Deliberately absent, because they are not known: VIN, price, mileage, registration,
+ * location, prior owner, history and any transaction date.
  *
  * To change the public status of this vehicle, edit `availability` and `statusNote`.
  */
@@ -17,35 +16,33 @@ export const temerario: Vehicle = {
   slug: 'lamborghini-temerario-giallo-inti',
   make: 'Lamborghini',
   model: 'Temerario',
-  subtitle: 'Giallo Inti | Custom Commission',
+  subtitle: 'Giallo Inti · Custom Commission',
   bodyStyle: 'Coupe',
-  category: 'Supersport',
+  category: 'Performance',
   availability: 'sold',
   statusNote: 'Custom order fulfilled',
-  priceDisplay: 'Not published',
-  isSample: false,
-  featured: true,
+  priceDisplay: 'Price on request',
 
   summary:
-    'A bespoke customer commission specified through the factory configurator in ' +
-    'Giallo Inti over Nero Ade, with Giallo Taurus contrast stitching and piping.',
+    'Ordered to a customer specification in Giallo Inti over Nero Ade, with Giallo ' +
+    'Taurus contrast stitching and piping throughout.',
 
   description: [
-    'This Temerario was built to a customer commission rather than taken from a ' +
-    'standing allocation. The specification was set at the point of order under ' +
-    'configuration code AKTT2X, and the car was produced to that configuration: ' +
-    'Giallo Inti over a Nero Ade cabin in unicolor leather and Corsa Tex, with ' +
-    'Giallo Taurus contrast stitching and piping running through the interior.',
+    'Built to a customer order rather than taken from a standing allocation. The ' +
+    'specification was fixed at the point of order under configuration code AKTT2X, ' +
+    'and the car was produced to it: Giallo Inti over a Nero Ade cabin in unicolor ' +
+    'leather and Corsa Tex, with Giallo Taurus contrast stitching and piping through ' +
+    'the interior.',
 
-    'The exterior brief is consistent throughout. The roof, upper hood cover and ' +
-    'kidney are finished in shiny black, the High Gloss Black style package carries ' +
-    'that treatment across the body details, and the Velador forged wheels, wheel ' +
-    'caps, tailpipes and rear bumper centre section follow the same dark theme against ' +
-    'the yellow. Nero Lucido carbon-ceramic calipers sit behind the forged rims.',
+    'The exterior is consistent throughout. Roof, upper hood cover and kidney are ' +
+    'finished in shiny black; the High Gloss Black style package carries that ' +
+    'treatment across the body details; and the Velador forged wheels, wheel caps, ' +
+    'tailpipes and rear bumper centre section follow the same dark theme against the ' +
+    'yellow. Nero Lucido carbon-ceramic calipers sit behind the forged rims.',
 
-    'It is presented here as an entry in the collection’s archive of vehicles that ' +
-    'are no longer available, and is documented for reference only. No sale price, ' +
-    'transaction detail or information about any owner is published on this site.',
+    'The car has been sold. It remains listed so the specification stays on record ' +
+    'for anyone researching the model. Sale price and transaction detail are not ' +
+    'published.',
   ],
 
   specs: [
@@ -122,9 +119,9 @@ export const temerario: Vehicle = {
     'together with the import documentation for this vehicle.',
 
   /**
-   * Gallery. Items 1–9 are the configuration renders for this exact specification,
-   * extracted at full resolution from the vehicle’s own configuration document.
-   * Item 10 is a photograph of the car itself. No imagery here is generated or stock.
+   * Gallery. Items 1–9 are configuration renders for this exact specification, taken
+   * at full resolution from the car's own configuration document. Item 10 is a
+   * photograph of the car. Nothing here is generated or stock imagery.
    */
   images: [
     {

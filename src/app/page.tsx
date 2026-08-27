@@ -1,196 +1,175 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { Container } from '@/components/site/Container';
-import { SampleInventoryNotice } from '@/components/site/SampleInventoryNotice';
 import { SectionHeading } from '@/components/site/SectionHeading';
 import { AvailabilityBadge } from '@/components/vehicles/AvailabilityBadge';
 import { VehicleCard } from '@/components/vehicles/VehicleCard';
 import { VehicleThumb } from '@/components/vehicles/VehicleThumb';
 import { homeCopy } from '@/content/copy';
 import {
-  getAvailableVehicles,
-  getFeaturedVehicle,
+  CATEGORY_BLURB,
+  CATEGORY_ORDER,
+  countByCategory,
+  getCurrentVehicles,
   getSoldVehicles,
-  vehicleHeading,
+  vehicleTitle,
 } from '@/lib/vehicles';
 
 export default function HomePage() {
-  const featured = getFeaturedVehicle();
-  const current = getAvailableVehicles().slice(0, 6);
-  // The strip is a record of real sold vehicles. Sample archive entries stay on /sold.
-  const sold = getSoldVehicles().filter((v) => !v.isSample);
-  const heroImage = featured?.images[0];
+  const current = getCurrentVehicles();
+  const sold = getSoldVehicles();
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative">
-        <div className="relative h-[74vh] min-h-[30rem] w-full overflow-hidden bg-ink-panel sm:h-[82vh]">
-          {heroImage ? (
-            <Image
-              src={heroImage.src}
-              alt={heroImage.alt}
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover object-[60%_center] sm:object-center"
-            />
-          ) : null}
-          {/* Two-stop scrim: keeps type legible without washing the photograph out. */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 via-45% to-ink/15"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-r from-ink/85 via-ink/25 to-transparent"
-          />
+      {/*
+        Typography-led hero. No single vehicle leads the page — the business sells
+        across several categories and the masthead should say so.
+      */}
+      <section className="border-b border-line">
+        <Container>
+          <div className="grid gap-14 py-20 sm:py-24 lg:grid-cols-[1.45fr_auto_0.75fr] lg:gap-0 lg:py-28">
+            <div className="flex flex-col justify-center lg:pr-16">
+              <h1 className="display-1 max-w-[13ch] text-bone">
+                {homeCopy.hero.headline}
+              </h1>
 
-          <Container className="relative flex h-full flex-col justify-end pb-12 sm:pb-16">
-            <p className="label-xs text-giallo">{homeCopy.hero.eyebrow}</p>
-            <h1 className="display-1 mt-5 max-w-[16ch] text-bone">
-              {homeCopy.hero.headline}
-            </h1>
-            <p className="mt-6 max-w-xl text-[0.9375rem] leading-relaxed text-bone-dim sm:text-base">
-              {homeCopy.hero.subhead}
-            </p>
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link
-                href={homeCopy.hero.primaryCta.href}
-                className="inline-flex h-12 items-center border border-giallo bg-giallo px-7 text-[0.8125rem] font-medium uppercase tracking-[0.14em] text-[#0a0a0b] transition-colors duration-300 hover:bg-transparent hover:text-giallo"
-              >
-                {homeCopy.hero.primaryCta.label}
-              </Link>
-              <Link
-                href={homeCopy.hero.secondaryCta.href}
-                className="inline-flex h-12 items-center border border-line-strong px-7 text-[0.8125rem] uppercase tracking-[0.14em] text-bone transition-colors duration-300 hover:border-bone"
-              >
-                {homeCopy.hero.secondaryCta.label}
-              </Link>
-            </div>
-          </Container>
-        </div>
-      </section>
-
-      <Container>
-        <SampleInventoryNotice className="mt-10" />
-      </Container>
-
-      {/* Featured vehicle */}
-      {featured ? (
-        <Container className="mt-14 sm:mt-20">
-          <SectionHeading
-            eyebrow={homeCopy.featured.eyebrow}
-            title={homeCopy.featured.title}
-            intro={homeCopy.featured.intro}
-          />
-
-          <article className="group relative mt-10 grid gap-8 lg:grid-cols-[1.35fr_1fr] lg:items-stretch lg:gap-12">
-            <Link
-              href={`/inventory/${featured.slug}`}
-              className="relative block aspect-[4/3] overflow-hidden border border-line bg-ink-panel lg:aspect-auto"
-            >
-              <VehicleThumb
-                vehicle={featured}
-                sizes="(min-width: 1024px) 58vw, 92vw"
-                className="group-hover:scale-[1.025]"
-              />
-              <span className="sr-only">View {vehicleHeading(featured)}</span>
-            </Link>
-
-            <div className="flex flex-col justify-center lg:py-6">
-              <AvailabilityBadge
-                availability={featured.availability}
-                note={featured.statusNote}
-                size="lg"
-              />
-              <h3 className="display-2 mt-6 text-bone">
-                {vehicleHeading(featured)}
-              </h3>
-              {featured.subtitle ? (
-                <p className="mt-3 text-base text-steel">{featured.subtitle}</p>
-              ) : null}
-              <p className="mt-6 max-w-md text-[0.9375rem] leading-relaxed text-bone-dim">
-                {featured.summary}
+              <p className="mt-8 max-w-lg text-base leading-relaxed text-bone-dim sm:text-lg">
+                {homeCopy.hero.subhead}
               </p>
 
-              <dl className="mt-8 grid grid-cols-2 gap-x-8 gap-y-5 border-t border-line pt-6">
-                {featured.specs.slice(0, 4).map((spec) => (
-                  <div key={spec.label}>
-                    <dt className="label-xs">{spec.label}</dt>
-                    <dd className="mt-1.5 text-sm leading-snug text-bone-dim">
-                      {spec.value}
+              <div className="mt-10 flex flex-wrap items-center gap-3">
+                <Link href={homeCopy.hero.primaryCta.href} className="btn btn-primary">
+                  {homeCopy.hero.primaryCta.label}
+                </Link>
+                <Link href={homeCopy.hero.secondaryCta.href} className="btn btn-secondary">
+                  {homeCopy.hero.secondaryCta.label}
+                </Link>
+              </div>
+            </div>
+
+            {/* Vertical hairline, desktop only. */}
+            <div aria-hidden="true" className="hidden w-px bg-line lg:block" />
+
+            {/* Live stock summary. Counts come from the vehicle data, not copy. */}
+            <div className="flex flex-col justify-center lg:pl-16">
+              <h2 className="label-xs">Currently listed</h2>
+              <dl className="mt-6 border-t border-line">
+                {CATEGORY_ORDER.map((category) => (
+                  <div
+                    key={category}
+                    className="flex items-baseline justify-between gap-6 border-b border-line py-3.5"
+                  >
+                    <dt className="text-[0.9375rem] text-bone-dim">{category}</dt>
+                    <dd className="text-[0.9375rem] tabular-nums text-steel">
+                      {countByCategory(category)}
                     </dd>
                   </div>
                 ))}
               </dl>
-
-              <Link
-                href={`/inventory/${featured.slug}`}
-                className="link-underline mt-8 self-start text-sm text-bone transition-colors hover:text-giallo"
-              >
-                View the full configuration
-                <span aria-hidden="true"> →</span>
-              </Link>
             </div>
-          </article>
-        </Container>
-      ) : null}
+          </div>
 
-      {/* Current inventory */}
-      <Container className="mt-20 sm:mt-28">
+          {/* Marque line sits on the section's bottom rule. */}
+          <ul className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-line py-6">
+            {homeCopy.hero.marques.map((marque, i) => (
+              <li key={marque} className="flex items-center gap-3">
+                {i > 0 ? (
+                  <span aria-hidden="true" className="text-steel-dim">
+                    ·
+                  </span>
+                ) : null}
+                <span className="text-[0.8125rem] tracking-[0.02em] text-steel">
+                  {marque}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      {/* Featured inventory */}
+      <Container className="pt-20 sm:pt-28">
         <SectionHeading
-          eyebrow={homeCopy.inventory.eyebrow}
-          title={homeCopy.inventory.title}
-          intro={homeCopy.inventory.intro}
+          title={homeCopy.featured.title}
+          intro={homeCopy.featured.intro}
           action={{ label: 'All inventory', href: '/inventory' }}
         />
-        <ul className="mt-10 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 xl:grid-cols-3">
-          {current.map((vehicle) => (
-            <li key={vehicle.slug}>
-              <VehicleCard vehicle={vehicle} />
+        <ul className="mt-12 grid grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 xl:grid-cols-3">
+          {current.map((vehicle, i) => (
+            <li key={vehicle.slug} className="h-full">
+              <VehicleCard vehicle={vehicle} priority={i < 3} />
             </li>
           ))}
         </ul>
       </Container>
 
-      {/* Recently sold strip */}
+      {/* Browse by category */}
+      <Container className="pt-24 sm:pt-32">
+        <SectionHeading title={homeCopy.categories.title} />
+        <ul className="mt-10 grid grid-cols-1 border-t border-line sm:grid-cols-2 lg:grid-cols-4">
+          {CATEGORY_ORDER.map((category) => (
+            <li key={category} className="border-b border-line lg:border-r lg:last:border-r-0">
+              <Link
+                href={`/inventory?category=${encodeURIComponent(category)}`}
+                className="group flex h-full flex-col justify-between gap-12 py-9 pr-6 transition-colors hover:bg-ink-raised lg:px-7 lg:py-10 lg:first:pl-0"
+              >
+                <div>
+                  <h3 className="text-xl font-medium tracking-[-0.02em] text-bone">
+                    {category}
+                  </h3>
+                  <p className="mt-3 max-w-[26ch] text-sm leading-relaxed text-steel">
+                    {CATEGORY_BLURB[category]}
+                  </p>
+                </div>
+                <p className="flex items-center justify-between text-xs text-steel-dim">
+                  <span className="tabular-nums">
+                    {countByCategory(category)}{' '}
+                    {countByCategory(category) === 1 ? 'vehicle' : 'vehicles'}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="transition-transform duration-300 group-hover:translate-x-1"
+                  >
+                    →
+                  </span>
+                </p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </Container>
+
+      {/* Recently sold */}
       {sold.length > 0 ? (
-        <Container className="mt-20 sm:mt-28">
+        <Container className="pt-24 sm:pt-32">
           <SectionHeading
-            eyebrow={homeCopy.sold.eyebrow}
             title={homeCopy.sold.title}
             intro={homeCopy.sold.intro}
-            action={{ label: 'Full archive', href: '/sold' }}
+            action={{ label: 'All sold vehicles', href: '/sold-vehicles' }}
           />
-          <ul className="mt-8 divide-y divide-line border-y border-line">
+          <ul className="mt-10 divide-y divide-line border-y border-line">
             {sold.map((vehicle) => (
               <li key={vehicle.slug}>
                 <Link
                   href={`/inventory/${vehicle.slug}`}
                   className="group flex items-center gap-5 py-5 transition-colors hover:bg-ink-raised sm:gap-8"
                 >
-                  <div className="relative aspect-[3/2] w-24 shrink-0 overflow-hidden border border-line bg-ink-panel sm:w-32">
-                    <VehicleThumb vehicle={vehicle} sizes="128px" />
+                  <div className="relative aspect-[3/2] w-24 shrink-0 overflow-hidden border border-line bg-ink-panel sm:w-28">
+                    <VehicleThumb vehicle={vehicle} sizes="112px" panelSize="thumb" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-[0.9375rem] font-medium text-bone">
-                      {vehicleHeading(vehicle)}
+                      {vehicleTitle(vehicle)}
                     </p>
                     <p className="mt-1 truncate text-sm text-steel">
                       {vehicle.subtitle ?? vehicle.category}
                     </p>
                   </div>
                   <div className="hidden shrink-0 sm:block">
-                    <AvailabilityBadge
-                      availability={vehicle.availability}
-                      note={vehicle.statusNote}
-                      size="sm"
-                    />
+                    <AvailabilityBadge availability={vehicle.availability} size="sm" />
                   </div>
                   <span
                     aria-hidden="true"
-                    className="shrink-0 text-steel-dim transition-colors group-hover:text-giallo"
+                    className="shrink-0 text-steel-dim transition-transform duration-300 group-hover:translate-x-1"
                   >
                     →
                   </span>
@@ -202,20 +181,17 @@ export default function HomePage() {
       ) : null}
 
       {/* Sourcing */}
-      <Container className="mt-20 sm:mt-28">
-        <div className="rule grid gap-8 pt-10 lg:grid-cols-[18rem_1fr] lg:gap-16">
-          <p className="label-xs">{homeCopy.sourcing.eyebrow}</p>
-          <div className="max-w-2xl">
-            <h2 className="display-2 text-bone">{homeCopy.sourcing.title}</h2>
-            <p className="mt-6 text-[0.9375rem] leading-relaxed text-bone-dim sm:text-base">
-              {homeCopy.sourcing.body}
-            </p>
-            <Link
-              href={homeCopy.sourcing.cta.href}
-              className="link-underline mt-8 inline-block text-sm text-bone transition-colors hover:text-giallo"
-            >
+      <Container className="pt-24 sm:pt-32">
+        <div className="rule grid gap-10 pt-12 lg:grid-cols-[20rem_1fr] lg:gap-20">
+          <h2 className="display-2 text-bone">{homeCopy.sourcing.title}</h2>
+          <div className="max-w-xl">
+            <div className="prose-body">
+              {homeCopy.sourcing.body.map((paragraph) => (
+                <p key={paragraph.slice(0, 32)}>{paragraph}</p>
+              ))}
+            </div>
+            <Link href={homeCopy.sourcing.cta.href} className="btn btn-primary mt-9">
               {homeCopy.sourcing.cta.label}
-              <span aria-hidden="true"> →</span>
             </Link>
           </div>
         </div>

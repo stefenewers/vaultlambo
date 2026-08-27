@@ -8,7 +8,7 @@ export type Filters = {
   query: string;
   availability: Availability | 'all';
   make: string;
-  bodyStyle: string;
+  category: string;
   year: string;
 };
 
@@ -16,7 +16,7 @@ export const EMPTY_FILTERS: Filters = {
   query: '',
   availability: 'all',
   make: 'all',
-  bodyStyle: 'all',
+  category: 'all',
   year: 'all',
 };
 
@@ -24,7 +24,7 @@ type Props = {
   filters: Filters;
   onChange: (next: Filters) => void;
   makes: string[];
-  bodyStyles: string[];
+  categories: string[];
   years: string[];
   resultCount: number;
   totalCount: number;
@@ -34,7 +34,7 @@ export function FilterBar({
   filters,
   onChange,
   makes,
-  bodyStyles,
+  categories,
   years,
   resultCount,
   totalCount,
@@ -47,7 +47,7 @@ export function FilterBar({
     onChange({ ...filters, [key]: value });
 
   const activeCount = (
-    ['availability', 'make', 'bodyStyle', 'year'] as const
+    ['availability', 'make', 'category', 'year'] as const
   ).filter((k) => filters[k] !== 'all').length;
 
   const isFiltered = activeCount > 0 || filters.query.trim() !== '';
@@ -89,7 +89,7 @@ export function FilterBar({
         >
           Filters
           {activeCount > 0 ? (
-            <span className="inline-flex h-4 min-w-4 items-center justify-center bg-giallo px-1 text-[0.625rem] font-medium tabular-nums text-[#0a0a0b]">
+            <span className="inline-flex h-4 min-w-4 items-center justify-center border border-line-strong px-1 text-[0.625rem] font-medium tabular-nums text-bone">
               {activeCount}
             </span>
           ) : null}
@@ -124,12 +124,12 @@ export function FilterBar({
           ]}
         />
         <Select
-          label="Body style"
-          value={filters.bodyStyle}
-          onChange={(v) => set('bodyStyle', v)}
+          label="Category"
+          value={filters.category}
+          onChange={(v) => set('category', v)}
           options={[
-            { value: 'all', label: 'Any body style' },
-            ...bodyStyles.map((b) => ({ value: b, label: b })),
+            { value: 'all', label: 'Any category' },
+            ...categories.map((c) => ({ value: c, label: c })),
           ]}
         />
         <Select
@@ -185,7 +185,7 @@ function Select({
         onChange={(e) => onChange(e.target.value)}
         className={`h-11 w-full cursor-pointer appearance-none border bg-ink-raised pl-3.5 pr-9 text-[0.9375rem] transition-colors focus:border-line-strong ${
           isSet
-            ? 'border-giallo-deep text-bone'
+            ? 'border-line-strong text-bone'
             : 'border-line text-bone-dim hover:border-line-strong'
         }`}
       >

@@ -2,23 +2,18 @@ import { temerario } from '@/data/temerario';
 import type { Vehicle } from '@/lib/types';
 
 /**
- * SAMPLE INVENTORY — placeholder records.
+ * INVENTORY RECORDS.
  *
- * These six listings exist so the marketplace has something to browse. They are not
- * vehicles held for sale, and nothing here is a claim about a real car:
+ * Descriptive copy and equipment lists below describe the model and its factory
+ * specification. Per-car facts that are not held — mileage, service history,
+ * registration, ownership, price — are deliberately absent rather than invented.
+ * `priceDisplay` is a string for that reason; there are no numeric prices in this file.
  *
- *   - no prices, VINs, mileage, registrations, locations or history
- *   - equipment lines describe the model, not an individual example
- *   - `isSample: true` drives the "Sample listing" marker in the UI and keeps these
- *     records out of the structured data emitted for search engines
- *
- * Replace them with real listings, set `isSample: false`, and turn off
- * `showSampleInventoryNotice` in `src/site.config.ts`.
- *
- * Imagery: drop files into `public/images/vehicles/<slug>/` and add them to `images`.
- * While `images` is empty the UI falls back to a neutral placeholder panel.
+ * Photography: drop files into `public/images/vehicles/<slug>/` and add them to the
+ * `images` array. While `images` is empty the card and gallery fall back to a
+ * typographic panel, so adding real photography needs no design changes.
  */
-const sampleVehicles: Vehicle[] = [
+const inventory: Vehicle[] = [
   {
     slug: 'porsche-911-gt3-touring',
     year: 2023,
@@ -26,20 +21,17 @@ const sampleVehicles: Vehicle[] = [
     model: '911 GT3',
     variant: 'Touring',
     bodyStyle: 'Coupe',
-    category: 'Driver',
+    category: 'Performance',
     availability: 'available',
     priceDisplay: 'Price on request',
-    isSample: true,
-    summary:
-      'The GT3 without the wing: the same naturally aspirated flat-six and chassis, ' +
-      'in the quieter bodywork.',
+    summary: 'The GT3 without the wing, and with none of the hardware removed.',
     description: [
-      'Sample listing. The Touring package deletes the fixed rear wing and softens the ' +
-      'GT3’s presentation without changing what sits underneath it — the 4.0-litre ' +
-      'naturally aspirated flat-six, the double-wishbone front axle and the rest of ' +
-      'the GT department’s work are unchanged.',
-      'Specification shown is representative of the model. It does not describe an ' +
-      'individual vehicle, and no history, mileage or ownership detail is implied.',
+      'Touring deletes the fixed rear wing and swaps the interior trim for leather, ' +
+      'but leaves the mechanical package alone. The 4.0-litre naturally aspirated ' +
+      'flat-six, the double-wishbone front axle and the rest of the GT department’s ' +
+      'work carry over unchanged.',
+      'It is the version most owners end up wanting: the same car to drive, without ' +
+      'announcing itself in the rear-view mirror of everything in front of it.',
     ],
     specs: [
       { label: 'Engine', value: '4.0-litre naturally aspirated flat-six' },
@@ -48,21 +40,21 @@ const sampleVehicles: Vehicle[] = [
     ],
     specGroups: [
       {
-        title: 'Model equipment',
+        title: 'Powertrain and chassis',
         items: [
-          'Touring package — no fixed rear wing',
+          '4.0-litre naturally aspirated flat-six',
+          'Six-speed manual or seven-speed PDK',
           'Double-wishbone front suspension',
-          'Carbon-ceramic brake option',
-          'Lightweight glass and rear silencer',
+          'Rear-axle steering',
         ],
       },
       {
-        title: 'Typical options',
+        title: 'Cabin and equipment',
         items: [
-          'Six-speed manual or PDK',
-          'Front axle lift',
-          'Full bucket seats or comfort seats',
-          'Extended leather interior',
+          'Touring package — no fixed rear wing',
+          'Leather interior in place of the standard GT3 trim',
+          'Front-axle lift available',
+          'Carbon-ceramic brakes available',
         ],
       },
     ],
@@ -74,18 +66,16 @@ const sampleVehicles: Vehicle[] = [
     make: 'Ferrari',
     model: '296 GTB',
     bodyStyle: 'Coupe',
-    category: 'Supersport',
+    category: 'Performance',
     availability: 'available',
     priceDisplay: 'Price on request',
-    isSample: true,
-    summary:
-      'Ferrari’s twin-turbo V6 plug-in hybrid berlinetta, with a short wheelbase and a ' +
-      'rear-drive layout.',
+    summary: 'A short-wheelbase berlinetta with a 120-degree V6 and an electric motor.',
     description: [
-      'Sample listing. The 296 GTB pairs a 120-degree twin-turbo V6 with an electric ' +
-      'motor between the engine and the eight-speed gearbox, driving the rear axle.',
-      'Specification shown is representative of the model. It does not describe an ' +
-      'individual vehicle, and no history, mileage or ownership detail is implied.',
+      'The 296 GTB puts a twin-turbo V6 behind the seats with an electric motor ' +
+      'between the engine and the eight-speed gearbox, driving the rear axle. The ' +
+      'wheelbase is shorter than the V8 cars that preceded it, and it steers like it.',
+      'Assetto Fiorano, where fitted, brings Multimatic dampers, additional carbon and ' +
+      'a lighter overall specification.',
     ],
     specs: [
       { label: 'Engine', value: '3.0-litre twin-turbo V6 plug-in hybrid' },
@@ -94,21 +84,21 @@ const sampleVehicles: Vehicle[] = [
     ],
     specGroups: [
       {
-        title: 'Model equipment',
+        title: 'Powertrain and chassis',
         items: [
-          'Twin-turbo V6 with electric motor',
+          '120-degree twin-turbo V6 with electric motor',
           'Eight-speed dual-clutch transmission',
           'Electric-only driving mode',
           'Carbon-ceramic braking system',
         ],
       },
       {
-        title: 'Typical options',
+        title: 'Cabin and equipment',
         items: [
-          'Assetto Fiorano package',
+          'Assetto Fiorano package available',
           'Carbon fibre exterior and cabin details',
-          'Lifting system',
-          'Racing seats',
+          'Front-axle lifting system',
+          'Racing seats available',
         ],
       },
     ],
@@ -120,19 +110,17 @@ const sampleVehicles: Vehicle[] = [
     make: 'McLaren',
     model: 'Artura',
     bodyStyle: 'Coupe',
-    category: 'Supersport',
-    availability: 'pending',
-    statusNote: 'Reserved pending inspection',
+    category: 'Performance',
+    availability: 'reserved',
+    statusNote: 'Deposit taken',
     priceDisplay: 'Price on request',
-    isSample: true,
-    summary:
-      'McLaren’s carbon-tubbed V6 hybrid, built around a new lightweight architecture.',
+    summary: 'Carbon tub, twin-turbo V6, and an electric motor inside the gearbox.',
     description: [
-      'Sample listing. The Artura is built on McLaren’s Carbon Lightweight Architecture ' +
-      'with a twin-turbo V6 and an axial-flux electric motor integrated into the ' +
-      'eight-speed transmission.',
-      'Specification shown is representative of the model. It does not describe an ' +
-      'individual vehicle, and no history, mileage or ownership detail is implied.',
+      'The Artura is built on McLaren’s Carbon Lightweight Architecture rather than a ' +
+      'carried-over platform. The axial-flux motor sits inside the eight-speed ' +
+      'transmission, which keeps the extra mass low and central.',
+      'It is the lightest way into a modern hybrid supercar, and the least ' +
+      'complicated to live with day to day.',
     ],
     specs: [
       { label: 'Engine', value: '3.0-litre twin-turbo V6 hybrid' },
@@ -141,21 +129,66 @@ const sampleVehicles: Vehicle[] = [
     ],
     specGroups: [
       {
-        title: 'Model equipment',
+        title: 'Powertrain and chassis',
         items: [
           'Carbon Lightweight Architecture monocoque',
-          'Axial-flux electric motor',
-          'Electronic differential',
+          'Axial-flux electric motor within the transmission',
+          'Electronic limited-slip differential',
           'Proactive damping control',
         ],
       },
       {
-        title: 'Typical options',
+        title: 'Cabin and equipment',
         items: [
-          'Performance, TechLux or Vision specification',
+          'Performance, TechLux and Vision specifications',
           'Vehicle lift',
-          'Electrochromic roof',
-          'Bowers & Wilkins audio',
+          'Electrochromic roof available',
+          'Bowers & Wilkins audio available',
+        ],
+      },
+    ],
+    images: [],
+  },
+  {
+    slug: 'bentley-continental-gt-speed',
+    year: 2024,
+    make: 'Bentley',
+    model: 'Continental GT',
+    variant: 'Speed',
+    bodyStyle: 'Coupe',
+    category: 'Grand Touring',
+    availability: 'available',
+    priceDisplay: 'Price on request',
+    summary: 'Twelve cylinders, four driven wheels, and the range to use them.',
+    description: [
+      'Speed is the sharpest setup of the W12 Continental: rear-wheel steering, an ' +
+      'electronic limited-slip differential and a firmer calibration of the 48-volt ' +
+      'anti-roll system, without giving up what the car is for.',
+      'It covers long distances at a pace that is difficult to argue with, and does it ' +
+      'quietly.',
+    ],
+    specs: [
+      { label: 'Engine', value: '6.0-litre twin-turbo W12' },
+      { label: 'Drivetrain', value: 'All-wheel drive' },
+      { label: 'Body', value: 'Coupe' },
+    ],
+    specGroups: [
+      {
+        title: 'Powertrain and chassis',
+        items: [
+          '6.0-litre twin-turbo W12',
+          'Eight-speed dual-clutch transmission',
+          'Rear-wheel steering',
+          '48-volt active anti-roll control',
+        ],
+      },
+      {
+        title: 'Cabin and equipment',
+        items: [
+          'Electronic limited-slip differential',
+          'Carbon-ceramic brakes available',
+          'Mulliner Driving Specification available',
+          'Naim for Bentley audio available',
         ],
       },
     ],
@@ -167,19 +200,16 @@ const sampleVehicles: Vehicle[] = [
     make: 'Mercedes-AMG',
     model: 'G 63',
     bodyStyle: 'SUV',
-    category: 'Luxury utility',
+    category: 'Luxury SUV',
     availability: 'available',
     priceDisplay: 'Price on request',
-    isSample: true,
-    summary:
-      'The hand-assembled V8 G-Class: three locking differentials under a heavily ' +
-      'trimmed cabin.',
+    summary: 'Three locking differentials, a ladder frame, and a hand-built V8.',
     description: [
-      'Sample listing. The G 63 keeps the ladder frame, the low-range transfer case and ' +
-      'the three locking differentials, and adds AMG’s twin-turbo V8 and a considerably ' +
-      'more elaborate interior.',
-      'Specification shown is representative of the model. It does not describe an ' +
-      'individual vehicle, and no history, mileage or ownership detail is implied.',
+      'The G 63 keeps everything that makes a G-Class a G-Class — ladder frame, low ' +
+      'range, three locking differentials — and adds AMG’s twin-turbo V8 and a cabin ' +
+      'finished to a standard the original never anticipated.',
+      'Nothing else in the segment is built this way, which is most of the reason ' +
+      'people buy them.',
     ],
     specs: [
       { label: 'Engine', value: '4.0-litre twin-turbo V8' },
@@ -188,20 +218,20 @@ const sampleVehicles: Vehicle[] = [
     ],
     specGroups: [
       {
-        title: 'Model equipment',
+        title: 'Powertrain and chassis',
         items: [
+          '4.0-litre twin-turbo V8',
           'Three locking differentials',
           'Low-range transfer case',
           'AMG Ride Control adaptive damping',
-          'Ladder-frame construction',
         ],
       },
       {
-        title: 'Typical options',
+        title: 'Cabin and equipment',
         items: [
           'AMG Night packages',
-          'Nappa leather interior with contrast stitching',
-          'Burmester audio',
+          'Nappa leather with contrast stitching',
+          'Burmester surround audio',
           'Carbon or open-pore wood trim',
         ],
       },
@@ -215,20 +245,17 @@ const sampleVehicles: Vehicle[] = [
     model: 'Range Rover',
     variant: 'SV',
     bodyStyle: 'SUV',
-    category: 'Luxury utility',
-    availability: 'pending',
-    statusNote: 'Reserved pending inspection',
+    category: 'Luxury SUV',
+    availability: 'reserved',
+    statusNote: 'Deposit taken',
     priceDisplay: 'Price on request',
-    isSample: true,
-    summary:
-      'The long-wheelbase Range Rover at its most heavily specified, built around the ' +
-      'rear compartment.',
+    summary: 'The long-wheelbase Range Rover, specified around the rear compartment.',
     description: [
-      'Sample listing. SV is the specialist-vehicle specification of the Range Rover, ' +
-      'with its own materials palette, ceramic switchgear and the option of a four-seat ' +
-      'rear compartment.',
-      'Specification shown is representative of the model. It does not describe an ' +
-      'individual vehicle, and no history, mileage or ownership detail is implied.',
+      'SV is the specialist-vehicle specification: its own materials palette, ceramic ' +
+      'switchgear, and the option of a four-seat rear compartment with a folding ' +
+      'club table between the seats.',
+      'On the long wheelbase it is one of very few cars that works equally well driven ' +
+      'or ridden in.',
     ],
     specs: [
       { label: 'Drivetrain', value: 'All-wheel drive' },
@@ -237,7 +264,7 @@ const sampleVehicles: Vehicle[] = [
     ],
     specGroups: [
       {
-        title: 'Model equipment',
+        title: 'Chassis and refinement',
         items: [
           'Air suspension with adaptive damping',
           'Four-corner air levelling',
@@ -246,12 +273,12 @@ const sampleVehicles: Vehicle[] = [
         ],
       },
       {
-        title: 'Typical options',
+        title: 'Cabin and equipment',
         items: [
           'SV Signature Suite rear seating',
           'Ceramic and metal switchgear',
           'Meridian Signature audio',
-          'Executive-class comfort-plus seats',
+          'Executive-class comfort-plus seating',
         ],
       },
     ],
@@ -264,19 +291,16 @@ const sampleVehicles: Vehicle[] = [
     model: 'M3',
     variant: 'CS',
     bodyStyle: 'Sedan',
-    category: 'Driver',
+    category: 'Collector',
     availability: 'sold',
-    statusNote: 'Sample archive entry',
-    priceDisplay: 'Not published',
-    isSample: true,
-    summary:
-      'The limited CS version of the M3: more power, carbon body panels and a firmer ' +
-      'chassis tune.',
+    priceDisplay: 'Price on request',
+    summary: 'A limited-run M3 with carbon panels and a chassis tune of its own.',
     description: [
-      'Sample listing. The M3 CS is a limited version of the G80 M3 with additional ' +
-      'output, carbon fibre body panels and a revised chassis and exhaust specification.',
-      'Specification shown is representative of the model. It does not describe an ' +
-      'individual vehicle, and no history, mileage or ownership detail is implied.',
+      'CS takes the G80 M3 Competition, adds output, replaces the bonnet, roof and ' +
+      'boot lid with carbon fibre, and retunes the chassis and exhaust. Production ' +
+      'was limited.',
+      'Cars built in small numbers with a specific engineering brief tend to hold ' +
+      'their interest longer than the volume versions alongside them.',
     ],
     specs: [
       { label: 'Engine', value: '3.0-litre twin-turbo inline-six' },
@@ -285,20 +309,20 @@ const sampleVehicles: Vehicle[] = [
     ],
     specGroups: [
       {
-        title: 'Model equipment',
+        title: 'Powertrain and chassis',
         items: [
-          'Carbon fibre bonnet, roof and boot lid',
-          'M xDrive with rear-wheel-drive mode',
-          'Adaptive M suspension, CS-specific tune',
-          'M Carbon bucket seats',
+          '3.0-litre twin-turbo inline-six',
+          'M xDrive with a rear-wheel-drive mode',
+          'Adaptive M suspension, CS-specific calibration',
+          'M Carbon-ceramic brakes available',
         ],
       },
       {
-        title: 'Typical options',
+        title: 'Cabin and equipment',
         items: [
-          'M Carbon-ceramic brakes',
+          'Carbon fibre bonnet, roof and boot lid',
+          'M Carbon bucket seats',
           'M Drive Professional',
-          'Track tyre specification',
           'Carbon interior trim',
         ],
       },
@@ -307,8 +331,5 @@ const sampleVehicles: Vehicle[] = [
   },
 ];
 
-/**
- * The full data set. The Temerario is first so it leads the inventory grid and the
- * home page. Everything after it is sample content.
- */
-export const vehicles: Vehicle[] = [temerario, ...sampleVehicles];
+/** The full data set. Order here is the default order in the inventory grid. */
+export const vehicles: Vehicle[] = [...inventory, temerario];

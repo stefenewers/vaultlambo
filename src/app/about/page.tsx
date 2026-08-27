@@ -14,43 +14,38 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
-      <PageHeader
-        eyebrow={aboutCopy.eyebrow}
-        title={aboutCopy.headline}
-        intro={aboutCopy.intro}
-      />
+      <PageHeader title={aboutCopy.headline} intro={aboutCopy.intro} />
 
       <Container>
-        <div className="rule pt-12 sm:pt-16">
+        <div className="rule pt-14">
           {aboutCopy.sections.map((section) => (
             <section
               key={section.title}
-              className="grid gap-6 border-b border-line py-10 last:border-b-0 lg:grid-cols-[18rem_1fr] lg:gap-16 lg:py-14"
+              className="grid gap-6 border-b border-line py-12 last:border-b-0 lg:grid-cols-[20rem_1fr] lg:gap-20"
             >
-              <h2 className="display-3 text-bone lg:text-[1.375rem]">
+              <h2 className="text-lg font-medium tracking-[-0.015em] text-bone">
                 {section.title}
               </h2>
               <div className="prose-body">
                 {section.body.map((paragraph) => (
-                  <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+                  <p key={paragraph.slice(0, 32)}>{paragraph}</p>
                 ))}
               </div>
             </section>
           ))}
         </div>
 
-        <div className="rule mt-4 grid gap-6 pt-12 lg:grid-cols-[18rem_1fr] lg:gap-16">
-          <p className="label-xs">Get in touch</p>
+        <div className="rule mt-2 grid gap-6 py-14 lg:grid-cols-[20rem_1fr] lg:gap-20">
+          <h2 className="text-lg font-medium tracking-[-0.015em] text-bone">
+            Get in touch
+          </h2>
           <div>
-            <p className="display-2 max-w-lg text-bone">
-              Every inquiry is read and answered by a person.
+            <p className="max-w-xl text-[0.9375rem] leading-relaxed text-bone-dim sm:text-base">
+              Enquiries about a listed car, or about finding one, reach us the same way.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
-                href="/contact"
-                className="inline-flex h-12 items-center border border-giallo bg-giallo px-7 text-[0.8125rem] font-medium uppercase tracking-[0.14em] text-[#0a0a0b] transition-colors duration-300 hover:bg-transparent hover:text-giallo"
-              >
-                Start an inquiry
+              <Link href="/contact" className="btn btn-primary">
+                Contact us
               </Link>
               <a
                 href={`mailto:${siteConfig.contact.email}`}

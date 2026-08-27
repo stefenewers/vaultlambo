@@ -1,12 +1,27 @@
 import { vehicles } from '@/data/vehicles';
-import type { Availability, Vehicle } from '@/lib/types';
+import type { Availability, Category, Vehicle } from '@/lib/types';
 
-export const AVAILABILITY_ORDER: Availability[] = ['available', 'pending', 'sold'];
+export const AVAILABILITY_ORDER: Availability[] = ['available', 'reserved', 'sold'];
 
 export const AVAILABILITY_LABEL: Record<Availability, string> = {
   available: 'Available',
-  pending: 'Pending',
+  reserved: 'Reserved',
   sold: 'Sold',
+};
+
+export const CATEGORY_ORDER: Category[] = [
+  'Performance',
+  'Grand Touring',
+  'Luxury SUV',
+  'Collector',
+];
+
+/** One short line per category, used on the browse-by-category row. */
+export const CATEGORY_BLURB: Record<Category, string> = {
+  Performance: 'Mid- and rear-engined cars built to be driven hard.',
+  'Grand Touring': 'Long-legged coupes and saloons for distance.',
+  'Luxury SUV': 'Full-size utility, specified properly.',
+  Collector: 'Limited runs and cars worth keeping.',
 };
 
 export function getAllVehicles(): Vehicle[] {
@@ -17,16 +32,17 @@ export function getVehicleBySlug(slug: string): Vehicle | undefined {
   return vehicles.find((v) => v.slug === slug);
 }
 
-export function getFeaturedVehicle(): Vehicle | undefined {
-  return vehicles.find((v) => v.featured);
-}
-
 export function getSoldVehicles(): Vehicle[] {
   return vehicles.filter((v) => v.availability === 'sold');
 }
 
-export function getAvailableVehicles(): Vehicle[] {
+/** Available and reserved cars — everything currently on the books. */
+export function getCurrentVehicles(): Vehicle[] {
   return vehicles.filter((v) => v.availability !== 'sold');
+}
+
+export function countByCategory(category: Category): number {
+  return vehicles.filter((v) => v.category === category).length;
 }
 
 /** Other vehicles to surface at the foot of a detail page. */
@@ -52,9 +68,14 @@ export function vehicleTitle(v: Vehicle): string {
   return [v.year, v.make, v.model, v.variant].filter(Boolean).join(' ');
 }
 
-/** Heading used on the detail page — no year prefix, the year sits in the metadata. */
+/** Heading used on the detail page — the year sits in the metadata instead. */
 export function vehicleHeading(v: Vehicle): string {
   return [v.make, v.model, v.variant].filter(Boolean).join(' ');
+}
+
+/** Model name without the marque, for the typographic image panel. */
+export function vehicleModelLine(v: Vehicle): string {
+  return [v.model, v.variant].filter(Boolean).join(' ');
 }
 
 export function uniqueSorted(values: string[]): string[] {

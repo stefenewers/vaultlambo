@@ -1,24 +1,41 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import {
-  EMPTY_FILTERS,
-  FilterBar,
-  type Filters,
-} from '@/components/vehicles/FilterBar';
+import { EMPTY_FILTERS, FilterBar, type Filters } from '@/components/vehicles/FilterBar';
 import { VehicleCard } from '@/components/vehicles/VehicleCard';
-import type { Vehicle } from '@/lib/types';
-import { uniqueSorted, vehicleTitle } from '@/lib/vehicles';
 import { inventoryCopy } from '@/content/copy';
+import type { Vehicle } from '@/lib/types';
+import { CATEGORY_ORDER, uniqueSorted, vehicleTitle } from '@/lib/vehicles';
 
 export function InventoryBrowser({ vehicles }: { vehicles: Vehicle[] }) {
-  const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
+  const params = useSearchParams();
+
+  // Category and availability can be deep-linked, e.g. from the footer or the
+  // browse-by-category row on the home page.
+  const [filters, setFilters] = useState<Filters>(() => {
+    const category = params.get('category');
+    const availability = params.get('availability');
+    return {
+      ...EMPTY_FILTERS,
+      category:
+        category && CATEGORY_ORDER.some((c) => c === category) ? category : 'all',
+      availability:
+        availability === 'available' ||
+        availability === 'reserved' ||
+        availability === 'sold'
+          ? availability
+          : 'all',
+    };
+  });
 
   const makes = useMemo(() => uniqueSorted(vehicles.map((v) => v.make)), [vehicles]);
-  const bodyStyles = useMemo(
-    () => uniqueSorted(vehicles.map((v) => v.bodyStyle)),
+
+  const categories = useMemo(
+    () => CATEGORY_ORDER.filter((c) => vehicles.some((v) => v.category === c)),
     [vehicles],
   );
+
   const years = useMemo(
     () =>
       Array.from(
@@ -37,7 +54,7 @@ export function InventoryBrowser({ vehicles }: { vehicles: Vehicle[] }) {
         return false;
       }
       if (filters.make !== 'all' && v.make !== filters.make) return false;
-      if (filters.bodyStyle !== 'all' && v.bodyStyle !== filters.bodyStyle) return false;
+      if (filters.category !== 'all' && v.category !== filters.category) return false;
       if (filters.year !== 'all' && String(v.year ?? '') !== filters.year) return false;
       if (q) {
         const haystack = [vehicleTitle(v), v.category, v.bodyStyle, v.subtitle ?? '']
@@ -55,7 +72,7 @@ export function InventoryBrowser({ vehicles }: { vehicles: Vehicle[] }) {
         filters={filters}
         onChange={setFilters}
         makes={makes}
-        bodyStyles={bodyStyles}
+        categories={categories}
         years={years}
         resultCount={results.length}
         totalCount={vehicles.length}
@@ -76,15 +93,15 @@ export function InventoryBrowser({ vehicles }: { vehicles: Vehicle[] }) {
           <button
             type="button"
             onClick={() => setFilters(EMPTY_FILTERS)}
-            className="mt-8 inline-flex h-11 items-center border border-line-strong px-6 text-[0.8125rem] text-bone transition-colors hover:border-giallo hover:text-giallo"
+            className="btn btn-primary mt-8"
           >
             Clear filters
           </button>
         </div>
       ) : (
-        <ul className="grid grid-cols-1 gap-x-8 gap-y-14 py-12 sm:grid-cols-2 sm:py-16 xl:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-x-8 gap-y-16 py-14 sm:grid-cols-2 sm:py-20 xl:grid-cols-3">
           {results.map((vehicle, i) => (
-            <li key={vehicle.slug}>
+            <li key={vehicle.slug} className="h-full">
               <VehicleCard vehicle={vehicle} priority={i < 3} />
             </li>
           ))}

@@ -23,7 +23,7 @@ export function ContactFormPanel({
       defaultVehicle={match?.value}
       defaultMessage={
         match
-          ? `I'd like to ask about sourcing something along the lines of the ${match.value}.\n\n`
+          ? `I'm interested in the ${match.value}.\n\n`
           : undefined
       }
     />

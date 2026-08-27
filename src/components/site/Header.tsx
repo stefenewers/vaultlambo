@@ -37,20 +37,18 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-ink/85 backdrop-blur-md">
       <Container>
-        <div className="flex h-16 items-center justify-between gap-6 sm:h-[4.5rem]">
+        <div className="flex h-[4.5rem] items-center justify-between gap-6 sm:h-20">
           <Wordmark />
 
           <nav aria-label="Primary" className="hidden md:block">
-            <ul className="flex items-center gap-8">
+            <ul className="flex items-center gap-7">
               {siteConfig.nav.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
                     aria-current={isActive(item.href) ? 'page' : undefined}
                     className={`link-underline text-[0.8125rem] tracking-[0.02em] transition-colors ${
-                      isActive(item.href)
-                        ? 'text-bone'
-                        : 'text-steel hover:text-bone'
+                      isActive(item.href) ? 'text-bone' : 'text-steel hover:text-bone'
                     }`}
                   >
                     {item.label}
@@ -61,11 +59,8 @@ export function Header() {
           </nav>
 
           <div className="hidden md:block">
-            <Link
-              href="/contact"
-              className="inline-flex h-9 items-center border border-line-strong px-4 text-[0.8125rem] text-bone transition-colors duration-300 hover:border-giallo hover:text-giallo"
-            >
-              Inquire
+            <Link href="/contact" className="btn btn-primary btn-sm">
+              Enquire
             </Link>
           </div>
 
@@ -107,7 +102,7 @@ export function Header() {
                     href={item.href}
                     aria-current={isActive(item.href) ? 'page' : undefined}
                     className={`flex items-center justify-between py-4 text-base ${
-                      isActive(item.href) ? 'text-giallo' : 'text-bone'
+                      isActive(item.href) ? 'text-bone' : 'text-bone-dim'
                     }`}
                   >
                     {item.label}

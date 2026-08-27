@@ -276,7 +276,7 @@ export function VehicleGallery({ images, vehicleName }: Props) {
             <button
               type="button"
               onClick={closeLightbox}
-              className="inline-flex h-9 items-center gap-2 border border-line-strong px-3 text-xs uppercase tracking-[0.14em] text-bone transition-colors hover:border-giallo hover:text-giallo"
+              className="inline-flex h-9 items-center gap-2 border border-line-strong px-3 text-xs uppercase tracking-[0.14em] text-bone transition-colors hover:border-line-strong hover:text-bone"
             >
               Close
               <span aria-hidden="true">✕</span>
@@ -343,7 +343,7 @@ function GalleryArrow({
     <button
       type="button"
       onClick={onClick}
-      className={`absolute top-1/2 z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-line-strong bg-ink/70 text-bone backdrop-blur-sm transition duration-300 hover:border-giallo hover:text-giallo focus-visible:opacity-100 ${
+      className={`absolute top-1/2 z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-line-strong bg-ink/70 text-bone backdrop-blur-sm transition duration-300 hover:border-line-strong hover:text-bone focus-visible:opacity-100 ${
         alwaysVisible ? '' : 'opacity-0 group-hover:opacity-100 max-md:opacity-100'
       } ${className}`}
     >

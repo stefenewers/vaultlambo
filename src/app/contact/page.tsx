@@ -26,11 +26,7 @@ export default function ContactPage() {
 
   return (
     <>
-      <PageHeader
-        eyebrow={contactCopy.eyebrow}
-        title={contactCopy.headline}
-        intro={contactCopy.intro}
-      />
+      <PageHeader title={contactCopy.headline} intro={contactCopy.intro} />
 
       <Container>
         <div className="rule grid gap-12 pt-12 lg:grid-cols-[1fr_18rem] lg:gap-20 lg:pt-16">
@@ -44,7 +40,7 @@ export default function ContactPage() {
               <li>
                 <a
                   href={`mailto:${contact.email}`}
-                  className="link-underline text-bone transition-colors hover:text-giallo"
+                  className="link-underline text-bone transition-colors hover:text-bone-dim"
                 >
                   {contact.email}
                 </a>
@@ -53,7 +49,7 @@ export default function ContactPage() {
                 <li>
                   <a
                     href={`tel:${contact.phone.replace(/[^+\d]/g, '')}`}
-                    className="link-underline text-bone transition-colors hover:text-giallo"
+                    className="link-underline text-bone transition-colors hover:text-bone-dim"
                   >
                     {contact.phone}
                   </a>
@@ -66,12 +62,7 @@ export default function ContactPage() {
 
             <h2 className="label-xs mt-10">What helps</h2>
             <ul className="mt-5 space-y-2.5">
-              {[
-                'Model and specification, if you know it',
-                'Colour and interior preferences',
-                'Timing, and whether an order slot works',
-                'Where the vehicle needs to end up',
-              ].map((item) => (
+              {contactCopy.helps.map((item) => (
                 <li
                   key={item}
                   className="flex gap-3 text-[0.8125rem] leading-relaxed text-steel"

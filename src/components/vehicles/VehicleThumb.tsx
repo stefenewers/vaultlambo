@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { VehicleImagePanel } from '@/components/vehicles/VehicleImagePanel';
 import type { Vehicle } from '@/lib/types';
 
 type Props = {
@@ -6,25 +7,21 @@ type Props = {
   sizes: string;
   priority?: boolean;
   className?: string;
+  /** Controls the typographic panel shown when the vehicle has no photography. */
+  panelSize?: 'card' | 'thumb' | 'stage';
 };
 
-/**
- * Lead image for a vehicle, with a neutral fallback for listings that have no
- * photography yet. Add files to `public/images/vehicles/<slug>/` and list them in the
- * vehicle's `images` array to replace the fallback.
- */
-export function VehicleThumb({ vehicle, sizes, priority = false, className = '' }: Props) {
+/** Lead image for a vehicle, falling back to the typographic panel. */
+export function VehicleThumb({
+  vehicle,
+  sizes,
+  priority = false,
+  className = '',
+  panelSize = 'card',
+}: Props) {
   const lead = vehicle.images[0];
 
-  if (!lead) {
-    return (
-      <div
-        className={`photo-pending flex h-full w-full items-end justify-start p-5 ${className}`}
-      >
-        <span className="label-xs text-steel-dim">Photography pending</span>
-      </div>
-    );
-  }
+  if (!lead) return <VehicleImagePanel vehicle={vehicle} size={panelSize} />;
 
   return (
     <Image

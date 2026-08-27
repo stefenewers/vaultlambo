@@ -11,11 +11,11 @@ type Props = {
 
 export function SectionHeading({ eyebrow, title, intro, action, children }: Props) {
   return (
-    <div className="rule pt-6 sm:pt-8">
+    <div className="rule pt-8 sm:pt-10">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-2xl">
           {eyebrow ? <p className="label-xs">{eyebrow}</p> : null}
-          <h2 className="display-2 mt-3">{title}</h2>
+          <h2 className="display-2 mt-4 text-bone">{title}</h2>
           {intro ? (
             <p className="mt-4 max-w-xl text-[0.9375rem] leading-relaxed text-steel">
               {intro}

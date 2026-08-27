@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { Container } from '@/components/site/Container';
 import { PageHeader } from '@/components/site/PageHeader';
-import { SampleInventoryNotice } from '@/components/site/SampleInventoryNotice';
 import { InventoryBrowser } from '@/components/vehicles/InventoryBrowser';
 import { inventoryCopy } from '@/content/copy';
 import { getAllVehicles } from '@/lib/vehicles';
@@ -9,24 +9,20 @@ import { getAllVehicles } from '@/lib/vehicles';
 export const metadata: Metadata = {
   title: 'Inventory',
   description:
-    'Browse the current list of performance, collector and special-order vehicles. ' +
-    'Filter by availability, make, body style and year.',
+    'Performance, luxury and collector vehicles currently available. Filter by make, ' +
+    'category, year and availability.',
   alternates: { canonical: '/inventory' },
 };
 
 export default function InventoryPage() {
   return (
     <>
-      <PageHeader
-        eyebrow={inventoryCopy.eyebrow}
-        title={inventoryCopy.headline}
-        intro={inventoryCopy.intro}
-      >
-        <SampleInventoryNotice className="mt-8" />
-      </PageHeader>
+      <PageHeader title={inventoryCopy.headline} intro={inventoryCopy.intro} />
 
       <Container>
-        <InventoryBrowser vehicles={getAllVehicles()} />
+        <Suspense fallback={<div className="h-96" aria-hidden="true" />}>
+          <InventoryBrowser vehicles={getAllVehicles()} />
+        </Suspense>
       </Container>
     </>
   );

@@ -5,14 +5,11 @@ import { siteConfig } from '@/site.config';
 /**
  * Schema.org `Vehicle` for a detail page.
  *
- * Deliberately conservative: only fields backed by data we actually hold are emitted.
+ * Deliberately conservative: only fields backed by data actually held are emitted.
  * There is no `offers`, `price`, `vehicleIdentificationNumber`, `mileageFromOdometer`,
- * `itemCondition` or `seller` because none of those are known. Sample listings return
- * null and emit nothing at all.
+ * `itemCondition` or `seller`, because none of those are known.
  */
 export function vehicleJsonLd(vehicle: Vehicle): Record<string, unknown> | null {
-  if (vehicle.isSample) return null;
-
   const url = `${siteConfig.url}/inventory/${vehicle.slug}`;
 
   const exterior = vehicle.specs.find((s) => s.label === 'Exterior')?.value;

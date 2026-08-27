@@ -50,7 +50,7 @@ export function SpecSection({ title, intro, groups, footnote }: SpecSectionProps
         <div className="columns-1 gap-x-14 md:columns-2">
           {groups.map((group) => (
             <div key={group.title} className="mb-9 break-inside-avoid last:mb-0">
-              <h3 className="label-xs border-b border-line pb-3 text-giallo">
+              <h3 className="label-xs border-b border-line pb-3 text-bone-dim">
                 {group.title}
               </h3>
               <ul className="mt-4 space-y-2.5">
@@ -73,7 +73,7 @@ export function SpecSection({ title, intro, groups, footnote }: SpecSectionProps
       </div>
 
       {footnote ? (
-        <div className="grid gap-8 lg:grid-cols-[18rem_1fr] lg:gap-16">
+        <div className="mt-10 grid gap-8 lg:grid-cols-[18rem_1fr] lg:gap-16">
           <div aria-hidden="true" className="hidden lg:block" />
           <p className="max-w-xl text-xs leading-relaxed text-steel-dim">
             {footnote}

@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Container } from '@/components/site/Container';
 import { JsonLd } from '@/components/site/JsonLd';
-import { SampleInventoryNotice } from '@/components/site/SampleInventoryNotice';
 import { AvailabilityBadge } from '@/components/vehicles/AvailabilityBadge';
 import { VehicleCard } from '@/components/vehicles/VehicleCard';
 import { VehicleGallery } from '@/components/vehicles/VehicleGallery';
@@ -47,8 +46,6 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
         ? [{ url: lead.src, width: lead.width, height: lead.height, alt: lead.alt }]
         : undefined,
     },
-    // Sample records exist to demonstrate the layout, not to be indexed as inventory.
-    robots: vehicle.isSample ? { index: false, follow: true } : undefined,
   };
 }
 
@@ -60,6 +57,8 @@ export default async function VehiclePage({ params }: Params) {
   const similar = getSimilarVehicles(vehicle.slug, 3);
   const heading = vehicleHeading(vehicle);
   const isSold = vehicle.availability === 'sold';
+  // Cars ordered new carry a factory configuration summary; used cars do not.
+  const hasFactoryConfig = Boolean(vehicle.documentation);
 
   const inquiryHref = `/contact?vehicle=${encodeURIComponent(vehicleTitle(vehicle))}`;
 
@@ -99,17 +98,18 @@ export default async function VehiclePage({ params }: Params) {
           <div className="shrink-0 border-t border-line pt-6 lg:border-l lg:border-t-0 lg:pb-1 lg:pl-10 lg:pt-0 lg:text-right">
             <AvailabilityBadge
               availability={vehicle.availability}
-              size="xl"
+              size="lg"
               className="lg:justify-end"
             />
             {vehicle.statusNote ? (
               <p className="mt-4 text-[0.9375rem] text-bone-dim">{vehicle.statusNote}</p>
             ) : null}
-            <p className="mt-1 text-sm text-steel-dim">{vehicle.priceDisplay}</p>
+            {isSold ? null : (
+              <p className="mt-1 text-sm text-steel-dim">{vehicle.priceDisplay}</p>
+            )}
           </div>
         </div>
 
-        {vehicle.isSample ? <SampleInventoryNotice className="mt-8" /> : null}
       </Container>
 
       {/* Gallery */}
@@ -126,9 +126,7 @@ export default async function VehiclePage({ params }: Params) {
       <Container size="wide" className="mt-12 sm:mt-16">
         <div className="grid gap-12 lg:grid-cols-[1fr_20rem] lg:gap-20">
           <div className="prose-body">
-            <h2 className="label-xs mb-5">
-              {isSold ? 'About this vehicle' : 'Overview'}
-            </h2>
+            <h2 className="label-xs mb-5">About this vehicle</h2>
             {vehicle.description.map((paragraph) => (
               <p key={paragraph.slice(0, 40)}>{paragraph}</p>
             ))}
@@ -136,19 +134,16 @@ export default async function VehiclePage({ params }: Params) {
 
           <aside className="lg:sticky lg:top-28 lg:self-start">
             <div className="border border-line bg-ink-raised p-6 sm:p-7">
-              <h2 className="display-3 text-bone">
-                {isSold ? 'No longer available' : 'Interested in this vehicle?'}
+              <h2 className="text-lg font-medium tracking-[-0.015em] text-bone">
+                {isSold ? 'This car has sold' : 'Enquire'}
               </h2>
-              <p className="mt-4 text-sm leading-relaxed text-steel">
+              <p className="mt-3 text-sm leading-relaxed text-steel">
                 {isSold
-                  ? 'This vehicle is documented here for reference. Similar cars can be found or commissioned to a comparable specification.'
-                  : 'Ask about specification, viewing or delivery. Inquiries are answered directly.'}
+                  ? 'We can look for a comparable car, or arrange an order to a similar specification.'
+                  : 'Ask about specification, inspection, viewing or delivery.'}
               </p>
-              <Link
-                href={inquiryHref}
-                className="mt-7 inline-flex h-12 w-full items-center justify-center border border-giallo bg-giallo px-5 text-center text-[0.75rem] font-medium uppercase tracking-[0.13em] text-[#0a0a0b] transition-colors duration-300 hover:bg-transparent hover:text-giallo"
-              >
-                {isSold ? 'Inquire about sourcing a similar vehicle' : 'Inquire about this vehicle'}
+              <Link href={inquiryHref} className="btn btn-primary mt-6 w-full">
+                {isSold ? 'Source a similar vehicle' : 'Enquire about this vehicle'}
               </Link>
               <a
                 href={`mailto:${siteConfig.contact.email}`}
@@ -159,8 +154,8 @@ export default async function VehiclePage({ params }: Params) {
             </div>
 
             {/* Documentation */}
-            <div className="mt-6 border-l border-line-strong py-1 pl-5">
-              <h2 className="label-xs">Vehicle documentation</h2>
+            <div className="mt-8 border-t border-line pt-6">
+              <h2 className="label-xs">Documentation</h2>
               {vehicle.documentation ? (
                 <p className="mt-3 text-xs leading-relaxed text-bone-dim">
                   {vehicle.documentation}
@@ -178,17 +173,17 @@ export default async function VehiclePage({ params }: Params) {
       {vehicle.specGroups && vehicle.specGroups.length > 0 ? (
         <Container size="wide" className="mt-16 sm:mt-24">
           <SpecSection
-            title={vehicle.isSample ? 'Specification' : 'Configuration highlights'}
+            title={hasFactoryConfig ? 'Configuration' : 'Specification'}
             intro={
-              vehicle.isSample
-                ? 'Representative of the model. Not a description of an individual vehicle.'
-                : 'As specified at the point of order, transcribed from the vehicle’s own factory configuration summary.'
+              hasFactoryConfig
+                ? 'As specified at the point of order, taken from the car’s factory configuration summary.'
+                : undefined
             }
             groups={vehicle.specGroups}
             footnote={
-              vehicle.isSample
-                ? undefined
-                : 'Option names follow the manufacturer’s configurator wording.'
+              hasFactoryConfig
+                ? 'Option names follow the manufacturer’s configurator wording.'
+                : undefined
             }
           />
         </Container>
@@ -199,8 +194,7 @@ export default async function VehiclePage({ params }: Params) {
         <Container size="wide" className="mt-20 sm:mt-28">
           <div className="rule flex flex-col gap-6 pt-8 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="label-xs">Elsewhere in the collection</p>
-              <h2 className="display-2 mt-3 text-bone">Similar vehicles</h2>
+              <h2 className="display-2 text-bone">Similar vehicles</h2>
             </div>
             <Link
               href="/inventory"
@@ -213,7 +207,7 @@ export default async function VehiclePage({ params }: Params) {
 
           <ul className="mt-10 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 xl:grid-cols-3">
             {similar.map((item) => (
-              <li key={item.slug}>
+              <li key={item.slug} className="h-full">
                 <VehicleCard
                   vehicle={item}
                   sizes="(min-width: 1280px) 30vw, (min-width: 640px) 45vw, 92vw"

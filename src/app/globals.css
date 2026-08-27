@@ -10,7 +10,7 @@
 @theme {
   --color-ink: #0a0a0b;
   --color-ink-raised: #101012;
-  --color-ink-panel: #16161a;
+  --color-ink-panel: #151518;
   --color-bone: #f3f0ea;
   --color-bone-dim: #cfccc6;
   --color-steel: #8b8b91;
@@ -101,9 +101,9 @@
   .display-1 {
     font-family: var(--font-display);
     font-weight: 500;
-    letter-spacing: -0.035em;
-    line-height: 0.98;
-    font-size: clamp(2.5rem, 7.2vw, 5.25rem);
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
     text-wrap: balance;
   }
 
@@ -112,7 +112,7 @@
     font-weight: 500;
     letter-spacing: -0.03em;
     line-height: 1.03;
-    font-size: clamp(2rem, 4.6vw, 3.25rem);
+    font-size: clamp(1.75rem, 3.2vw, 2.5rem);
     text-wrap: balance;
   }
 
@@ -121,7 +121,7 @@
     font-weight: 500;
     letter-spacing: -0.022em;
     line-height: 1.1;
-    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    font-size: clamp(1.375rem, 2vw, 1.625rem);
     text-wrap: balance;
   }
 
@@ -161,16 +161,56 @@
   }
 
   /*
-    Neutral placeholder treatment for listings without photography yet.
-    Deliberately abstract: fine diagonal hatching over the panel colour, no
-    illustration, no stock image.
+    Buttons. Charcoal with a hairline border throughout — no filled accent colour.
+    The difference between primary and secondary is weight of border and text, not hue.
   */
-  .photo-pending {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 3rem;
+    padding-inline: 1.75rem;
+    border: 1px solid var(--color-line);
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    transition:
+      border-color 0.35s var(--ease-out),
+      background-color 0.35s var(--ease-out),
+      color 0.35s var(--ease-out);
+  }
+
+  .btn-primary {
+    background-color: var(--color-ink-raised);
+    border-color: var(--color-line-strong);
+    color: var(--color-bone);
+  }
+
+  .btn-primary:hover {
     background-color: var(--color-ink-panel);
-    background-image: repeating-linear-gradient(
-      -45deg,
-      rgb(243 240 234 / 0.055) 0 1px,
-      transparent 1px 10px
-    );
+    border-color: rgb(243 240 234 / 0.42);
+  }
+
+  .btn-secondary {
+    color: var(--color-bone-dim);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--color-line-strong);
+    color: var(--color-bone);
+  }
+
+  .btn-sm {
+    height: 2.75rem;
+    padding-inline: 1.25rem;
+  }
+
+  /*
+    Typographic panel used wherever a listing has no photography yet. Reads as a
+    deliberate editorial treatment rather than a missing asset, and is replaced
+    automatically the moment an image is added to the vehicle record.
+  */
+  .image-panel {
+    background-color: var(--color-ink-panel);
   }
 }

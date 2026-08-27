@@ -1,8 +1,8 @@
-# Apex Motor Collection
+# Marlowe Motorcars
 
-A boutique vehicle marketplace built with Next.js 15 (App Router), TypeScript and
-Tailwind CSS v4. Dark editorial layout, photography-led, with a filterable inventory,
-per-vehicle detail pages and a documented sold archive.
+An independent luxury and performance car dealer site, built with Next.js 15
+(App Router), TypeScript and Tailwind CSS v4. Dark editorial layout with a filterable
+inventory, per-vehicle detail pages, a sold-vehicle record and a sourcing enquiry flow.
 
 ```bash
 npm install
@@ -17,41 +17,51 @@ npm run typecheck  # tsc --noEmit
 
 | Route | What it is |
 | --- | --- |
-| `/` | Hero, featured archive vehicle, current inventory, recently sold strip |
+| `/` | Hero, featured inventory, browse by category, recently sold, sourcing |
 | `/inventory` | Full list with client-side search and filters |
-| `/inventory/[slug]` | Vehicle detail template (gallery, specs, configuration, similar) |
-| `/sold` | Archive of vehicles no longer available |
-| `/about` | Positioning and how the collection works |
-| `/contact` | Inquiry form with validation and a success state |
-| `/api/inquiries` | Inquiry sink — validates and logs; swap in a real provider |
+| `/inventory/[slug]` | Vehicle detail template (gallery, specs, equipment, similar) |
+| `/sold-vehicles` | Cars that have sold (`/sold` permanently redirects here) |
+| `/sourcing` | How a search is run, and how to send a brief |
+| `/about` | Short positioning statement |
+| `/contact` | Enquiry form with validation and a success state |
+| `/api/inquiries` | Enquiry sink — validates and logs; swap in a real provider |
 | `/sitemap.xml`, `/robots.txt` | Generated from the vehicle data |
 
 Every vehicle route is pre-rendered via `generateStaticParams`, so detail pages resolve
 on a cold refresh. Unknown slugs fall through to `src/app/not-found.tsx`.
 
+The inventory page reads `?category=` and `?availability=` on load, which is how the
+home page category row and the footer links deep-link into a filtered view.
+
 ## Where to change things
 
 ### Site name and contact details
 
-**`src/site.config.ts`** — the only place any brand string lives. Company name, tagline,
-canonical URL, email, phone, location, response-time line, social links, navigation,
-and every legal/disclaimer string. No component hard-codes any of these.
+**`src/site.config.ts`** — the only place any brand string lives. Company name, the
+two-part wordmark (`MARLOWE` / `MOTORCARS`), tagline, canonical URL, email, phone,
+location, response-time line, social links, navigation, and every legal string. No
+component hard-codes any of these.
 
 ### Vehicle data
 
-**`src/data/vehicles.ts`** — the six sample listings and the exported `vehicles` array.
-**`src/data/temerario.ts`** — the one real record, kept separate because its content is
-transcribed from an actual configuration document.
+**`src/data/vehicles.ts`** — the inventory records and the exported `vehicles` array.
+**`src/data/temerario.ts`** — kept separate because its content is transcribed from an
+actual factory configuration document.
 
 The shape is defined in `src/lib/types.ts`. Notable fields:
 
-- `year` is **optional** — a vehicle only carries a year when the year is genuinely
+- `year` is **optional** — a vehicle carries a year only when the year is genuinely
   known. Nothing is inferred.
 - `priceDisplay` is a string, not a number. There are no numeric prices in this data
-  set; `'Price on request'` and `'Not published'` are the two values in use.
-- `isSample: true` marks a placeholder record. It drives the "Sample listing" marker on
-  cards, sets `robots: noindex` on that detail page, excludes the record from the
-  sitemap, and suppresses its JSON-LD.
+  set; every listed car uses `'Price on request'`, and the price line is hidden
+  entirely once a car is sold.
+- `availability` is `'available' | 'reserved' | 'sold'`.
+- `category` is `'Performance' | 'Grand Touring' | 'Luxury SUV' | 'Collector'` and
+  drives the browse-by-category row, the footer links and the inventory filter. Adding
+  a category means extending `Category` in `src/lib/types.ts` and `CATEGORY_ORDER` /
+  `CATEGORY_BLURB` in `src/lib/vehicles.ts`.
+- `documentation` is set only for cars that came with a factory configuration summary.
+  It switches the specification section's heading to "Configuration".
 
 ### Imagery
 
@@ -59,17 +69,13 @@ Vehicle photography lives in **`public/images/vehicles/<slug>/`**. Add the files
 list them in that vehicle's `images` array with `src`, `alt`, `width` and `height`.
 `alt` is required by the type — it is never decorative on this site.
 
-While a vehicle's `images` array is empty, `VehicleCard` and `VehicleGallery` fall back
-to a neutral "Photography pending" panel (the `.photo-pending` treatment in
-`src/app/globals.css`). No stock imagery or remote image hosts are configured;
-`next.config.ts` deliberately declares no `remotePatterns`.
+While a vehicle's `images` array is empty, the card, the gallery and the sold-list
+thumbnail fall back to `VehicleImagePanel` — a typographic charcoal panel carrying the
+marque, model and category. It is a deliberate treatment rather than a missing-asset
+state, and it disappears the moment an image is added, with no other change needed.
 
-### Sample inventory toggle
-
-**`src/site.config.ts` → `showSampleInventoryNotice`.** Set it to `false` to remove the
-site-wide "Sample inventory shown for demonstration" notice once the placeholder
-listings have been replaced. The notice text itself is
-`siteConfig.legal.sampleInventoryNotice`.
+No stock imagery or remote image hosts are configured; `next.config.ts` deliberately
+declares no `remotePatterns`.
 
 ### The Temerario's availability status
 
@@ -78,12 +84,15 @@ and `statusNote` (the short line beside the chip, currently `'Custom order fulfi
 The badge, the detail-page CTA wording, the home page featured slot and the `/sold`
 listing all follow from those two fields.
 
-To move it off the home page featured slot, remove `featured: true`.
+The Temerario appears in `/sold-vehicles` and in the Recently Sold list on the home
+page. It is not featured anywhere else — the home page hero is typographic and shows no
+single car.
 
 ### Copy
 
 **`src/content/copy.ts`** — headlines, intros and section text for the home, about,
-contact, inventory and sold pages. Components read from it; they don't contain prose.
+sourcing, contact, inventory and sold pages, plus the hero marque line. Components read
+from it; they don't contain prose.
 
 ### Wiring up email
 
@@ -99,12 +108,13 @@ endpoint instead is a one-line change.
 | --- | --- |
 | `VehicleCard` | Grid card — image, title, metadata, status, "View vehicle" |
 | `VehicleGallery` | Stage, thumbnail rail, lightbox, keyboard and touch navigation |
-| `AvailabilityBadge` | Status chip in four sizes, with an optional qualifier line |
-| `SpecRow` / `SpecSection` | Metadata strip and the two-column grouped option layout |
-| `FilterBar` | Search plus availability / make / body style / year, mobile disclosure |
-| `InventoryBrowser` | Owns filter state and renders the results grid |
+| `AvailabilityBadge` | Quiet status chip in three sizes, with an optional qualifier |
+| `SpecRow` / `SpecSection` | Metadata strip and the two-column grouped equipment layout |
+| `FilterBar` | Search plus availability / make / category / year, mobile disclosure |
+| `InventoryBrowser` | Owns filter state, reads deep-link params, renders the grid |
 | `InquiryForm` | Client-side validation, honeypot, submitting and success states |
-| `VehicleThumb` | Lead image with the photography-pending fallback |
+| `VehicleThumb` | Lead image, falling back to `VehicleImagePanel` |
+| `VehicleImagePanel` | Typographic stand-in for listings without photography |
 
 ## Accessibility
 
@@ -119,10 +129,10 @@ endpoint instead is a one-line change.
 
 ## Structured data
 
-`src/lib/jsonld.ts` emits an `AutoDealer` block site-wide and a `Vehicle` block on
-non-sample detail pages. It is deliberately conservative: no `offers`, `price`,
+`src/lib/jsonld.ts` emits an `AutoDealer` block site-wide and a `Vehicle` block on each
+detail page. It is deliberately conservative: no `offers`, `price`,
 `vehicleIdentificationNumber`, `mileageFromOdometer`, `itemCondition` or `seller`,
-because none of those are known. Optional fields are only emitted when the data
+because none of those are known. Optional fields are emitted only when the data
 actually holds them.
 
 ## Source material
@@ -134,10 +144,15 @@ references the existence of that documentation but does not publish it. See
 
 ## Notes on content accuracy
 
-The Temerario record is the only non-sample listing. Its configuration is transcribed
-from the vehicle's own factory configuration summary. It carries no VIN, price,
-mileage, registration, location, seller, prior owner, history or transaction date,
-because none of those are known to this site.
+Listing copy and equipment lists describe the model and its factory specification.
+Per-car facts that are not held — mileage, service history, registration, ownership,
+price — are omitted rather than invented, which is why `priceDisplay` is a string and
+why `year` is optional on the `Vehicle` type.
 
-The site makes no claim of affiliation with any manufacturer, and carries no reviews,
-press logos, buyer names, sales figures or activity feeds.
+The Temerario's configuration is transcribed from the car's own factory configuration
+summary. It carries no VIN, price, mileage, registration, location, prior owner,
+history or transaction date.
+
+The site makes no claim of affiliation with any manufacturer, invents no company
+history, location, sales figures or awards, and carries no reviews, press logos, buyer
+names or activity feeds.

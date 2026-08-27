@@ -96,13 +96,15 @@ export function InquiryForm({ vehicleOptions, defaultVehicle, defaultMessage }: 
         ref={successRef}
         tabIndex={-1}
         role="status"
-        className="border border-giallo-deep bg-ink-raised p-8 sm:p-10"
+        className="border border-line-strong bg-ink-raised p-8 sm:p-10"
       >
-        <p className="label-xs text-giallo">Received</p>
-        <h2 className="display-3 mt-3 text-bone">Thank you — that&rsquo;s in.</h2>
+        <p className="label-xs">Received</p>
+        <h2 className="mt-3 text-xl font-medium tracking-[-0.015em] text-bone">
+          Thanks &mdash; we have it.
+        </h2>
         <p className="mt-4 max-w-md text-[0.9375rem] leading-relaxed text-bone-dim">
-          Your inquiry about <strong className="text-bone">{values.vehicle}</strong>{' '}
-          has been logged and will be answered by a person. If it is urgent, email{' '}
+          Your enquiry about <strong className="text-bone">{values.vehicle}</strong>{' '}
+          has been received and will be answered directly. If it is urgent, email{' '}
           <a
             href={`mailto:${siteConfig.contact.email}`}
             className="link-underline text-bone"
@@ -125,9 +127,9 @@ export function InquiryForm({ vehicleOptions, defaultVehicle, defaultMessage }: 
             setTouched({});
             setStatus('idle');
           }}
-          className="mt-8 inline-flex h-11 items-center border border-line-strong px-6 text-[0.8125rem] text-bone transition-colors hover:border-giallo hover:text-giallo"
+          className="btn btn-secondary btn-sm mt-8"
         >
-          Send another inquiry
+          Send another enquiry
         </button>
       </div>
     );
@@ -182,7 +184,7 @@ export function InquiryForm({ vehicleOptions, defaultVehicle, defaultMessage }: 
             }
             className={`h-12 w-full cursor-pointer appearance-none border bg-ink-raised pl-3.5 pr-9 text-[0.9375rem] transition-colors focus:border-line-strong ${
               touched.vehicle && errors.vehicle
-                ? 'border-giallo text-bone'
+                ? 'border-line-strong text-bone'
                 : 'border-line text-bone'
             }`}
           >
@@ -226,9 +228,7 @@ export function InquiryForm({ vehicleOptions, defaultVehicle, defaultMessage }: 
           }
           placeholder="Specification, colour, timing — anything that narrows the search."
           className={`w-full resize-y border bg-ink-raised p-3.5 text-[0.9375rem] leading-relaxed text-bone placeholder:text-steel-dim transition-colors focus:border-line-strong ${
-            touched.message && errors.message
-              ? 'border-giallo'
-              : 'border-line'
+            touched.message && errors.message ? 'border-line-strong' : 'border-line'
           }`}
         />
         <FieldError id={`${formId}-message-error`}>
@@ -253,9 +253,9 @@ export function InquiryForm({ vehicleOptions, defaultVehicle, defaultMessage }: 
         <button
           type="submit"
           disabled={status === 'submitting'}
-          className="inline-flex h-12 items-center justify-center border border-giallo bg-giallo px-8 text-[0.8125rem] font-medium uppercase tracking-[0.14em] text-[#0a0a0b] transition-colors duration-300 enabled:hover:bg-transparent enabled:hover:text-giallo disabled:opacity-60"
+          className="btn btn-primary disabled:opacity-60"
         >
-          {status === 'submitting' ? 'Sending…' : 'Send inquiry'}
+          {status === 'submitting' ? 'Sending…' : 'Send enquiry'}
         </button>
 
         <p className="text-xs leading-relaxed text-steel-dim sm:max-w-xs sm:text-right">
@@ -266,7 +266,7 @@ export function InquiryForm({ vehicleOptions, defaultVehicle, defaultMessage }: 
       {formError ? (
         <p
           role="alert"
-          className="border-l border-giallo py-1 pl-4 text-sm text-bone-dim sm:col-span-2"
+          className="border-l border-line-strong py-1 pl-4 text-sm text-bone-dim sm:col-span-2"
         >
           {formError}
         </p>
@@ -299,7 +299,7 @@ function FieldLabel({
 function FieldError({ id, children }: { id: string; children?: string }) {
   if (!children) return null;
   return (
-    <p id={id} className="mt-2 text-xs text-giallo">
+    <p id={id} className="mt-2 text-xs text-bone-dim">
       {children}
     </p>
   );
@@ -344,7 +344,7 @@ function Field({
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${id}-error` : undefined}
         className={`h-12 w-full border bg-ink-raised px-3.5 text-[0.9375rem] text-bone transition-colors focus:border-line-strong ${
-          error ? 'border-giallo' : 'border-line'
+          error ? 'border-line-strong' : 'border-line'
         }`}
       />
       <FieldError id={`${id}-error`}>{error}</FieldError>
