@@ -38,9 +38,21 @@ home page category row and the footer links deep-link into a filtered view.
 ### Site name and contact details
 
 **`src/site.config.ts`** — the only place any brand string lives. Company name, the
-two-part wordmark (`MARLOWE` / `MOTORCARS`), tagline, canonical URL, email, phone,
-location, response-time line, social links, navigation, and every legal string. No
-component hard-codes any of these.
+two-part wordmark (`MARLOWE` / `MOTORCARS`), tagline, email, phone, location,
+response-time line, social links, navigation, and every legal string. No component
+hard-codes any of these.
+
+The canonical origin is resolved rather than hard-coded, because a wrong canonical on a
+live site points search engines at the wrong host. Order of precedence:
+
+1. `CANONICAL_URL` at the top of `src/site.config.ts` — set this once a real domain is
+   in place
+2. `NEXT_PUBLIC_SITE_URL`
+3. `VERCEL_PROJECT_PRODUCTION_URL`, then `VERCEL_URL` (both set automatically on Vercel)
+4. `http://localhost:3000`
+
+It is only ever read on the server — in `layout.tsx`, `sitemap.ts`, `robots.ts` and
+`lib/jsonld.ts`.
 
 ### Vehicle data
 

@@ -7,14 +7,38 @@
 
 export type NavItem = { label: string; href: string };
 
+/** Set this once a real domain is in place. Everything else is a fallback. */
+const CANONICAL_URL = '';
+
+/**
+ * Resolve the origin used for canonical URLs, the sitemap and JSON-LD.
+ *
+ * Order: an explicit canonical, then `NEXT_PUBLIC_SITE_URL`, then the Vercel
+ * production domain, then the per-deployment Vercel URL. Getting this wrong on a live
+ * site points every canonical at the wrong host, so it resolves rather than hard-codes.
+ */
+function resolveSiteUrl(): string {
+  const explicit = CANONICAL_URL || process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return explicit.replace(/\/$/, '');
+
+  const vercel =
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
+  if (vercel) return `https://${vercel}`;
+
+  return 'http://localhost:3000';
+}
+
 export const siteConfig = {
   name: 'Marlowe Motorcars',
   /** Wordmark, set in two parts. */
   wordmark: { primary: 'MARLOWE', secondary: 'MOTORCARS' },
   tagline: 'Fine automobiles, properly represented',
 
-  /** Canonical origin. Used for metadata, canonical URLs, sitemap and JSON-LD. */
-  url: 'https://example.com',
+  /**
+   * Canonical origin. Used for metadata, canonical URLs, sitemap and JSON-LD.
+   * Only ever read on the server — see `resolveSiteUrl` above.
+   */
+  url: resolveSiteUrl(),
 
   description:
     'An independent dealer of performance, luxury and collector automobiles. ' +
