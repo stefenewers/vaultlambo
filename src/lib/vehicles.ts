@@ -1,20 +1,19 @@
 import { inventory } from '@/data/inventory';
 import { soldVehicles } from '@/data/sold';
-import { sourcingCatalogue } from '@/data/sourcing';
+import { sourcingCategories } from '@/data/sourcing';
 import type {
   Availability,
   Category,
   InventoryVehicle,
   SoldVehicle,
-  SourcingModel,
+  SourcingCategory,
   SpecificVehicle,
-  VehicleRecord,
 } from '@/lib/types';
 
 /**
- * Read access to the three collections.
+ * Read access to the published content.
  *
- * Every accessor here filters on `published`. Routes, sitemaps and structured data go
+ * Every accessor filters on `published`. Routes, sitemaps and structured data go
  * through these functions and never touch the raw arrays, so an unpublished draft
  * cannot leak into a generated route or an indexed URL.
  */
@@ -38,15 +37,8 @@ export const CATEGORY_ORDER: Category[] = [
   'Collector',
 ];
 
-/** One short line per category, used on the sourcing catalogue. */
-export const CATEGORY_BLURB: Record<Category, string> = {
-  Performance: 'Mid- and rear-engined cars built to be driven hard.',
-  'Grand Touring': 'Long-legged coupes and saloons for distance.',
-  'Luxury SUV': 'Full-size utility, specified properly.',
-  Collector: 'Limited runs and cars worth keeping.',
-};
-
-const isPublished = <T extends VehicleRecord>(record: T): boolean => record.published;
+const isPublished = <T extends { published: boolean }>(record: T): boolean =>
+  record.published;
 
 // --- Inventory: specific cars currently offered ------------------------------
 
@@ -63,7 +55,7 @@ export function hasPublishedInventory(): boolean {
   return getPublishedInventory().length > 0;
 }
 
-// --- Sold: specific cars, individually documented ----------------------------
+// --- Commissions: specific cars, individually documented ---------------------
 
 export function getPublishedSoldVehicles(): SoldVehicle[] {
   return soldVehicles.filter(isPublished);
@@ -73,86 +65,51 @@ export function getSoldVehicleBySlug(slug: string): SoldVehicle | undefined {
   return getPublishedSoldVehicles().find((v) => v.slug === slug);
 }
 
-// --- Sourcing: models, not cars ----------------------------------------------
+// --- Sourcing: categories of brief, not cars ---------------------------------
 
-export function getPublishedSourcingModels(): SourcingModel[] {
-  return sourcingCatalogue.filter(isPublished);
-}
-
-export function getSourcingModelBySlug(slug: string): SourcingModel | undefined {
-  return getPublishedSourcingModels().find((m) => m.slug === slug);
-}
-
-/** Sourcing models grouped by category, in display order, skipping empty groups. */
-export function getSourcingByCategory(): { category: Category; models: SourcingModel[] }[] {
-  const all = getPublishedSourcingModels();
-  return CATEGORY_ORDER.map((category) => ({
-    category,
-    models: all.filter((m) => m.category === category),
-  })).filter((group) => group.models.length > 0);
+/**
+ * Published sourcing categories, in the site's category order.
+ *
+ * There is no `getSourcingCategoryBySlug`, because a category has no page of its own.
+ * Seven thin model pages were removed in favour of one Sourcing page that explains the
+ * service; the old `/sourcing/[slug]` URLs redirect there.
+ */
+export function getPublishedSourcingCategories(): SourcingCategory[] {
+  const published = sourcingCategories.filter(isPublished);
+  return CATEGORY_ORDER.flatMap((category) =>
+    published.filter((entry) => entry.category === category),
+  );
 }
 
 // --- Cross-collection helpers ------------------------------------------------
 
-/** Every specific car the site publishes. Never includes sourcing models. */
+/** Every specific car the site publishes. Never includes sourcing categories. */
 export function getPublishedSpecificVehicles(): SpecificVehicle[] {
   return [...getPublishedInventory(), ...getPublishedSoldVehicles()];
 }
 
-/** The canonical path for any record. Each kind lives under its own section. */
-export function recordHref(record: VehicleRecord): string {
-  switch (record.kind) {
-    case 'inventory':
-      return `/inventory/${record.slug}`;
-    case 'sold':
-      return `/commissions/${record.slug}`;
-    case 'sourcing':
-      return `/sourcing/${record.slug}`;
-  }
+/**
+ * The canonical path for a specific car.
+ *
+ * Typed to `SpecificVehicle`, so a sourcing category cannot be handed to it. There is
+ * no sourcing branch to get wrong.
+ */
+export function recordHref(vehicle: SpecificVehicle): string {
+  return vehicle.kind === 'inventory'
+    ? `/inventory/${vehicle.slug}`
+    : `/commissions/${vehicle.slug}`;
 }
 
-/**
- * Full title including the year, for lists and the enquiry select.
- *
- * A sourcing model never carries a year here: a model has no model year, and printing
- * one would imply a particular car.
- */
-export function vehicleTitle(record: VehicleRecord): string {
-  const year = record.kind === 'sourcing' ? undefined : record.year;
-  return [year, record.make, record.model, record.variant].filter(Boolean).join(' ');
+/** Full title including the year, for lists and the enquiry select. */
+export function vehicleTitle(vehicle: SpecificVehicle): string {
+  return [vehicle.year, vehicle.make, vehicle.model, vehicle.variant]
+    .filter(Boolean)
+    .join(' ');
 }
 
 /** Heading used on a detail page — the year sits in the metadata instead. */
-export function vehicleHeading(record: VehicleRecord): string {
-  return [record.make, record.model, record.variant].filter(Boolean).join(' ');
-}
-
-/** Model name without the marque. */
-export function vehicleModelLine(record: VehicleRecord): string {
-  return [record.model, record.variant].filter(Boolean).join(' ');
-}
-
-/**
- * Other model briefs to surface at the foot of a page. Sourcing models only — a
- * completed sale is never offered as an alternative to buy.
- */
-export function getRelatedSourcingModels(slug: string, limit = 3): SourcingModel[] {
-  const all = getPublishedSourcingModels();
-  const current = all.find((m) => m.slug === slug);
-
-  const scored = all
-    .filter((m) => m.slug !== slug)
-    .map((model) => {
-      let score = 0;
-      if (current) {
-        if (model.category === current.category) score += 3;
-        if (model.bodyStyle === current.bodyStyle) score += 2;
-      }
-      return { model, score };
-    })
-    .sort((a, b) => b.score - a.score || a.model.slug.localeCompare(b.model.slug));
-
-  return scored.slice(0, limit).map((s) => s.model);
+export function vehicleHeading(vehicle: SpecificVehicle): string {
+  return [vehicle.make, vehicle.model, vehicle.variant].filter(Boolean).join(' ');
 }
 
 export function uniqueSorted(values: string[]): string[] {

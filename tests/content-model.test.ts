@@ -1,19 +1,23 @@
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { inventory } from '@/data/inventory';
-import { imageSourceFor, imageSources } from '@/data/image-sources';
+import { attributableSources, imageSourceFor, imageSources } from '@/data/image-sources';
 import { soldVehicles } from '@/data/sold';
-import { sourcingCatalogue } from '@/data/sourcing';
+import { sourcingCategories } from '@/data/sourcing';
 import {
+  CATEGORY_ORDER,
   getPublishedInventory,
   getPublishedSoldVehicles,
-  getPublishedSourcingModels,
+  getPublishedSourcingCategories,
   getPublishedSpecificVehicles,
   getSoldVehicleBySlug,
-  getSourcingByCategory,
   hasPublishedInventory,
   recordHref,
-  vehicleTitle,
 } from '@/lib/vehicles';
+
+const SRC = fileURLToPath(new URL('../src', import.meta.url));
 
 /**
  * These tests exist to stop the specific failure this site was overhauled to fix:
@@ -26,7 +30,7 @@ describe('collection separation', () => {
   it('keeps the three collections disjoint by slug-and-kind', () => {
     const kinds = new Map<string, string[]>();
 
-    for (const record of [...inventory, ...soldVehicles, ...sourcingCatalogue]) {
+    for (const record of [...inventory, ...soldVehicles]) {
       const existing = kinds.get(record.slug) ?? [];
       kinds.set(record.slug, [...existing, record.kind]);
     }
@@ -42,76 +46,87 @@ describe('collection separation', () => {
   it('tags every record with the kind its collection implies', () => {
     expect(inventory.every((v) => v.kind === 'inventory')).toBe(true);
     expect(soldVehicles.every((v) => v.kind === 'sold')).toBe(true);
-    expect(sourcingCatalogue.every((m) => m.kind === 'sourcing')).toBe(true);
+    expect(sourcingCategories.every((c) => c.kind === 'sourcing-category')).toBe(true);
   });
 
-  it('never returns a sourcing model as a specific vehicle', () => {
-    for (const vehicle of getPublishedSpecificVehicles()) {
-      expect(vehicle.kind).not.toBe('sourcing');
+  it('never returns a sourcing category as a specific vehicle', () => {
+    const kinds = getPublishedSpecificVehicles().map((v) => v.kind);
+    expect(kinds).not.toContain('sourcing-category');
+    for (const kind of kinds) {
+      expect(['inventory', 'sold']).toContain(kind);
     }
   });
 
-  it('routes each kind to its own section of the site', () => {
+  it('routes each specific vehicle to its own section of the site', () => {
     for (const vehicle of getPublishedInventory()) {
       expect(recordHref(vehicle)).toMatch(/^\/inventory\//);
     }
     for (const vehicle of getPublishedSoldVehicles()) {
       expect(recordHref(vehicle)).toMatch(/^\/commissions\//);
     }
-    for (const model of getPublishedSourcingModels()) {
-      expect(recordHref(model)).toMatch(/^\/sourcing\//);
-    }
   });
 });
 
-describe('sourcing models make no claims about specific cars', () => {
-  it('carries no availability, price or status field', () => {
-    for (const model of sourcingCatalogue) {
-      // These are absent from the type; this guards against the object literal
+describe('sourcing categories make no claims about specific cars', () => {
+  it('carries no availability, price, status, year or image field', () => {
+    for (const entry of sourcingCategories) {
+      // None of these exist on the type. This guards against the object literal
       // acquiring them through a loosened type or a bad merge.
-      const loose = model as unknown as Record<string, unknown>;
+      const loose = entry as unknown as Record<string, unknown>;
       expect(loose.availability).toBeUndefined();
       expect(loose.priceDisplay).toBeUndefined();
+      expect(loose.salePrice).toBeUndefined();
       expect(loose.statusNote).toBeUndefined();
       expect(loose.year).toBeUndefined();
+      // Photography was removed entirely: a category illustrates scope, not a car.
+      expect(loose.image).toBeUndefined();
+      expect(loose.images).toBeUndefined();
     }
   });
 
-  it('never prints a model year in a title', () => {
-    for (const model of getPublishedSourcingModels()) {
-      expect(vehicleTitle(model)).not.toMatch(/\b(19|20)\d{2}\b/);
+  it('has no slug, so no per-model page can be generated from it', () => {
+    for (const entry of sourcingCategories) {
+      const loose = entry as unknown as Record<string, unknown>;
+      expect(loose.slug).toBeUndefined();
     }
   });
 
-  it('labels its imagery as representative', () => {
-    for (const model of sourcingCatalogue) {
-      expect(model.image.kind).toBe('representative');
+  it('names a year in an example only as part of a model name, never as a car', () => {
+    for (const entry of getPublishedSourcingCategories()) {
+      for (const example of entry.examples) {
+        expect(example, `"${example}" reads as a specific car`).not.toMatch(
+          /\b(19|20)\d{2}\b/,
+        );
+      }
     }
   });
 
-  it('groups by category without producing empty groups', () => {
-    const groups = getSourcingByCategory();
-    expect(groups.length).toBeGreaterThan(0);
-    for (const group of groups) {
-      expect(group.models.length).toBeGreaterThan(0);
-    }
-    // Every published model lands in exactly one group.
-    const grouped = groups.flatMap((g) => g.models);
-    expect(grouped).toHaveLength(getPublishedSourcingModels().length);
+  it('covers every browsable category exactly once, in display order', () => {
+    const published = getPublishedSourcingCategories();
+    const categories = published.map((entry) => entry.category);
+
+    expect(new Set(categories).size, 'a category is duplicated').toBe(categories.length);
+    expect(categories).toEqual(
+      CATEGORY_ORDER.filter((category) => categories.includes(category)),
+    );
+    expect(categories).toEqual([...CATEGORY_ORDER]);
   });
 
-  it('holds the marques moved out of the old inventory list', () => {
-    const makes = new Set(sourcingCatalogue.map((m) => m.make));
-    for (const make of [
-      'Porsche',
-      'Ferrari',
-      'McLaren',
-      'Bentley',
-      'Mercedes-AMG',
-      'Land Rover',
-      'BMW',
-    ]) {
-      expect(makes, `${make} should be a sourcing model`).toContain(make);
+  it('gives every category something concrete to show', () => {
+    for (const entry of getPublishedSourcingCategories()) {
+      expect(entry.summary.length).toBeGreaterThan(20);
+      expect(entry.examples.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('still covers the marques moved out of the old inventory list', () => {
+    const text = sourcingCategories
+      .flatMap((entry) => entry.examples)
+      .join(' ')
+      .toLowerCase();
+
+    for (const make of ['porsche', 'ferrari', 'mclaren', 'bentley', 'mercedes', 'bmw']) {
+      expect(text, `${make} should still appear as an example`).toContain(make);
     }
   });
 });
@@ -145,10 +160,12 @@ describe('completed vehicles', () => {
   });
 
   it('does not present the BMW M3 CS as a completed sale', () => {
+    // It was published as sold by Marlowe with nothing to support it. It survives only
+    // as an example under Collector, where it makes no claim about a specific car.
     expect(soldVehicles.some((v) => v.model === 'M3')).toBe(false);
-    expect(sourcingCatalogue.some((m) => m.model === 'M3' && m.variant === 'CS')).toBe(
-      true,
-    );
+
+    const examples = sourcingCategories.flatMap((entry) => entry.examples);
+    expect(examples.some((example) => example.includes('M3 CS'))).toBe(true);
   });
 
   it('keeps factory renderings out of the documentary photographs', () => {
@@ -220,7 +237,7 @@ describe('draft records', () => {
     const published = [
       ...getPublishedInventory(),
       ...getPublishedSoldVehicles(),
-      ...getPublishedSourcingModels(),
+      ...getPublishedSourcingCategories(),
     ];
     expect(published.every((record) => record.published)).toBe(true);
   });
@@ -236,10 +253,46 @@ describe('draft records', () => {
   });
 });
 
+describe('no external photography', () => {
+  it('holds only owner-supplied material in the ledger', () => {
+    // A set of Creative Commons marque and editorial photographs was removed: legally
+    // fine, but pictures of other people's cars by different photographers in
+    // different places, which made the site read as a classifieds page.
+    for (const source of imageSources) {
+      expect(
+        source.license,
+        `${source.path} is externally licensed and must not be in use`,
+      ).toBe('Owner supplied — all rights reserved');
+    }
+  });
+
+  it('needs no public attribution interface', () => {
+    // /credits existed to attribute Creative Commons images. With none left, nothing
+    // requires a visible credit and the page has gone.
+    expect(attributableSources()).toEqual([]);
+  });
+
+  it('references no image outside the owner-supplied vehicle directory', () => {
+    const OWNER_DIR = '/images/vehicles/';
+    const files = readdirSync(SRC, { recursive: true, encoding: 'utf8' }).filter(
+      (file) => /\.tsx?$/.test(file),
+    );
+
+    for (const file of files) {
+      const content = readFileSync(join(SRC, file), 'utf8');
+      for (const match of content.matchAll(/['\"`](\/images\/[^'\"`]+)['\"`]/g)) {
+        expect(
+          match[1]!.startsWith(OWNER_DIR),
+          `${file} still references ${match[1]}`,
+        ).toBe(true);
+      }
+    }
+  });
+});
+
 describe('image ledger', () => {
   it('records a source for every externally obtained image in use', () => {
     const inUse = [
-      ...sourcingCatalogue.map((m) => m.image.src),
       ...soldVehicles.flatMap((v) => [
         ...v.images.map((i) => i.src),
         ...(v.documentaryImages ?? []).map((i) => i.src),

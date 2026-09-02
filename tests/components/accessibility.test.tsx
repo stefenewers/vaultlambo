@@ -88,13 +88,13 @@ afterEach(cleanup);
 
 describe('accessibility', () => {
   it('header has no axe violations', async () => {
-    const { container } = render(<Header showInventory />);
+    const { container } = render(<Header showInventory canContact />);
     expect(await violationsIn(container)).toEqual([]);
   });
 
   it('header has no axe violations with the mobile panel open', async () => {
     const user = userEvent.setup();
-    const { container } = render(<Header showInventory />);
+    const { container } = render(<Header showInventory canContact />);
     await user.click(container.querySelector('button')!);
     expect(await violationsIn(container)).toEqual([]);
   });

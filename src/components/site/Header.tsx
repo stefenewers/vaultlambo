@@ -13,9 +13,15 @@ type Props = {
    * whole vehicle data set is not bundled into the client just to count it.
    */
   showInventory: boolean;
+  /**
+   * Whether a visitor can actually reach the business — a working form or a published
+   * address. Both the Contact link and the Enquire button are withheld when they
+   * cannot, because the page they lead to has nothing to offer.
+   */
+  canContact: boolean;
 };
 
-export function Header({ showInventory }: Props) {
+export function Header({ showInventory, canContact }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -30,9 +36,11 @@ export function Header({ showInventory }: Props) {
    * live and reachable — it just is not offered as a primary destination when it has
    * nothing to show.
    */
-  const nav = showInventory
-    ? siteConfig.nav
-    : siteConfig.nav.filter((item) => item.href !== '/inventory');
+  const nav = siteConfig.nav.filter((item) => {
+    if (item.href === '/inventory') return showInventory;
+    if (item.href === '/contact') return canContact;
+    return true;
+  });
 
   /** Dismiss and hand focus back to the button that opened the panel. */
   const close = useCallback(() => {
@@ -155,11 +163,13 @@ export function Header({ showInventory }: Props) {
             </ul>
           </nav>
 
-          <div className="hidden md:block">
-            <Link href="/contact" className="btn btn-primary btn-sm">
-              Enquire
-            </Link>
-          </div>
+          {canContact ? (
+            <div className="hidden md:block">
+              <Link href="/contact" className="btn btn-primary btn-sm">
+                Enquire
+              </Link>
+            </div>
+          ) : null}
 
           <button
             ref={toggleRef}

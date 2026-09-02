@@ -1,9 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { sourcingModelJsonLd, vehicleJsonLd } from '@/lib/jsonld';
+import { vehicleJsonLd } from '@/lib/jsonld';
 import {
   getPublishedInventory,
   getPublishedSoldVehicles,
-  getPublishedSourcingModels,
   getSoldVehicleBySlug,
   recordHref,
 } from '@/lib/vehicles';
@@ -50,15 +49,13 @@ describe('vehicle structured data', () => {
     }
   });
 
-  it('marks a sourcing model as a page about a model, never as stock', () => {
-    for (const model of getPublishedSourcingModels()) {
-      const data = sourcingModelJsonLd(model);
-      expect(data['@type']).toBe('WebPage');
-      expect(data.offers).toBeUndefined();
-      expect(data.price).toBeUndefined();
-      expect(data.availability).toBeUndefined();
-      expect((data.about as Record<string, unknown>)['@type']).toBe('ProductModel');
-    }
+  it('emits no structured data at all for sourcing categories', async () => {
+    // Sourcing categories have no page, no route and no markup. The old per-model
+    // pages emitted a WebPage/ProductModel pair; nothing replaces it, because there is
+    // nothing to describe that would not read as a product listing.
+    const jsonld = await import('@/lib/jsonld');
+    expect(Object.keys(jsonld)).not.toContain('sourcingModelJsonLd');
+    expect(Object.keys(jsonld)).not.toContain('sourcingCategoryJsonLd');
   });
 });
 
@@ -161,11 +158,7 @@ describe('generated routes and sitemap', () => {
     const { default: sitemap } = await import('@/app/sitemap');
 
     const urls = sitemap().map((entry) => entry.url);
-    const published = [
-      ...getPublishedInventory(),
-      ...getPublishedSoldVehicles(),
-      ...getPublishedSourcingModels(),
-    ];
+    const published = [...getPublishedInventory(), ...getPublishedSoldVehicles()];
 
     for (const record of published) {
       expect(urls).toContain(`https://marlowemotorcars.com${recordHref(record)}`);
@@ -173,6 +166,14 @@ describe('generated routes and sitemap', () => {
 
     // Nothing unpublished, and no stale /inventory/<model> URLs from the old data set.
     expect(urls.some((u) => u.includes('/inventory/'))).toBe(false);
+
+    // Per-model sourcing pages are gone and their routes redirect, so no /sourcing/<slug>
+    // URL may be submitted for indexing.
+    expect(urls.some((u) => /\/sourcing\/.+/.test(u))).toBe(false);
+
+    // The credits page went with the external photography it existed to attribute.
+    expect(urls.some((u) => u.endsWith('/credits'))).toBe(false);
+
     expect(new Set(urls).size).toBe(urls.length);
   });
 

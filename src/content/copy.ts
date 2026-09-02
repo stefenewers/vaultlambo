@@ -2,36 +2,67 @@
  * Site copy.
  *
  * Everything an editorial pass would touch lives here rather than inside a component.
- * Two rules hold across all of it: say what is true, and say it the way someone who
- * knows cars would say it out loud. No "a considered inventory of remarkable
- * vehicles", no explaining why a piece of information is absent.
+ * Three rules hold across all of it:
+ *
+ *   - Say what is true. Nothing here asserts experience, reach, relationships or
+ *     volume that the configuration does not carry.
+ *   - Say it the way someone who knows cars would say it out loud.
+ *   - Do not describe the absence of information. A page that keeps explaining what it
+ *     cannot tell you reads as though it is defending itself.
  */
 
 export const homeCopy = {
   hero: {
     eyebrow: 'MARLOWE MOTORCARS',
     headline: 'Cars worth finding.',
-    subhead: 'Performance, luxury and collector vehicles, sourced to order.',
+    subhead:
+      'An independent sourcing service for performance, luxury and collector vehicles. ' +
+      'We work to an agreed brief and search until the right car turns up.',
     primaryCta: { label: 'Start a search', href: '/contact' },
-    /** The second CTA depends on whether there is real inventory — see the homepage. */
-    inventoryCta: { label: 'View inventory', href: '/inventory' },
-    soldCta: { label: 'View past commissions', href: '/commissions' },
+    secondaryCta: { label: 'How sourcing works', href: '/sourcing' },
+    /** Three short statements set beneath the headline as a rule-separated row. */
+    marks: [
+      { term: 'Brief-led', detail: 'The search starts from your specification, not from stock.' },
+      { term: 'Independent', detail: 'No franchise, no allocation to clear, no house car to push.' },
+      { term: 'Documented', detail: 'Configuration and history reviewed before anything is agreed.' },
+    ],
   },
-  inventory: {
-    title: 'Available Now',
-    intro: 'Specific cars currently being offered.',
-  },
-  sourcing: {
-    title: 'Models We Source',
+  briefs: {
+    title: 'Representative briefs',
     intro:
-      'Cars we know well and go looking for. Tell us which one and how you want it specified.',
+      'Examples of the categories and vehicles a search may cover. Availability is ' +
+      'established only after a brief is agreed.',
   },
   process: {
-    title: 'How Sourcing Works',
+    title: 'How it works',
+    cta: { label: 'The full process', href: '/sourcing' },
   },
-  completed: {
-    title: 'Recent Commissions',
-    intro: 'Ordered to a client’s specification, and delivered.',
+  commission: {
+    eyebrow: 'Recent commission',
+    cta: { label: 'All commissions', href: '/commissions' },
+  },
+  principles: {
+    title: 'How we work',
+    items: [
+      {
+        title: 'One brief at a time',
+        body:
+          'A search is defined before it starts: model, specification, condition, ' +
+          'timing, and where each of those can move.',
+      },
+      {
+        title: 'Nothing stated that is not known',
+        body:
+          'Where a fact about a car has not been verified, it is left out rather than ' +
+          'estimated. That applies to this site as much as to a listing.',
+      },
+      {
+        title: 'The client sees the same paperwork',
+        body:
+          'Inspection reports and configuration records are passed on as issued, not ' +
+          'summarised.',
+      },
+    ],
   },
   contactCta: {
     title: 'Tell us what you are after.',
@@ -43,75 +74,82 @@ export const homeCopy = {
 } as const;
 
 export const aboutCopy = {
-  headline: 'About Marlowe Motorcars',
+  headline: 'About',
   intro:
-    'Marlowe Motorcars works with clients looking for well-specified performance, ' +
-    'luxury and collector vehicles. Searches begin with the car itself: model, colour, ' +
-    'equipment, condition and timing. Completed commissions remain documented ' +
-    'privately, with selected vehicles retained in the public archive.',
+    'Marlowe Motorcars finds specific cars for people who already know roughly what ' +
+    'they want. Performance, luxury and collector vehicles, sourced to an agreed brief.',
 
   sections: [
     {
-      title: 'Sourcing',
-      body: ['We search against a defined brief and present suitable vehicles for review.'],
-    },
-    {
-      title: 'Representation',
+      title: 'What we do',
       body: [
-        'Where a specific vehicle is offered, its listing is built from the records and ' +
-          'photography available for that car. If a fact has not been verified, it is ' +
-          'left off the listing rather than estimated.',
+        'A client describes the car they are after — model, specification, colour, ' +
+          'condition, timing — and we go and look for it. Candidates are presented for ' +
+          'review with what is known about each one, and the search continues until ' +
+          'something fits or the brief changes.',
+        'Where a car has not been built yet, that can mean a factory order with the ' +
+          'specification fixed at the point of order, as with the Temerario in the ' +
+          'commission archive.',
       ],
     },
     {
-      title: 'Documentation',
+      title: 'How we approach a brief',
       body: [
-        'Configuration, ownership and service records are reviewed where available and ' +
-          'shared with appropriate parties during a transaction.',
+        'The tighter the brief, the shorter the search. It helps to know early which ' +
+          'parts are firm — transmission, colour, a particular option — and which are ' +
+          'negotiable, because that is usually what decides how many cars are worth ' +
+          'looking at.',
+        'An independent inspection and a documentation review can be arranged before ' +
+          'anything is agreed. The report is passed on as it was issued.',
+      ],
+    },
+    {
+      title: 'What we do not claim',
+      body: [
+        'We are not a franchised or authorised dealer for any manufacturer, and we are ' +
+          'not affiliated with one. We hold no standing allocation and no stock beyond ' +
+          'what is published under Inventory — which, at the moment, is nothing.',
+        'This site publishes one completed commission because one client has agreed to ' +
+          'it being shown. It is not a summary of everything that has been done, and it ' +
+          'is not presented as a track record.',
       ],
     },
   ],
 
   /*
-   * Answers to the questions a buyer actually asks before making contact.
+   * Questions a buyer actually asks before making contact.
    *
-   * Every answer here is either a description of the service or a statement about what
-   * this site does — both of which are checkable against the repository. Two questions
-   * a buyer would reasonably ask are deliberately absent because nobody has supplied
-   * the answer: what Marlowe charges, and who operates it. Both are listed in
-   * CONTENT_NEEDED.md. An invented fee structure or a fictional founder biography would
-   * be the single most damaging thing on the page.
+   * Two obvious ones are deliberately missing because nobody has supplied the answer:
+   * what Marlowe charges, and who operates it. Both are in CONTENT_NEEDED.md. An
+   * invented fee structure or a fictional founder biography would be the single most
+   * damaging thing on this page.
    */
   faq: {
     title: 'Common questions',
     items: [
       {
-        question: 'Is Marlowe a dealer or a sourcing service?',
+        question: 'Are you a dealer?',
         answer:
-          'A sourcing and representation service. We are not a franchised or authorised ' +
-          'dealer for any manufacturer, and we are not affiliated with one. Where a ' +
-          'specific car is offered here, the listing says so explicitly.',
+          'No. We are an independent sourcing service, not a franchised or authorised ' +
+          'dealer, and we are not affiliated with any manufacturer.',
       },
       {
-        question: 'How does a search start?',
+        question: 'Do you only source the categories listed under Sourcing?',
         answer:
-          'With a brief. Tell us the model and how you want it specified, including ' +
-          'where you have latitude and where you do not, and how the timing works. The ' +
-          'tighter the brief, the shorter the search.',
-      },
-      {
-        question: 'Do you only source the models listed under Sourcing?',
-        answer:
-          'No. Those are models we know well and are a useful starting point, not a ' +
-          'catalogue of what we can look for. The photography on those pages is ' +
-          'representative of the model and does not show a car we hold.',
+          'Those are examples of scope, not a menu. They are there to show the kind of ' +
+          'brief a search covers. If the car you want is not among them, say so.',
       },
       {
         question: 'Why is nothing listed under Inventory?',
         answer:
-          'A car appears under Inventory only when it is genuinely being offered, with ' +
-          'its own photography and its own verified details. Most sourcing work is ' +
-          'private and never reaches a public listing.',
+          'Because nothing is currently being offered. A car appears there only when it ' +
+          'is genuinely on offer, with its own photography and verified details.',
+      },
+      {
+        question: 'Why is only one commission shown?',
+        answer:
+          'Because only one client has agreed to have their car published. Completed ' +
+          'work is shown with permission and not otherwise.',
       },
       {
         question: 'How are inspections and documents handled?',
@@ -124,8 +162,8 @@ export const aboutCopy = {
         question: 'What happens to the details I send?',
         answer:
           'They are used to answer your enquiry and nothing else. They are not sold or ' +
-          'shared for marketing. The privacy page sets out exactly what is collected ' +
-          'and how to have it removed.',
+          'shared for marketing. The privacy page sets out what is collected and how to ' +
+          'have it removed.',
       },
     ],
   },
@@ -134,36 +172,44 @@ export const aboutCopy = {
 export const sourcingCopy = {
   headline: 'Sourcing',
   intro:
-    'Models we know well and go looking for. Nothing on this page is a car we hold — ' +
-    'these are briefs, and a search starts from one.',
-  catalogueNote:
-    'Photography on this page is representative of the model. It does not show a ' +
-    'vehicle held by Marlowe Motorcars.',
-  /*
-   * Each step describes what is done for a client, in the conditional. Earlier drafts
-   * asserted standing trade contacts, held order slots and an in-house logistics
-   * operation — none of which is established, and all of which would be a claim about
-   * the business rather than a description of the service.
-   */
+    'How a search runs, from the first conversation to the car arriving. Nothing on ' +
+    'this page is a car for sale.',
+
+  /** The service, in the order it actually happens. */
   steps: [
     {
-      title: 'The brief',
+      title: 'You describe the car',
       body:
-        'Model, specification, colour, transmission, and how much latitude there is on ' +
-        'each. The tighter the brief, the shorter the search.',
+        'Model and specification if you know them, or the shape of what you want if ' +
+        'you do not. Colour, transmission, condition, mileage tolerance, and how ' +
+        'quickly it needs to happen.',
     },
     {
-      title: 'The search',
+      title: 'We agree the brief',
+      body:
+        'The brief is written down before anything starts: what is firm, what can ' +
+        'move, and what would rule a car out. That is what the search is measured ' +
+        'against, and it is what stops a near-miss being presented as a match.',
+    },
+    {
+      title: 'Candidates are identified',
       body:
         'Cars publicly for sale, cars available to order, and anything that can be ' +
         'found privately. Where the car has not been built yet, that can mean a ' +
         'factory order with the specification fixed at the point of order.',
     },
     {
-      title: 'Inspection',
+      title: 'History and documents are reviewed',
       body:
-        'An independent inspection and a documentation review can be arranged before ' +
-        'anything is agreed. You see the inspector’s report as it was issued.',
+        'Configuration records, service history and ownership records are read where ' +
+        'they exist, and what is missing is reported as missing. An independent ' +
+        'inspection can be arranged, and you see the report as it was issued.',
+    },
+    {
+      title: 'Before you commit',
+      body:
+        'You get what is known about the car and what is not, in writing, while there ' +
+        'is still time to walk away. Nothing is agreed on a phone call.',
     },
     {
       title: 'Handover',
@@ -172,7 +218,22 @@ export const sourcingCopy = {
         'car arriving.',
     },
   ],
-  cta: { label: 'Send a brief', href: '/contact' },
+
+  briefs: {
+    title: 'Representative briefs',
+    intro:
+      'Examples of the categories and vehicles a search may cover. Availability is ' +
+      'established only after a brief is agreed.',
+  },
+
+  cta: {
+    title: 'Send a brief',
+    body:
+      'Include the model, the specification you want, and how firm each part of it is. ' +
+      'If timing matters, say when.',
+    label: 'Start a search',
+    href: '/contact',
+  },
 } as const;
 
 export const contactCopy = {
@@ -199,7 +260,7 @@ export const inventoryCopy = {
       'its own verified details. Most of what we handle is found to a brief and never ' +
       'reaches this page, so the quickest route is to tell us what you are after.',
     primaryCta: { label: 'Start a search', href: '/contact' },
-    secondaryCta: { label: 'Models we source', href: '/sourcing' },
+    secondaryCta: { label: 'How sourcing works', href: '/sourcing' },
   },
   /** Shown when filters exclude everything, but stock does exist. */
   empty: {
@@ -209,21 +270,9 @@ export const inventoryCopy = {
 } as const;
 
 export const soldCopy = {
-  headline: 'Past Commissions',
+  headline: 'Commissions',
   intro:
-    'Cars ordered and delivered to a client’s specification. Each one is documented ' +
-    'individually; most stay private, and only those a client is happy to have shown ' +
-    'appear here.',
+    'Selected completed work. Client and vehicle details are published only with ' +
+    'permission.',
   empty: 'No commissions are published yet.',
-} as const;
-
-export const creditsCopy = {
-  headline: 'Image credits',
-  intro:
-    'Photography used on this site that was not supplied by a vehicle’s owner, with ' +
-    'its source and licence. Cropped and re-encoded versions of ShareAlike images ' +
-    'remain under the same licence as the original.',
-  representativeNote:
-    'Marque photography illustrates the model under discussion. It does not show a ' +
-    'vehicle held by Marlowe Motorcars.',
 } as const;

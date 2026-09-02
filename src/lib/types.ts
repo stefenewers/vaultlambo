@@ -29,9 +29,7 @@ export type ImageKind =
   /** Manufacturer configurator output for this exact specification. */
   | 'factory-render'
   /** A photograph of this exact car. */
-  | 'vehicle-photograph'
-  /** A photograph of *some* example of the model. Never implies possession. */
-  | 'representative';
+  | 'vehicle-photograph';
 
 export type VehicleImage = {
   /** Path under /public. */
@@ -143,32 +141,39 @@ export type SoldVehicle = BaseRecord & {
 };
 
 /**
- * A model Marlowe can discuss or go and find. Explicitly NOT a car.
+ * A category of brief the service can investigate. Explicitly NOT a car, and no longer
+ * even a model page.
  *
- * There is no `availability`, no `price`, no `statusNote` and no `year` unless the
- * brief deliberately references a generation — because none of those can be true of a
- * model in the abstract.
+ * This replaced a set of seven per-model records that each carried representative
+ * photography and several paragraphs of manufacturer detail. That format had two
+ * problems: the photography was unrelated stock that made the site look like a
+ * classifieds listing, and generic model facts read as though they were evidence of
+ * expertise nobody had verified.
+ *
+ * A category carries no image, no slug route, no availability, no price and no year.
+ * `examples` are model names offered as illustrations of scope — the copy around them
+ * states that availability is established only after a brief is agreed.
  */
-export type SourcingModel = BaseRecord & {
-  kind: 'sourcing';
+export type SourcingCategory = {
+  kind: 'sourcing-category';
+  /** Stable key for React and for in-page anchors. Deliberately not a route. */
+  id: string;
+  category: Category;
+  /** One factual sentence describing what the category covers. */
+  summary: string;
   /**
-   * Only set when the brief intentionally refers to one generation, and then it is
-   * rendered as "generation", never as a model year on a car in stock.
+   * Illustrative model names. Plain strings on purpose: there is no record behind
+   * them, so there is nothing that could be mistaken for a car on the books.
    */
-  generation?: string;
-  /** One factual model-level sentence, used on the card. */
-  brief: string;
-  /** Longer model-level notes for the brief page. Each string is one paragraph. */
-  notes: string[];
-  /** Model-level facts. Never presented as belonging to a particular example. */
-  specs: SpecItem[];
-  specGroups?: SpecGroup[];
-  /** Representative imagery. Labelled as such wherever it appears. */
-  image: VehicleImage;
+  examples: string[];
+  published: boolean;
 };
 
-/** Any record that describes one specific car. */
+/**
+ * Any record that describes one specific car.
+ *
+ * This is the only vehicle union there is. `SourcingCategory` is deliberately outside
+ * it, so a category cannot be passed to anything that renders, links to or emits
+ * structured data for a vehicle.
+ */
 export type SpecificVehicle = InventoryVehicle | SoldVehicle;
-
-/** Every record the site holds. */
-export type VehicleRecord = InventoryVehicle | SoldVehicle | SourcingModel;

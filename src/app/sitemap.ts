@@ -2,7 +2,6 @@ import type { MetadataRoute } from 'next';
 import {
   getPublishedInventory,
   getPublishedSoldVehicles,
-  getPublishedSourcingModels,
   hasPublishedInventory,
   recordHref,
 } from '@/lib/vehicles';
@@ -30,7 +29,6 @@ const STATIC_PRIORITY: Record<string, number> = {
   '/contact': 0.6,
   '/privacy': 0.3,
   '/terms': 0.3,
-  '/credits': 0.3,
 };
 
 /** How often each route genuinely changes. */
@@ -43,13 +41,11 @@ const STATIC_FREQUENCY: Record<string, MetadataRoute.Sitemap[number]['changeFreq
   '/contact': 'yearly',
   '/privacy': 'yearly',
   '/terms': 'yearly',
-  '/credits': 'monthly',
 };
 
-/** Priority per record kind. Cars on offer outrank a model brief. */
+/** Priority per record kind. A car on offer outranks a completed one. */
 const RECORD_PRIORITY = {
   inventory: 0.9,
-  sourcing: 0.7,
   sold: 0.6,
 } as const;
 
@@ -63,18 +59,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/contact',
     '/privacy',
     '/terms',
-    '/credits',
   ].map((path) => ({
     url: `${siteConfig.url}${path}`,
     changeFrequency: STATIC_FREQUENCY[path] ?? ('monthly' as const),
     priority: STATIC_PRIORITY[path] ?? 0.5,
   }));
 
-  const records = [
-    ...getPublishedInventory(),
-    ...getPublishedSoldVehicles(),
-    ...getPublishedSourcingModels(),
-  ].map((record) => ({
+  /*
+   * Specific cars only. The sourcing catalogue used to contribute seven per-model
+   * URLs; those pages are gone and their routes redirect to /sourcing, so there is
+   * nothing here to submit for them.
+   */
+  const records = [...getPublishedInventory(), ...getPublishedSoldVehicles()].map((record) => ({
     url: `${siteConfig.url}${recordHref(record)}`,
     changeFrequency:
       record.kind === 'inventory' ? ('weekly' as const) : ('monthly' as const),

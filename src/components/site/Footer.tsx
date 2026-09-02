@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Container } from '@/components/site/Container';
 import { Wordmark } from '@/components/site/Wordmark';
+import { contactAvailability } from '@/lib/contact';
 import { hasPublishedInventory } from '@/lib/vehicles';
 import { isLicensedDealer, siteConfig } from '@/site.config';
 
@@ -15,11 +16,25 @@ export function Footer() {
   const year = new Date().getFullYear();
   const { contact, legal, social, dealerLicense } = siteConfig;
   const showInventory = hasPublishedInventory();
+  const { email, reachable } = contactAvailability();
+
+  /*
+   * The contact column renders only when it has something real in it. It used to carry
+   * a literal "By appointment" line with no address, phone or email beside it, which
+   * communicated nothing except that the column had to be filled.
+   */
+  const hasContactColumn = Boolean(email || contact.phone || social.length > 0);
 
   return (
     <footer className="mt-28 border-t border-line bg-ink sm:mt-36">
       <Container>
-        <div className="grid gap-12 py-16 sm:py-20 lg:grid-cols-[1.6fr_1fr_1fr_1fr] lg:gap-12">
+        <div
+          className={`grid gap-12 py-16 sm:py-20 lg:gap-12 ${
+            hasContactColumn
+              ? 'lg:grid-cols-[1.6fr_1fr_1fr_1fr]'
+              : 'lg:grid-cols-[1.6fr_1fr_1fr]'
+          }`}
+        >
           <div>
             <Wordmark size="lg" asLink={false} />
             <p className="mt-6 max-w-xs text-sm leading-relaxed text-steel">
@@ -34,24 +49,24 @@ export function Footer() {
             {showInventory ? (
               <FooterLink href="/inventory">Inventory</FooterLink>
             ) : null}
-            <FooterLink href="/sourcing">Models we source</FooterLink>
-            <FooterLink href="/commissions">Past commissions</FooterLink>
+            <FooterLink href="/sourcing">Sourcing</FooterLink>
+            <FooterLink href="/commissions">Commissions</FooterLink>
           </FooterColumn>
 
           <FooterColumn title="Company">
             <FooterLink href="/about">About</FooterLink>
-            <FooterLink href="/contact">Contact</FooterLink>
-            <FooterLink href="/credits">Image credits</FooterLink>
+            {reachable ? <FooterLink href="/contact">Contact</FooterLink> : null}
           </FooterColumn>
 
+          {hasContactColumn ? (
           <FooterColumn title="Contact">
-            {contact.email ? (
+            {email ? (
               <li>
                 <a
-                  href={`mailto:${contact.email}`}
+                  href={`mailto:${email}`}
                   className="link-underline text-sm text-bone-dim transition-colors hover:text-bone"
                 >
-                  {contact.email}
+                  {email}
                 </a>
               </li>
             ) : null}
@@ -65,7 +80,6 @@ export function Footer() {
                 </a>
               </li>
             ) : null}
-            <li className="text-sm text-steel">By appointment</li>
             {social.map((item) => (
               <li key={item.href}>
                 <a
@@ -79,6 +93,7 @@ export function Footer() {
               </li>
             ))}
           </FooterColumn>
+          ) : null}
         </div>
 
         <div className="rule flex flex-col gap-5 py-8 lg:flex-row lg:items-start lg:gap-16">

@@ -57,7 +57,7 @@ function panel(): HTMLElement {
 describe('mobile navigation', () => {
   it('opens and closes from the toggle', async () => {
     const user = userEvent.setup();
-    render(<Header showInventory />);
+    render(<Header showInventory canContact />);
 
     const toggle = screen.getByRole('button', { name: 'Open menu' });
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
@@ -74,7 +74,7 @@ describe('mobile navigation', () => {
 
   it('closes on Escape and returns focus to the toggle', async () => {
     const user = userEvent.setup();
-    render(<Header showInventory />);
+    render(<Header showInventory canContact />);
 
     const toggle = screen.getByRole('button', { name: 'Open menu' });
     await user.click(toggle);
@@ -90,7 +90,7 @@ describe('mobile navigation', () => {
 
   it('keeps Tab inside the panel while it is open', async () => {
     const user = userEvent.setup();
-    render(<Header showInventory />);
+    render(<Header showInventory canContact />);
 
     const toggle = screen.getByRole('button', { name: 'Open menu' });
     await user.click(toggle);
@@ -114,7 +114,7 @@ describe('mobile navigation', () => {
 
   it('locks page scroll while open and restores it on close', async () => {
     const user = userEvent.setup();
-    render(<Header showInventory />);
+    render(<Header showInventory canContact />);
 
     await user.click(screen.getByRole('button', { name: 'Open menu' }));
     expect(document.body.style.overflow).toBe('hidden');
@@ -124,14 +124,33 @@ describe('mobile navigation', () => {
   });
 
   it('omits Inventory from navigation when nothing is listed', () => {
-    render(<Header showInventory={false} />);
+    render(<Header showInventory={false} canContact />);
     expect(screen.queryByRole('link', { name: 'Inventory' })).toBeNull();
     expect(screen.getAllByRole('link', { name: 'Sourcing' }).length).toBeGreaterThan(0);
   });
 
+  it('omits Contact and Enquire when there is no way to get in touch', () => {
+    render(<Header showInventory={false} canContact={false} />);
+
+    // The specific dead end this guards: the header used to advertise "Enquire" on
+    // every page, and the contact page it led to showed neither a form nor an address.
+    expect(screen.queryByRole('link', { name: 'Contact' })).toBeNull();
+    expect(screen.queryByRole('link', { name: 'Enquire' })).toBeNull();
+
+    // The rest of the site stays navigable.
+    expect(screen.getAllByRole('link', { name: 'Sourcing' }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('link', { name: 'Commissions' }).length).toBeGreaterThan(0);
+  });
+
+  it('offers Contact and Enquire once a contact route exists', () => {
+    render(<Header showInventory={false} canContact />);
+    expect(screen.getAllByRole('link', { name: 'Contact' }).length).toBeGreaterThan(0);
+    expect(screen.getByRole('link', { name: 'Enquire' })).toBeInTheDocument();
+  });
+
   it('marks the current section with aria-current', () => {
     pathname.current = '/sourcing';
-    render(<Header showInventory />);
+    render(<Header showInventory canContact />);
 
     const current = screen
       .getAllByRole('link', { name: 'Sourcing' })

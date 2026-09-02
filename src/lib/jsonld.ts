@@ -1,5 +1,5 @@
 import { isProductionReady } from '@/lib/production-readiness';
-import type { SourcingModel, SpecificVehicle } from '@/lib/types';
+import type { SpecificVehicle } from '@/lib/types';
 import { recordHref, vehicleTitle } from '@/lib/vehicles';
 import { isLicensedDealer, siteConfig } from '@/site.config';
 
@@ -13,7 +13,7 @@ import { isLicensedDealer, siteConfig } from '@/site.config';
  *   - `AutoDealer` is a claim to be a motor vehicle dealer. It is emitted only when
  *     the business is confirmed as one and the licence details are on file.
  *   - `Vehicle` describes one specific car, so it is emitted only for inventory and
- *     sold vehicles. A sourcing model gets no `Vehicle` markup at all — marking a
+ *     sold vehicles. A sourcing category gets no markup at all — marking a
  *     model brief up as a vehicle is exactly how a search engine ends up presenting
  *     it as stock.
  *   - No `offers`, `price`, `vehicleIdentificationNumber`, `mileageFromOdometer`,
@@ -23,7 +23,7 @@ import { isLicensedDealer, siteConfig } from '@/site.config';
 /**
  * `Vehicle` for one specific car.
  *
- * Note the type: this function cannot be called with a `SourcingModel`, so the
+ * Note the type: this function cannot be called with a `SourcingCategory`, so the
  * "don't mark up model briefs as stock" rule is enforced by the compiler rather than
  * by remembering.
  */
@@ -58,30 +58,6 @@ export function vehicleJsonLd(vehicle: SpecificVehicle): Record<string, unknown>
   }
 
   return data;
-}
-
-/**
- * Structured data for a sourcing model brief.
- *
- * Deliberately NOT `Vehicle` or `Product` — this is an article about a model, and
- * `WebPage` is the honest description of it. No offer, no availability, no price.
- */
-export function sourcingModelJsonLd(model: SourcingModel): Record<string, unknown> {
-  const url = `${siteConfig.url}${recordHref(model)}`;
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    '@id': url,
-    url,
-    name: `${vehicleTitle(model)} — model brief`,
-    description: model.brief,
-    about: {
-      '@type': 'ProductModel',
-      name: [model.make, model.model, model.variant].filter(Boolean).join(' '),
-      manufacturer: { '@type': 'Organization', name: model.make },
-    },
-  };
 }
 
 /**

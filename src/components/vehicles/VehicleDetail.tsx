@@ -2,10 +2,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Container } from '@/components/site/Container';
 import { AvailabilityBadge } from '@/components/vehicles/AvailabilityBadge';
-import { SourcingCard } from '@/components/vehicles/SourcingCard';
 import { SpecRow, SpecSection } from '@/components/vehicles/SpecSection';
 import { VehicleGallery } from '@/components/vehicles/VehicleGallery';
-import type { SoldVehicle, SourcingModel, SpecificVehicle } from '@/lib/types';
+import type { SoldVehicle, SpecificVehicle } from '@/lib/types';
 import { vehicleHeading, vehicleTitle } from '@/lib/vehicles';
 import { siteConfig } from '@/site.config';
 
@@ -13,8 +12,6 @@ type Props = {
   vehicle: SpecificVehicle;
   /** Breadcrumb parent. */
   parent: { label: string; href: string };
-  /** Model briefs shown at the foot of the page. */
-  related: SourcingModel[];
   /** Whether an enquiry can actually be delivered. Gates the CTA. */
   canEnquire: boolean;
 };
@@ -26,7 +23,7 @@ type Props = {
  * repeated in the description, the enquiry panel and the footer, which made the page
  * read as though it were explaining itself to somebody rather than describing a car.
  */
-export function VehicleDetail({ vehicle, parent, related, canEnquire }: Props) {
+export function VehicleDetail({ vehicle, parent, canEnquire }: Props) {
   const heading = vehicleHeading(vehicle);
   const isSold = vehicle.kind === 'sold';
   const documentary = isSold ? (vehicle as SoldVehicle).documentaryImages ?? [] : [];
@@ -209,32 +206,6 @@ export function VehicleDetail({ vehicle, parent, related, canEnquire }: Props) {
         </Container>
       ) : null}
 
-      {/* Related model briefs */}
-      {related.length > 0 ? (
-        <Container size="wide" className="mt-20 sm:mt-28">
-          <div className="rule flex flex-col gap-6 pt-8 sm:flex-row sm:items-end sm:justify-between">
-            <h2 className="display-2 text-bone">Models we source</h2>
-            <Link
-              href="/sourcing"
-              className="link-underline shrink-0 self-start text-sm text-bone-dim transition-colors hover:text-bone sm:self-end"
-            >
-              All models
-              <span aria-hidden="true"> →</span>
-            </Link>
-          </div>
-
-          <ul className="mt-10 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 xl:grid-cols-3">
-            {related.map((model) => (
-              <li key={model.slug} className="h-full">
-                <SourcingCard
-                  model={model}
-                  sizes="(min-width: 1280px) 30vw, (min-width: 640px) 45vw, 92vw"
-                />
-              </li>
-            ))}
-          </ul>
-        </Container>
-      ) : null}
     </>
   );
 }

@@ -3,48 +3,53 @@ import Link from 'next/link';
 import { Container } from '@/components/site/Container';
 import { Hero } from '@/components/site/Hero';
 import { SectionHeading } from '@/components/site/SectionHeading';
-import { AvailabilityBadge } from '@/components/vehicles/AvailabilityBadge';
-import { SourcingCard } from '@/components/vehicles/SourcingCard';
+import { BriefCategories } from '@/components/vehicles/BriefCategories';
 import { VehicleCard } from '@/components/vehicles/VehicleCard';
 import { homeCopy, sourcingCopy } from '@/content/copy';
+import { isReachable } from '@/lib/contact';
 import {
   getPublishedInventory,
   getPublishedSoldVehicles,
-  getPublishedSourcingModels,
+  getPublishedSourcingCategories,
   recordHref,
-  vehicleTitle,
+  vehicleHeading,
 } from '@/lib/vehicles';
 
 /**
  * Homepage.
  *
- * Order is deliberate: a multi-marque hero, then genuine inventory *only if there is
- * any*, then the models we source, how a search runs, and finally the completed
- * archive. The Temerario appears once, near the bottom, as one completed car — not as
- * the reason the business exists.
+ * Sequence: typographic hero, representative briefs, the process in three steps, one
+ * commission feature, how we work, contact.
  *
- * There are no category counts. The previous version counted model briefs and sold
- * cars together and presented the total as "Currently listed", which read as stock.
+ * The only photograph on this page is the Temerario, well below the fold, and it is
+ * there because it is the one car the owner actually supplied and the one piece of
+ * verifiable proof the business has. Everything above it is type and rules. The
+ * previous version opened with a mosaic of unrelated third-party car photography,
+ * which made the site look like a listings aggregator.
+ *
+ * There are no category counts anywhere. Counting model briefs and presenting the
+ * total as though it were stock is exactly the kind of manufactured scale this page
+ * is meant to avoid.
  */
 export default function HomePage() {
   const inventory = getPublishedInventory();
-  const sold = getPublishedSoldVehicles();
-  const sourcing = getPublishedSourcingModels();
+  const commissions = getPublishedSoldVehicles();
+  const categories = getPublishedSourcingCategories();
+  const canContact = isReachable();
 
-  // The secondary hero action points at whichever section actually has something in it.
-  const secondaryCta =
-    inventory.length > 0 ? homeCopy.hero.inventoryCta : homeCopy.hero.soldCta;
+  /** The single most recent commission carries the feature. */
+  const feature = commissions[0];
 
   return (
     <>
-      <Hero secondaryCta={secondaryCta} />
+      <Hero canContact={canContact} />
 
       {/* Available inventory — rendered only when real records exist. */}
       {inventory.length > 0 ? (
         <Container className="pt-20 sm:pt-28">
           <SectionHeading
-            title={homeCopy.inventory.title}
-            intro={homeCopy.inventory.intro}
+            title="Available now"
+            intro="Specific cars currently being offered."
             action={{ label: 'All inventory', href: '/inventory' }}
           />
           <ul className="mt-12 grid grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 xl:grid-cols-3">
@@ -57,38 +62,34 @@ export default function HomePage() {
         </Container>
       ) : null}
 
-      {/* Models we source */}
+      {/* Representative briefs */}
       <Container className="pt-20 sm:pt-28">
         <SectionHeading
-          title={homeCopy.sourcing.title}
-          intro={homeCopy.sourcing.intro}
-          action={{ label: 'All models', href: '/sourcing' }}
+          title={homeCopy.briefs.title}
+          intro={homeCopy.briefs.intro}
+          action={{ label: 'How sourcing works', href: '/sourcing' }}
         />
-        <ul className="mt-12 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 xl:grid-cols-3">
-          {sourcing.slice(0, 6).map((model) => (
-            <li key={model.slug} className="h-full">
-              <SourcingCard model={model} />
-            </li>
-          ))}
-        </ul>
-        <p className="mt-10 max-w-xl text-xs leading-relaxed text-steel-dim">
-          {sourcingCopy.catalogueNote}
-        </p>
+        <div className="mt-12">
+          <BriefCategories categories={categories} />
+        </div>
       </Container>
 
-      {/* How sourcing works */}
+      {/* Process, condensed to three steps. The full six live on /sourcing. */}
       <Container className="pt-24 sm:pt-32">
-        <SectionHeading title={homeCopy.process.title} />
-        <ol className="mt-10 grid grid-cols-1 gap-px border-y border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
-          {sourcingCopy.steps.map((step, i) => (
-            <li key={step.title} className="bg-ink px-0 py-9 sm:px-6 sm:py-10">
+        <SectionHeading
+          title={homeCopy.process.title}
+          action={homeCopy.process.cta}
+        />
+        <ol className="mt-12 grid grid-cols-1 gap-x-10 gap-y-10 sm:grid-cols-3">
+          {sourcingCopy.steps.slice(0, 3).map((step, i) => (
+            <li key={step.title} className="border-t border-line pt-6">
               <p className="label-xs tabular-nums text-steel-dim">
                 {String(i + 1).padStart(2, '0')}
               </p>
               <h3 className="mt-4 text-lg font-medium tracking-[-0.015em] text-bone">
                 {step.title}
               </h3>
-              <p className="mt-3 max-w-[34ch] text-[0.9375rem] leading-relaxed text-steel">
+              <p className="mt-3 text-[0.9375rem] leading-relaxed text-steel">
                 {step.body}
               </p>
             </li>
@@ -96,69 +97,103 @@ export default function HomePage() {
         </ol>
       </Container>
 
-      {/* Recently completed */}
-      {sold.length > 0 ? (
+      {/*
+        Commission feature. One car, given room, rather than a single card stranded in
+        a three-column grid pretending to be an archive.
+      */}
+      {feature ? (
         <Container className="pt-24 sm:pt-32">
-          <SectionHeading
-            title={homeCopy.completed.title}
-            intro={homeCopy.completed.intro}
-            action={{ label: 'All commissions', href: '/commissions' }}
-          />
-          <ul className="mt-10 divide-y divide-line border-y border-line">
-            {sold.slice(0, 4).map((vehicle) => (
-              <li key={vehicle.slug}>
-                <Link
-                  href={recordHref(vehicle)}
-                  className="group flex items-center gap-5 py-5 transition-colors hover:bg-ink-raised sm:gap-8"
-                >
-                  <div className="relative aspect-[3/2] w-24 shrink-0 overflow-hidden border border-line bg-ink-panel sm:w-32">
-                    <Image
-                      src={vehicle.images[0].src}
-                      alt={vehicle.images[0].alt}
-                      fill
-                      sizes="128px"
-                      loading="lazy"
-                      className="object-cover"
-                    />
+          <div className="rule grid gap-10 pt-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16">
+            <Link
+              href={recordHref(feature)}
+              aria-label={`${vehicleHeading(feature)} — commission detail`}
+              className="group relative block overflow-hidden border border-line bg-ink-panel"
+            >
+              <div className="relative aspect-[4/3] w-full">
+                <Image
+                  src={feature.images[0].src}
+                  alt={feature.images[0].alt}
+                  fill
+                  sizes="(min-width: 1024px) 45vw, 92vw"
+                  loading="lazy"
+                  className="object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:scale-[1.02] motion-reduce:transition-none"
+                />
+              </div>
+            </Link>
+
+            <div>
+              <p className="label-xs">{homeCopy.commission.eyebrow}</p>
+              <h2 className="display-2 mt-5 text-bone">{vehicleHeading(feature)}</h2>
+              {feature.subtitle ? (
+                <p className="mt-4 text-lg text-steel">{feature.subtitle}</p>
+              ) : null}
+
+              <p className="mt-6 max-w-lg text-[0.9375rem] leading-relaxed text-bone-dim sm:text-base">
+                {feature.summary}
+              </p>
+
+              <dl className="mt-8 flex flex-wrap gap-x-12 gap-y-5 border-t border-line pt-6">
+                <div>
+                  <dt className="label-xs">Status</dt>
+                  <dd className="mt-2 text-[0.9375rem] text-bone">
+                    {feature.statusNote ?? 'Delivered'}
+                  </dd>
+                </div>
+                {feature.salePrice ? (
+                  <div>
+                    <dt className="label-xs">Sold for</dt>
+                    <dd className="mt-2 text-[0.9375rem] tabular-nums text-bone">
+                      {feature.salePrice}
+                    </dd>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[0.9375rem] font-medium text-bone">
-                      {vehicleTitle(vehicle)}
-                    </p>
-                    <p className="mt-1 truncate text-sm text-steel">
-                      {vehicle.subtitle ?? vehicle.category}
-                    </p>
-                  </div>
-                  <div className="hidden shrink-0 sm:block">
-                    <AvailabilityBadge availability="sold" size="sm" />
-                  </div>
-                  <span
-                    aria-hidden="true"
-                    className="shrink-0 text-steel-dim transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none"
-                  >
-                    →
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+                ) : null}
+              </dl>
+
+              <Link
+                href={recordHref(feature)}
+                className="link-underline mt-8 inline-block text-sm text-bone-dim transition-colors hover:text-bone"
+              >
+                See the commission
+                <span aria-hidden="true"> →</span>
+              </Link>
+            </div>
+          </div>
         </Container>
       ) : null}
 
-      {/* Contact */}
+      {/* How we work */}
       <Container className="pt-24 sm:pt-32">
-        <div className="rule grid gap-10 pt-12 lg:grid-cols-[20rem_1fr] lg:gap-20">
-          <h2 className="display-2 text-bone">{homeCopy.contactCta.title}</h2>
-          <div className="max-w-xl">
-            <p className="text-base leading-relaxed text-bone-dim sm:text-[1.0625rem]">
-              {homeCopy.contactCta.body}
-            </p>
-            <Link href={homeCopy.contactCta.cta.href} className="btn btn-primary mt-9">
-              {homeCopy.contactCta.cta.label}
-            </Link>
-          </div>
-        </div>
+        <SectionHeading title={homeCopy.principles.title} />
+        <ul className="mt-12 grid grid-cols-1 gap-x-10 gap-y-10 sm:grid-cols-3">
+          {homeCopy.principles.items.map((item) => (
+            <li key={item.title} className="border-t border-line pt-6">
+              <h3 className="text-lg font-medium tracking-[-0.015em] text-bone">
+                {item.title}
+              </h3>
+              <p className="mt-3 text-[0.9375rem] leading-relaxed text-steel">
+                {item.body}
+              </p>
+            </li>
+          ))}
+        </ul>
       </Container>
+
+      {/* Contact — withheld entirely when there is no way to get in touch. */}
+      {canContact ? (
+        <Container className="pt-24 sm:pt-32">
+          <div className="rule grid gap-10 pt-12 lg:grid-cols-[20rem_1fr] lg:gap-20">
+            <h2 className="display-2 text-bone">{homeCopy.contactCta.title}</h2>
+            <div className="max-w-xl">
+              <p className="text-base leading-relaxed text-bone-dim sm:text-[1.0625rem]">
+                {homeCopy.contactCta.body}
+              </p>
+              <Link href={homeCopy.contactCta.cta.href} className="btn btn-primary mt-9">
+                {homeCopy.contactCta.cta.label}
+              </Link>
+            </div>
+          </div>
+        </Container>
+      ) : null}
     </>
   );
 }

@@ -80,9 +80,9 @@ confirmed. `AutoDealer` requires the licence fields.
 ### Manual — run against the production build (`npm run build && npm start`)
 
 - [ ] Every route at **390px**, **768px**, **1440px** and a wide desktop:
-      `/`, `/inventory`, `/sourcing`, `/sourcing/[slug]`, `/commissions`,
+      `/`, `/inventory`, `/sourcing`, `/commissions`,
       `/commissions/lamborghini-temerario-giallo-inti`, `/about`, `/contact`,
-      `/privacy`, `/terms`, `/credits`, and a deliberate 404.
+      `/privacy`, `/terms`, and a deliberate 404.
 - [ ] No horizontal scrolling at any width.
 - [ ] Keyboard only: tab through every page. Focus is always visible; the mobile menu
       traps focus and returns it to the toggle on Escape; the gallery lightbox traps
@@ -98,7 +98,7 @@ confirmed. `AutoDealer` requires the licence fields.
 ### Metadata
 
 - [ ] `/robots.txt` allows crawling (it will `Disallow: /` until readiness passes).
-- [ ] `/sitemap.xml` contains no sourcing-model URLs as inventory, and no drafts.
+- [ ] `/sitemap.xml` contains no `/sourcing/<slug>` URLs, no `/credits`, and no drafts.
 - [ ] Open Graph preview renders correctly — check with a real link preview tool once
       the domain is live.
 - [ ] Favicon appears in the browser tab.
@@ -111,6 +111,8 @@ confirmed. `AutoDealer` requires the licence fields.
       covers this, but read the pages too).
 - [ ] Every published vehicle has real photography and verified facts.
 - [ ] Nothing claims a car is available, reserved or sold without evidence.
+- [ ] No Enquire or Contact affordance appears anywhere while there is no contact
+      route configured — and every one appears once there is.
 
 ---
 

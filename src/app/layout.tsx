@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter_Tight } from 'next/font/google';
 import { Footer } from '@/components/site/Footer';
 import { Header } from '@/components/site/Header';
+import { isReachable } from '@/lib/contact';
 import { JsonLd } from '@/components/site/JsonLd';
 import { organizationJsonLd } from '@/lib/jsonld';
 import { shouldAllowIndexing } from '@/lib/production-readiness';
@@ -67,7 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <Header showInventory={hasPublishedInventory()} />
+        <Header showInventory={hasPublishedInventory()} canContact={isReachable()} />
         <main id="main" className="flex-1">
           {children}
         </main>

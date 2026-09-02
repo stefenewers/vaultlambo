@@ -42,7 +42,7 @@ anywhere a specific car is implied.
 | --- | --- | --- | --- | --- |
 | `InventoryVehicle` | A **specific car** genuinely being offered | `/inventory/[slug]` | `Vehicle` | Yes |
 | `SoldVehicle` | A **specific car** that was delivered and sold | `/commissions/[slug]` | `Vehicle` | Yes |
-| `SourcingModel` | A **model** we can go and find. Not a car. | `/sourcing/[slug]` | None | Yes, as a brief |
+| `SourcingCategory` | A **category of brief** a search can cover. Not a car, and not a page. | none | None | No |
 
 ### Why this exists
 
@@ -53,8 +53,9 @@ Marlowe. None of it was true.
 
 The type system now makes that specific mistake impossible to repeat:
 
-- `SourcingModel` **has no** `availability`, `price`, `statusNote` or `year` field.
-  There is nowhere to put "Reserved" on a model brief.
+- `SourcingCategory` **has no** `availability`, `price`, `statusNote`, `year`, `slug`
+  or image field. There is nowhere to put "Reserved" on a category, and nothing that
+  could generate a page for one.
 - `InventoryVehicle.images` and `SoldVehicle.images` are `readonly [VehicleImage,
   ...VehicleImage[]]` — a non-empty tuple. Publishing a specific car with no
   photography is a compile error.
@@ -87,6 +88,22 @@ The moment the array is non-empty, the inventory section appears on the homepage
 to the primary navigation. Filters appear at four or more vehicles — below that,
 filtering is theatre.
 
+### Sourcing categories
+
+`src/data/sourcing.ts` holds four categories, each with a one-line summary and a list
+of example model names as plain strings. They render as a ruled text grid on the
+homepage and on `/sourcing`.
+
+This replaced seven per-model records that each carried a Creative Commons photograph
+and several paragraphs of manufacturer detail. Both halves were a problem: the
+photographs were of other people's cars, shot by different photographers in different
+places, and assembled into a grid they made the site look like a classifieds page;
+and reciting how a 911 GT3 is built is not evidence that anyone here can find one. The
+old `/sourcing/[slug]` URLs redirect to `/sourcing`.
+
+Adding a category is fine. Adding claims about relationships, access, allocations or
+expertise is not, unless the owner has supplied something that supports it.
+
 ### Adding a completed commission
 
 Same as above, but in `src/data/sold.ts` as a `SoldVehicle`. Two extra fields matter:
@@ -97,21 +114,27 @@ Same as above, but in `src/data/sold.ts` as a `SoldVehicle`. Two extra fields ma
 - `documentaryImages` — photographs of the finished car, kept apart from `images` so
   a configurator rendering is never presented as documentation of the delivered car.
 
-### Image kinds
+### Imagery
 
-`VehicleImage.kind` is required and drives how an image is captioned and used:
+**Every image on the site is owner-supplied material for one specific car.** There is
+no stock photography, no Creative Commons photography and no marque imagery anywhere.
+
+`VehicleImage.kind` drives how an image is captioned and used:
 
 | Kind | Meaning | Used in `Vehicle` JSON-LD |
 | --- | --- | --- |
 | `factory-render` | Manufacturer configurator output for this exact specification | No |
 | `vehicle-photograph` | A photograph of this exact car | Yes |
-| `representative` | A photograph of *some* example of the model | No |
 
-Only `vehicle-photograph` images are offered to search engines as pictures of the car.
-Sourcing imagery is labelled "Representative model imagery" in the interface.
+Only `vehicle-photograph` images are offered to search engines as pictures of the car,
+so a configurator rendering is never presented as documentation of a finished vehicle.
 
-Every externally sourced image is recorded in `src/data/image-sources.ts` with its
-source URL, creator, licence and access date, and credited on `/credits`.
+`src/data/image-sources.ts` is still the ledger, and the rules in its header still
+apply to anything added later: source URL, creator, licence and access date for
+anything not supplied by an owner. It currently contains only owner-supplied entries,
+`attributableSources()` returns nothing, and there is therefore no public credits page.
+Adding an image that requires attribution means bringing one back — a test asserts the
+ledger and the interface agree.
 
 ---
 
@@ -122,20 +145,18 @@ source URL, creator, licence and access date, and credited on `/credits`.
 | `/` | Photography-led hero, what we source, how sourcing works, recent commissions |
 | `/inventory` | Verified active listings, or an honest empty state |
 | `/inventory/[slug]` | A specific car being offered |
-| `/sourcing` | The sourcing catalogue and process |
-| `/sourcing/[slug]` | A model brief — explicitly not a car |
+| `/sourcing` | How a search runs, and the categories it can cover |
 | `/commissions` | Documented completed commissions |
 | `/commissions/[slug]` | A specific completed car |
 | `/about` | Operating model and FAQ |
 | `/contact` | Enquiry form |
 | `/privacy`, `/terms` | Linked discreetly in the footer |
-| `/credits` | Image attribution |
 | `/api/inquiries` | Enquiry delivery |
 
-Redirects in `next.config.ts` preserve every previously published URL:
-`/sold` and `/sold-vehicles` → `/commissions`; the old
-`/inventory/<sold-slug>` → `/commissions/<slug>`; and the seven model briefs that used
-to sit under `/inventory` → `/sourcing/<slug>`.
+Redirects in `next.config.ts` preserve every previously published URL: `/sold` and
+`/sold-vehicles` → `/commissions`; `/inventory/<sold-slug>` → `/commissions/<slug>`;
+every `/sourcing/<slug>` and the old model URLs under `/inventory` → `/sourcing`; and
+`/credits` → `/terms`.
 
 ---
 
@@ -253,6 +274,22 @@ user-supplied markup. Adding analytics means updating `script-src` and `connect-
 
 ---
 
+## Contact state
+
+Whether a visitor can reach the business is decided in one place, `src/lib/contact.ts`,
+and every contact affordance follows it:
+
+| State | Header | Contact page | Homepage / Sourcing CTAs |
+| --- | --- | --- | --- |
+| Form configured | Contact + Enquire | Enquiry form | Shown |
+| Email only | Contact + Enquire | Address, shown | Shown |
+| Neither | **Both hidden** | Says plainly there is no route yet | **Hidden** |
+
+The third row is the one that matters. The header previously offered "Enquire" on every
+page while the contact page said "Enquiries are by email" and showed no email — a call
+to action leading nowhere. Nothing now links to `/contact` unless it can help; the
+route stays reachable by direct URL and is honest about the state.
+
 ## Accessibility
 
 - Skip link, landmark structure, semantic headings, visible focus on every control
@@ -302,6 +339,7 @@ npm run test
 | `tests/components/gallery.test.tsx` | Lazy mounting, navigation, lightbox and `inert` |
 | `tests/components/inventory-browser.test.tsx` | URL-driven filters, empty state |
 | `tests/components/inquiry-form.test.tsx` | Client validation, no false success |
+| `tests/components/mobile-nav.test.tsx` | Conditional Contact and Enquire affordances |
 | `tests/components/accessibility.test.tsx` | axe-core over the interactive components |
 
 Data and validation tests run in `node`; component tests declare

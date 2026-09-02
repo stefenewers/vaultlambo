@@ -94,31 +94,36 @@ const nextConfig: NextConfig = {
         permanent: true,
       })),
 
-      // Model briefs that used to be presented as inventory now live in the sourcing
-      // catalogue, where they cannot imply that a specific car is held.
+      /*
+       * Per-model sourcing pages are gone.
+       *
+       * They carried third-party photography and manufacturer specifications, which
+       * read as generic automotive articles rather than evidence that this firm can
+       * find a car. One Sourcing page explaining the service replaced all seven, so
+       * every old model URL — and the /inventory URLs that previously redirected to
+       * them — now lands there.
+       */
+      { source: '/sourcing/:slug', destination: '/sourcing', permanent: true },
       ...[
         'porsche-911-gt3-touring',
         'ferrari-296-gtb',
         'mclaren-artura',
         'mercedes-amg-g-63',
         'bmw-m3-cs',
+        'bentley-continental-gt-speed',
+        'land-rover-range-rover-sv',
       ].map((slug) => ({
         source: `/inventory/${slug}`,
-        destination: `/sourcing/${slug}`,
+        destination: '/sourcing',
         permanent: true,
       })),
 
-      // Two briefs were also renamed when they moved.
-      {
-        source: '/inventory/bentley-continental-gt-speed',
-        destination: '/sourcing/bentley-continental-gt',
-        permanent: true,
-      },
-      {
-        source: '/inventory/land-rover-range-rover-sv',
-        destination: '/sourcing/range-rover-sv',
-        permanent: true,
-      },
+      /*
+       * The image-credits page existed to attribute Creative Commons photography.
+       * With all of it removed, nothing needs attributing and the page has gone; the
+       * URL points at the terms page, which carries what is left of the legal notes.
+       */
+      { source: '/credits', destination: '/terms', permanent: true },
     ];
   },
 };

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Container } from '@/components/site/Container';
 import { PageHeader } from '@/components/site/PageHeader';
 import { aboutCopy } from '@/content/copy';
+import { contactAvailability } from '@/lib/contact';
 import { siteConfig } from '@/site.config';
 
 export const metadata: Metadata = {
@@ -30,6 +31,7 @@ export const metadata: Metadata = {
  */
 export default function AboutPage() {
   const { contact } = siteConfig;
+  const { reachable } = contactAvailability();
 
   return (
     <>
@@ -92,6 +94,7 @@ export default function AboutPage() {
           </dl>
         </section>
 
+        {reachable ? (
         <div className="rule grid gap-6 py-14 lg:grid-cols-[20rem_1fr] lg:gap-20">
           <h2 className="text-lg font-medium tracking-[-0.015em] text-bone">
             Get in touch
@@ -115,6 +118,7 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
+        ) : null}
       </Container>
     </>
   );

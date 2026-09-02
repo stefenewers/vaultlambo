@@ -1,15 +1,14 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
+import { ContactFormPanel } from '@/app/contact/ContactFormPanel';
 import { Container } from '@/components/site/Container';
 import { PageHeader } from '@/components/site/PageHeader';
-import { ContactFormPanel } from '@/app/contact/ContactFormPanel';
 import { contactCopy } from '@/content/copy';
-import { canAcceptInquiries } from '@/lib/email';
+import { contactAvailability } from '@/lib/contact';
 import {
   getPublishedInventory,
   getPublishedSoldVehicles,
-  getPublishedSourcingModels,
-  vehicleHeading,
+  getPublishedSourcingCategories,
   vehicleTitle,
 } from '@/lib/vehicles';
 import { siteConfig } from '@/site.config';
@@ -18,17 +17,37 @@ export const metadata: Metadata = {
   title: 'Contact',
   description: contactCopy.intro,
   alternates: { canonical: '/contact' },
+  openGraph: {
+    title: 'Contact — Marlowe Motorcars',
+    description: contactCopy.intro,
+    url: '/contact',
+  },
 };
 
 /**
  * Contact.
  *
- * The select is grouped so a model brief cannot be mistaken for a car in stock: the
- * three collections are labelled separately, and completed cars are marked as sold.
- * When enquiries cannot be delivered the form is not rendered at all — a form that
- * silently drops a message is worse than an email address.
+ * Three possible states, and the page has to be honest in all of them:
+ *
+ *   1. Form configured — render the form.
+ *   2. No form, but a published email address — say so, and show the address.
+ *   3. Neither — this page is not linked from anywhere (see lib/contact.ts), but it
+ *      stays reachable by direct URL and must not pretend. It says plainly that there
+ *      is no contact route yet, rather than inviting an email to an address that does
+ *      not exist.
+ *
+ * State 3 previously rendered "Enquiries are by email." with no email beneath it,
+ * while the header advertised "Enquire" on every page. That dead end is what this
+ * structure exists to prevent.
  */
 export default function ContactPage() {
+  const { form, email, reachable } = contactAvailability();
+
+  /*
+   * Options for the enquiry select, grouped so the collections stay visibly separate.
+   * Sourcing entries are categories rather than model names: a category cannot be
+   * mistaken for a car in stock, which a model name in a dropdown quietly can.
+   */
   const groups = [
     {
       label: 'Available now',
@@ -38,14 +57,14 @@ export default function ContactPage() {
       })),
     },
     {
-      label: 'Models we source',
-      options: getPublishedSourcingModels().map((m) => ({
-        value: vehicleHeading(m),
-        label: vehicleHeading(m),
+      label: 'Sourcing a car',
+      options: getPublishedSourcingCategories().map((c) => ({
+        value: `${c.category} — sourcing brief`,
+        label: c.category,
       })),
     },
     {
-      label: 'Completed vehicles',
+      label: 'Completed commissions',
       options: getPublishedSoldVehicles().map((v) => ({
         value: vehicleTitle(v),
         label: `${vehicleTitle(v)} (sold)`,
@@ -54,7 +73,6 @@ export default function ContactPage() {
   ].filter((group) => group.options.length > 0);
 
   const { contact } = siteConfig;
-  const accepting = canAcceptInquiries();
 
   return (
     <>
@@ -62,67 +80,76 @@ export default function ContactPage() {
 
       <Container>
         <div className="rule grid gap-12 pt-12 lg:grid-cols-[1fr_18rem] lg:gap-20 lg:pt-16">
-          {accepting ? (
+          {form ? (
             <Suspense fallback={<div className="h-96" aria-hidden="true" />}>
               <ContactFormPanel groups={groups} />
             </Suspense>
-          ) : (
+          ) : email ? (
             <div className="max-w-xl">
               <h2 className="display-3 text-bone">Enquiries are by email.</h2>
               <p className="mt-5 text-[0.9375rem] leading-relaxed text-bone-dim">
-                {contact.email
-                  ? 'Send the model, specification and timing you have in mind and we will come back to you directly.'
-                  : 'The enquiry form is not accepting messages at the moment. Please try again shortly.'}
+                Send the model, specification and timing you have in mind and we will
+                come back to you directly.
               </p>
-              {contact.email ? (
-                <a
-                  href={`mailto:${contact.email}`}
-                  className="btn btn-primary mt-8 inline-flex"
-                >
-                  {contact.email}
-                </a>
-              ) : null}
+              <a href={`mailto:${email}`} className="btn btn-primary mt-8 inline-flex">
+                {email}
+              </a>
+            </div>
+          ) : (
+            <div className="max-w-xl">
+              <h2 className="display-3 text-bone">
+                There is no contact route configured yet.
+              </h2>
+              <p className="mt-5 text-[0.9375rem] leading-relaxed text-bone-dim">
+                Enquiries cannot be received at the moment, and no address is published
+                because there is not yet one to publish. While that is true this page is
+                not linked from anywhere else on the site.
+              </p>
             </div>
           )}
 
           <aside className="lg:pt-1">
-            {contact.email || contact.phone ? (
+            {reachable ? (
               <>
-                <h2 className="label-xs">Direct</h2>
-                <ul className="mt-5 space-y-4 text-sm">
-                  {contact.email ? (
-                    <li>
-                      <a
-                        href={`mailto:${contact.email}`}
-                        className="link-underline text-bone transition-colors hover:text-bone-dim"
-                      >
-                        {contact.email}
-                      </a>
-                    </li>
-                  ) : null}
-                  {contact.phone ? (
-                    <li>
-                      <a
-                        href={`tel:${contact.phone.replace(/[^+\d]/g, '')}`}
-                        className="link-underline text-bone transition-colors hover:text-bone-dim"
-                      >
-                        {contact.phone}
-                      </a>
-                    </li>
-                  ) : null}
-                  {contact.serviceArea ? (
-                    <li className="text-steel">{contact.serviceArea}</li>
-                  ) : null}
-                </ul>
+                {email || contact.phone ? (
+                  <>
+                    <h2 className="label-xs">Direct</h2>
+                    <ul className="mt-5 space-y-4 text-sm">
+                      {email ? (
+                        <li>
+                          <a
+                            href={`mailto:${email}`}
+                            className="link-underline text-bone transition-colors hover:text-bone-dim"
+                          >
+                            {email}
+                          </a>
+                        </li>
+                      ) : null}
+                      {contact.phone ? (
+                        <li>
+                          <a
+                            href={`tel:${contact.phone.replace(/[^+\d]/g, '')}`}
+                            className="link-underline text-bone transition-colors hover:text-bone-dim"
+                          >
+                            {contact.phone}
+                          </a>
+                        </li>
+                      ) : null}
+                      {contact.serviceArea ? (
+                        <li className="text-steel">{contact.serviceArea}</li>
+                      ) : null}
+                    </ul>
+                  </>
+                ) : null}
+
+                <h2 className="label-xs mt-10">Appointments</h2>
+                <p className="mt-5 text-[0.8125rem] leading-relaxed text-steel">
+                  {contact.appointmentPolicy}
+                </p>
               </>
             ) : null}
 
-            <h2 className="label-xs mt-10">Appointments</h2>
-            <p className="mt-5 text-[0.8125rem] leading-relaxed text-steel">
-              {contact.appointmentPolicy}
-            </p>
-
-            <h2 className="label-xs mt-10">What helps</h2>
+            <h2 className={`label-xs ${reachable ? 'mt-10' : ''}`}>What helps</h2>
             <ul className="mt-5 space-y-2.5">
               {contactCopy.helps.map((item) => (
                 <li

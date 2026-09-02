@@ -6,7 +6,6 @@ import { canAcceptInquiries } from '@/lib/email';
 import { vehicleJsonLd } from '@/lib/jsonld';
 import {
   getPublishedSoldVehicles,
-  getRelatedSourcingModels,
   getSoldVehicleBySlug,
   vehicleHeading,
 } from '@/lib/vehicles';
@@ -59,7 +58,6 @@ export default async function SoldVehiclePage({ params }: Params) {
       <VehicleDetail
         vehicle={vehicle}
         parent={{ label: 'Past commissions', href: '/commissions' }}
-        related={getRelatedSourcingModels(vehicle.slug, 3)}
         canEnquire={canAcceptInquiries()}
       />
     </>

@@ -7,7 +7,6 @@ import { vehicleJsonLd } from '@/lib/jsonld';
 import {
   getInventoryBySlug,
   getPublishedInventory,
-  getRelatedSourcingModels,
   vehicleHeading,
 } from '@/lib/vehicles';
 import { siteConfig } from '@/site.config';
@@ -57,7 +56,6 @@ export default async function InventoryVehiclePage({ params }: Params) {
       <VehicleDetail
         vehicle={vehicle}
         parent={{ label: 'Inventory', href: '/inventory' }}
-        related={getRelatedSourcingModels(vehicle.slug, 3)}
         canEnquire={canAcceptInquiries()}
       />
     </>

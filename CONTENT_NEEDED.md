@@ -51,6 +51,7 @@ it. **Recommended** — the site is honest without it, but weaker.
 | 4.1 | **Lamborghini Temerario — sale price** | ✅ Supplied | `$150,000 USD`, confirmed by the owner and published on the commission page. |
 | 4.2 | **Temerario — delivery date and jurisdiction** | Recommended | Would let the commission carry a date and populate `lastModified` in the sitemap. Currently omitted rather than guessed. |
 | 4.3 | **Temerario — real exterior photography** | Recommended | The gallery is nine factory configurator renderings plus **one** interior delivery photograph. Renders are captioned as renders and are excluded from structured data. A real exterior photograph would materially improve the page. |
+| 4.7 | **Any owner-supplied brand or vehicle photography** | Recommended | All external Creative Commons imagery has been removed: the licences were fine, but the pictures were of other people's cars, shot by different photographers in different places, and together they made the site look like a classifieds page. The site is now typography-led and carries only the Temerario. Real photography — a car, a handover, a workspace — would be the single biggest visual improvement available, but it has to be yours. |
 | 4.4 | **Any other genuinely completed commissions** | Recommended | The archive currently holds exactly one car. Each addition needs its own photography and verified facts. |
 | 4.5 | **Real active inventory** | Recommended | There is none, and the site says so plainly. See the README for what a listing requires before it can be published. |
 | 4.6 | **BMW M3 CS** | ⚠️ Resolved by removal | Was published as *sold by Marlowe* with no supporting evidence. Moved to the sourcing catalogue as a model brief. Restore it as a commission only if actual records and photography exist for a specific car. |
@@ -69,6 +70,7 @@ it. **Recommended** — the site is honest without it, but weaker.
 | # | Item | Status | Notes |
 |---|------|--------|-------|
 | 6.1 | **Inspection providers** | Recommended | The sourcing page says an independent inspection *can be arranged*. It does not name partners or claim a standing network, because none is established. |
+| 6.4 | **Verified marque expertise**, if any | Recommended | The sourcing categories are described as *representative briefs* — examples of scope. They deliberately avoid saying these are models the firm knows well, because that is a capability claim nobody has verified. Tell us where genuine depth exists and it can be said directly. |
 | 6.2 | **Transport and logistics providers** | Recommended | Same treatment: "can be arranged", not "we operate". |
 | 6.3 | **Analytics decision** | Recommended | None is installed. The CSP would need a matching `script-src`/`connect-src` entry, and the privacy page would need updating, if one is added. |
 
@@ -87,4 +89,6 @@ Recorded so nobody re-adds them by accident:
 - Showroom or street address
 - Finance, warranty, insurance or shipping offerings
 - Live activity feeds, view counters or vehicle counts
+- Familiarity with any particular model or marque
+- Photography of any car other than the one commission the owner supplied
 - Any mileage, VIN, registration, ownership history or price not supplied by the owner

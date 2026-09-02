@@ -1,180 +1,98 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { Container } from '@/components/site/Container';
 import { homeCopy } from '@/content/copy';
 
-type HeroImage = {
-  src: string;
-  alt: string;
-  /** Category label shown in the corner of the frame. */
-  label: string;
-  width: number;
-  height: number;
+type Props = {
+  /**
+   * Whether a contact route exists. The primary action is withheld entirely when it
+   * does not — an "Enquire" button leading to a page with no form and no address is
+   * worse than no button.
+   */
+  canContact: boolean;
 };
 
 /**
- * Hero composition.
+ * Homepage hero.
  *
- * Four images across four categories, so the page says "multi-marque specialist"
- * before a word is read. Asymmetric on purpose: one tall frame carrying the
- * craftsmanship shot, two stacked beside it, and a panoramic band beneath the fold
- * line. No single car leads, and no marque is repeated.
+ * Typography only. This replaced a four-image mosaic and a full-width panoramic band,
+ * all of it third-party photography of other people's cars: different photographers,
+ * locations, light and crops, assembled into something that read as a collage rather
+ * than an identity.
+ *
+ * A sourcing firm with one public commission has nothing to gain from borrowed
+ * pictures of cars it has never touched. What it can be is precise. So the hero holds
+ * a rule, a headline, one supporting sentence and three short statements about how the
+ * service works — and the only image on the homepage is the one car the owner actually
+ * supplied, well below the fold.
  */
-const TALL: HeroImage = {
-  src: '/images/editorial/hero-craftsmanship.webp',
-  alt: 'The cabin of an Aston Martin V12 Speedster, trimmed in tan and brown leather with visible stitching.',
-  label: 'Craftsmanship',
-  width: 1280,
-  height: 1600,
-};
-
-const STACKED: HeroImage[] = [
-  {
-    src: '/images/editorial/hero-performance.webp',
-    alt: 'The rear haunch and wheel of a dark green Porsche 911 GT3 Touring.',
-    label: 'Performance',
-    width: 1400,
-    height: 1400,
-  },
-  {
-    src: '/images/editorial/hero-grand-touring.webp',
-    alt: 'A white Bentley Flying Spur photographed from the front three-quarter.',
-    label: 'Grand touring',
-    width: 1400,
-    height: 1400,
-  },
-];
-
-const BAND: HeroImage = {
-  src: '/images/editorial/hero-luxury-suv.webp',
-  alt: 'The flank of a white long-wheelbase Range Rover SV in a showroom.',
-  label: 'Luxury SUV',
-  width: 2400,
-  height: 1029,
-};
-
-type Props = {
-  /** Where the secondary action points, and what it says. */
-  secondaryCta: { label: string; href: string };
-};
-
-export function Hero({ secondaryCta }: Props) {
+export function Hero({ canContact }: Props) {
   const { hero } = homeCopy;
 
   return (
     <section className="border-b border-line">
       <Container>
-        <div className="grid items-center gap-12 pb-14 pt-14 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16 lg:pb-20 lg:pt-20">
-          {/* Copy */}
-          <div className="lg:pr-8">
-            <p className="label-xs">{hero.eyebrow}</p>
-
-            <h1 className="display-1 mt-6 max-w-[11ch] text-bone">{hero.headline}</h1>
-
-            <p className="mt-7 max-w-md text-base leading-relaxed text-bone-dim sm:text-lg">
-              {hero.subhead}
-            </p>
-
-            {/*
-              Full-width on the narrowest screens: two auto-width buttons wrapping onto
-              separate lines at different widths reads as a layout accident.
-            */}
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-              <Link
-                href={hero.primaryCta.href}
-                className="btn btn-primary w-full sm:w-auto"
-              >
-                {hero.primaryCta.label}
-              </Link>
-              <Link
-                href={secondaryCta.href}
-                className="btn btn-secondary w-full sm:w-auto"
-              >
-                {secondaryCta.label}
-              </Link>
-            </div>
+        <div className="pb-16 pt-16 sm:pb-20 sm:pt-24 lg:pb-28 lg:pt-32">
+          {/* Eyebrow, sitting on a hairline that runs the full measure. */}
+          <div className="flex items-center gap-5">
+            <p className="label-xs shrink-0 text-bone-dim">{hero.eyebrow}</p>
+            <span aria-hidden="true" className="h-px flex-1 bg-line" />
           </div>
 
-          {/* Image mosaic */}
-          <div className="grid grid-cols-5 grid-rows-2 gap-2.5 sm:gap-3 lg:aspect-[5/4]">
-            <Frame
-              image={TALL}
-              priority
-              sizes="(min-width: 1024px) 33vw, 55vw"
-              className="col-span-3 row-span-2 aspect-[4/5] lg:aspect-auto"
-            />
-            {STACKED.map((image, i) => (
-              <Frame
-                key={image.src}
-                image={image}
-                priority={i === 0}
-                sizes="(min-width: 1024px) 22vw, 38vw"
-                className="col-span-2 aspect-square lg:aspect-auto"
-              />
-            ))}
+          <div className="grid gap-x-16 gap-y-10 pt-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-end lg:pt-14">
+            <h1 className="display-hero max-w-[9ch] text-bone">{hero.headline}</h1>
+
+            <div className="lg:pb-2">
+              <p className="max-w-md text-base leading-relaxed text-bone-dim sm:text-lg">
+                {hero.subhead}
+              </p>
+
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                {canContact ? (
+                  <Link
+                    href={hero.primaryCta.href}
+                    className="btn btn-primary w-full sm:w-auto"
+                  >
+                    {hero.primaryCta.label}
+                  </Link>
+                ) : null}
+                <Link
+                  href={hero.secondaryCta.href}
+                  className={`btn w-full sm:w-auto ${
+                    canContact ? 'btn-secondary' : 'btn-primary'
+                  }`}
+                >
+                  {hero.secondaryCta.label}
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </Container>
 
-      {/* Panoramic band */}
-      <div className="relative w-full overflow-hidden border-t border-line bg-ink-panel">
-        <div className="relative aspect-[3/2] w-full sm:aspect-[21/9] lg:aspect-[28/9]">
-          <Image
-            src={BAND.src}
-            alt={BAND.alt}
-            fill
-            sizes="100vw"
-            loading="lazy"
-            className="object-cover"
-          />
-          {/*
-            Captions sit over photography that may be light or dark, so each one
-            carries its own scrim rather than relying on the image behind it.
-          */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink/85 to-transparent"
-          />
-          <span className="absolute bottom-4 left-5 label-xs text-bone sm:bottom-5 sm:left-8 lg:left-12">
-            {BAND.label}
-          </span>
-        </div>
+      {/*
+        Three statements about the service, on a rule. This is where a stock-photo band
+        used to be: it occupies the same position in the composition and says something
+        true instead.
+      */}
+      <div className="border-t border-line">
+        <Container>
+          <dl className="grid grid-cols-1 divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            {hero.marks.map((mark, i) => (
+              <div
+                key={mark.term}
+                className={`py-8 sm:py-10 ${i === 0 ? 'sm:pr-8' : 'sm:px-8'} ${
+                  i === hero.marks.length - 1 ? 'sm:pr-0' : ''
+                }`}
+              >
+                <dt className="label-xs text-bone-dim">{mark.term}</dt>
+                <dd className="mt-3 max-w-[34ch] text-[0.9375rem] leading-relaxed text-steel">
+                  {mark.detail}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </Container>
       </div>
     </section>
-  );
-}
-
-function Frame({
-  image,
-  priority,
-  sizes,
-  className,
-}: {
-  image: HeroImage;
-  priority?: boolean;
-  sizes: string;
-  className: string;
-}) {
-  return (
-    <figure
-      className={`relative overflow-hidden border border-line bg-ink-panel ${className}`}
-    >
-      <Image
-        src={image.src}
-        alt={image.alt}
-        fill
-        sizes={sizes}
-        priority={priority}
-        loading={priority ? undefined : 'lazy'}
-        className="object-cover"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-ink/85 to-transparent"
-      />
-      <figcaption className="absolute bottom-3 left-3 label-xs text-bone sm:bottom-4 sm:left-4">
-        {image.label}
-      </figcaption>
-    </figure>
   );
 }
