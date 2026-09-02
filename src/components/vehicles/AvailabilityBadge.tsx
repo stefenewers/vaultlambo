@@ -29,8 +29,8 @@ const DOT: Record<Availability, string> = {
 };
 
 const SIZE = {
-  sm: 'h-6 px-2.5 text-[0.625rem] tracking-[0.14em] gap-1.5',
-  md: 'h-7 px-3 text-[0.6875rem] tracking-[0.15em] gap-2',
+  sm: 'h-7 px-2.5 text-xs tracking-[0.12em] gap-1.5',
+  md: 'h-8 px-3 text-xs tracking-[0.14em] gap-2',
   lg: 'h-9 px-4 text-[0.75rem] tracking-[0.18em] gap-2.5',
 } as const;
 

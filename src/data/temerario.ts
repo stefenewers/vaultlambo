@@ -7,7 +7,9 @@ const DIR = '/images/vehicles/lamborghini-temerario-giallo-inti';
  *
  * Every option below is transcribed from this car's official Lamborghini Car
  * Configurator summary, which is held in `private-source/` and is not published.
- * Deliberately absent, because they are not known and will not be guessed: VIN, price,
+ *
+ * The sale price is owner-supplied and published with the owner's instruction. Still
+ * deliberately absent, because they are not known and will not be guessed: VIN,
  * mileage, registration, location, prior owner, history and transaction date.
  *
  * The gallery separates the two kinds of image it holds. Items marked `factory-render`
@@ -26,6 +28,9 @@ export const temerario: SoldVehicle = {
   category: 'Performance',
   statusNote: 'Custom order fulfilled',
 
+  /** Confirmed by the owner. See the note above the record. */
+  salePrice: '$150,000 USD',
+
   summary:
     'Ordered to a customer specification in Giallo Inti over Nero Ade, with Giallo ' +
     'Taurus contrast stitching and piping throughout.',
@@ -36,7 +41,7 @@ export const temerario: SoldVehicle = {
       'wheels and Nero Lucido carbon-ceramic calipers complete the specification.',
 
     'The car was built to a fixed customer specification under configuration code ' +
-      'AKTT2X and has since been delivered and sold.',
+      'AKTT2X, delivered, and sold for $150,000 USD.',
   ],
 
   specs: [

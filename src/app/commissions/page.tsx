@@ -6,18 +6,23 @@ import { soldCopy } from '@/content/copy';
 import { getPublishedSoldVehicles } from '@/lib/vehicles';
 
 export const metadata: Metadata = {
-  title: 'Completed Vehicles',
+  title: 'Past Commissions',
   description: soldCopy.intro,
-  alternates: { canonical: '/sold-vehicles' },
+  alternates: { canonical: '/commissions' },
+  openGraph: {
+    title: 'Past Commissions — Marlowe Motorcars',
+    description: soldCopy.intro,
+    url: '/commissions',
+  },
 };
 
 /**
- * Completed vehicles.
+ * Past commissions.
  *
  * Only individually documented cars appear here. A model with no vehicle-specific
  * evidence is not a completed sale, and belongs in the sourcing catalogue instead.
  */
-export default function SoldVehiclesPage() {
+export default function CommissionsPage() {
   const sold = getPublishedSoldVehicles();
 
   return (

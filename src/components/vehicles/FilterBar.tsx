@@ -26,6 +26,12 @@ export const EMPTY_FILTERS: Filters = {
 type Props = {
   filters: Filters;
   onChange: (next: Filters) => void;
+  /**
+   * Resetting is its own action rather than `onChange(EMPTY_FILTERS)`: the browser
+   * owns filter state, and clearing has to push a history entry and reset the search
+   * box draft together.
+   */
+  onClear: () => void;
   makes: string[];
   categories: string[];
   years: string[];
@@ -36,6 +42,7 @@ type Props = {
 export function FilterBar({
   filters,
   onChange,
+  onClear,
   makes,
   categories,
   years,
@@ -92,7 +99,7 @@ export function FilterBar({
         >
           Filters
           {activeCount > 0 ? (
-            <span className="inline-flex h-4 min-w-4 items-center justify-center border border-line-strong px-1 text-[0.625rem] font-medium tabular-nums text-bone">
+            <span className="inline-flex h-5 min-w-5 items-center justify-center border border-line-strong px-1 text-xs font-medium tabular-nums text-bone">
               {activeCount}
             </span>
           ) : null}
@@ -154,7 +161,7 @@ export function FilterBar({
           </p>
           <button
             type="button"
-            onClick={() => onChange(EMPTY_FILTERS)}
+            onClick={onClear}
             disabled={!isFiltered}
             className="h-11 shrink-0 text-[0.8125rem] text-steel underline-offset-4 transition-colors enabled:hover:text-bone enabled:hover:underline disabled:cursor-default disabled:opacity-40 lg:h-auto"
           >

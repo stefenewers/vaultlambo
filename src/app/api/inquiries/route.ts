@@ -33,6 +33,19 @@ export async function POST(request: Request) {
     );
   }
 
+  /*
+   * Only JSON is accepted. Refusing other content types keeps this endpoint out of
+   * scope for simple cross-origin form posts, which cannot set a JSON content type
+   * without a preflight.
+   */
+  const contentType = request.headers.get('content-type') ?? '';
+  if (!contentType.toLowerCase().split(';')[0]?.trim().endsWith('/json')) {
+    return NextResponse.json(
+      { ok: false, error: 'Unsupported content type.' },
+      { status: 415 },
+    );
+  }
+
   const declaredLength = Number(request.headers.get('content-length') ?? '0');
   if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) {
     return NextResponse.json(
@@ -42,9 +55,25 @@ export async function POST(request: Request) {
   }
 
   // --- Parse ---------------------------------------------------------------
+  // Content-Length is a claim, not a fact. Read the body as text first and measure it,
+  // so an understated or absent header cannot slip an oversized payload past the check.
+  let rawBody: string;
+  try {
+    rawBody = await request.text();
+  } catch {
+    return NextResponse.json({ ok: false, error: 'Malformed request.' }, { status: 400 });
+  }
+
+  if (new TextEncoder().encode(rawBody).length > MAX_BODY_BYTES) {
+    return NextResponse.json(
+      { ok: false, error: 'That message is too long to send.' },
+      { status: 413 },
+    );
+  }
+
   let body: unknown;
   try {
-    body = await request.json();
+    body = JSON.parse(rawBody);
   } catch {
     return NextResponse.json({ ok: false, error: 'Malformed request.' }, { status: 400 });
   }

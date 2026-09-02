@@ -105,7 +105,7 @@ export function recordHref(record: VehicleRecord): string {
     case 'inventory':
       return `/inventory/${record.slug}`;
     case 'sold':
-      return `/sold-vehicles/${record.slug}`;
+      return `/commissions/${record.slug}`;
     case 'sourcing':
       return `/sourcing/${record.slug}`;
   }

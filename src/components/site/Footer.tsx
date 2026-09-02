@@ -35,7 +35,7 @@ export function Footer() {
               <FooterLink href="/inventory">Inventory</FooterLink>
             ) : null}
             <FooterLink href="/sourcing">Models we source</FooterLink>
-            <FooterLink href="/sold-vehicles">Completed vehicles</FooterLink>
+            <FooterLink href="/commissions">Past commissions</FooterLink>
           </FooterColumn>
 
           <FooterColumn title="Company">

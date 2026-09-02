@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!vehicle) return { title: 'Vehicle not found', robots: { index: false } };
 
   const title = vehicleHeading(vehicle);
-  const canonical = `/sold-vehicles/${vehicle.slug}`;
+  const canonical = `/commissions/${vehicle.slug}`;
 
   // Prefer a photograph of the car for the social card; fall back to the lead
   // configuration rendering only when there is no photograph.
@@ -58,7 +58,7 @@ export default async function SoldVehiclePage({ params }: Params) {
       <JsonLd data={vehicleJsonLd(vehicle)} />
       <VehicleDetail
         vehicle={vehicle}
-        parent={{ label: 'Completed vehicles', href: '/sold-vehicles' }}
+        parent={{ label: 'Past commissions', href: '/commissions' }}
         related={getRelatedSourcingModels(vehicle.slug, 3)}
         canEnquire={canAcceptInquiries()}
       />

@@ -56,7 +56,7 @@ describe('collection separation', () => {
       expect(recordHref(vehicle)).toMatch(/^\/inventory\//);
     }
     for (const vehicle of getPublishedSoldVehicles()) {
-      expect(recordHref(vehicle)).toMatch(/^\/sold-vehicles\//);
+      expect(recordHref(vehicle)).toMatch(/^\/commissions\//);
     }
     for (const model of getPublishedSourcingModels()) {
       expect(recordHref(model)).toMatch(/^\/sourcing\//);
@@ -169,6 +169,32 @@ describe('completed vehicles', () => {
     for (const image of temerario.images) {
       expect(image.caption?.toLowerCase()).toContain('rendering');
       expect(image.alt.toLowerCase()).toContain('rendering');
+    }
+  });
+
+  it('publishes the owner-confirmed sale price on the Temerario', () => {
+    const temerario = getSoldVehicleBySlug('lamborghini-temerario-giallo-inti');
+    if (!temerario) throw new Error('The documented Temerario record is missing.');
+
+    // Supplied by the owner. Everything else about the transaction — VIN, mileage,
+    // buyer, date — is still deliberately absent.
+    expect(temerario.salePrice).toBe('$150,000 USD');
+  });
+
+  it('never invents a sale price for a car that has not been given one', () => {
+    for (const vehicle of getPublishedSoldVehicles()) {
+      if (vehicle.salePrice === undefined) continue;
+      // A price that exists must be a non-empty, owner-supplied string, not a
+      // placeholder standing in for one.
+      expect(vehicle.salePrice.trim().length).toBeGreaterThan(0);
+      expect(vehicle.salePrice.toLowerCase()).not.toContain('request');
+      expect(vehicle.salePrice.toLowerCase()).not.toContain('undisclosed');
+    }
+  });
+
+  it('keeps completed vehicles under /commissions', () => {
+    for (const vehicle of getPublishedSoldVehicles()) {
+      expect(recordHref(vehicle)).toBe(`/commissions/${vehicle.slug}`);
     }
   });
 

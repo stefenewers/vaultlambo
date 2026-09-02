@@ -134,7 +134,7 @@ export const siteConfig = {
   nav: [
     { label: 'Inventory', href: '/inventory' },
     { label: 'Sourcing', href: '/sourcing' },
-    { label: 'Sold', href: '/sold-vehicles' },
+    { label: 'Commissions', href: '/commissions' },
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
   ] satisfies NavItem[],

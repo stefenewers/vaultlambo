@@ -55,7 +55,7 @@ export default function SourcingPage() {
           />
         </div>
         {bandCredit ? (
-          <p className="absolute bottom-3 right-4 text-[0.625rem] text-bone-dim sm:right-8">
+          <p className="absolute bottom-3 right-4 text-xs text-bone-dim sm:right-8">
             {bandCredit}
           </p>
         ) : null}

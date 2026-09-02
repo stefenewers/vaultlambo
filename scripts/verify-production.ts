@@ -10,8 +10,34 @@
  * make the run pass — a failing check means something still has to be supplied.
  */
 
-import { productionFindings } from '../src/lib/production-readiness';
-import { siteConfig } from '../src/site.config';
+import { existsSync } from 'node:fs';
+
+/*
+ * Load the same env files Next.js would, before anything reads process.env.
+ *
+ * Without this the script reports blockers for values that are configured in
+ * .env.local and works fine in the running app — which trains everyone to ignore it.
+ * Later files do not override earlier ones, matching Next's precedence.
+ *
+ * The imports below are deliberately dynamic: `src/site.config.ts` reads process.env
+ * at module scope, so a static import would be evaluated before this runs.
+ */
+for (const file of ['.env.local', '.env']) {
+  if (existsSync(file)) process.loadEnvFile(file);
+}
+
+type Deps = {
+  productionFindings: typeof import('../src/lib/production-readiness').productionFindings;
+  siteConfig: typeof import('../src/site.config').siteConfig;
+};
+
+async function loadDeps(): Promise<Deps> {
+  const [readiness, config] = await Promise.all([
+    import('../src/lib/production-readiness'),
+    import('../src/site.config'),
+  ]);
+  return { productionFindings: readiness.productionFindings, siteConfig: config.siteConfig };
+}
 
 const ESC = '\u001b';
 const BOLD = `${ESC}[1m`;
@@ -21,7 +47,8 @@ const YELLOW = `${ESC}[33m`;
 const GREEN = `${ESC}[32m`;
 const RESET = `${ESC}[0m`;
 
-function main(): void {
+async function main(): Promise<void> {
+  const { productionFindings, siteConfig } = await loadDeps();
   const findings = productionFindings();
   const blockers = findings.filter((f) => f.severity === 'blocker');
   const warnings = findings.filter((f) => f.severity === 'warning');
@@ -73,4 +100,7 @@ function main(): void {
   );
 }
 
-main();
+main().catch((error: unknown) => {
+  console.error('verify:production failed to run:', error);
+  process.exit(1);
+});

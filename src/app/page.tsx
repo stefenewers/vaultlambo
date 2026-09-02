@@ -102,7 +102,7 @@ export default function HomePage() {
           <SectionHeading
             title={homeCopy.completed.title}
             intro={homeCopy.completed.intro}
-            action={{ label: 'All completed vehicles', href: '/sold-vehicles' }}
+            action={{ label: 'All commissions', href: '/commissions' }}
           />
           <ul className="mt-10 divide-y divide-line border-y border-line">
             {sold.slice(0, 4).map((vehicle) => (

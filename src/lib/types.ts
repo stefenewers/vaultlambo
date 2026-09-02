@@ -68,6 +68,14 @@ type BaseRecord = {
    * Set to true only once every claim on the record is supported.
    */
   published: boolean;
+  /**
+   * ISO date (YYYY-MM-DD) this record's facts were last verified or changed. Feeds
+   * `lastModified` in the sitemap.
+   *
+   * Omit it rather than guessing. A fabricated freshness date is a small lie told to a
+   * crawler, and the sitemap simply leaves the field out when it is absent.
+   */
+  updated?: string;
 };
 
 /**
@@ -108,6 +116,16 @@ export type SoldVehicle = BaseRecord & {
   subtitle?: string;
   /** Short qualifier beside the SOLD badge, e.g. "Custom order fulfilled". */
   statusNote?: string;
+  /**
+   * The price the car actually sold for, exactly as the owner supplied it, e.g.
+   * "$150,000 USD". A string rather than a number and a currency code: this is a
+   * disclosed figure, not something to arithmetic on, and formatting it locally would
+   * risk restating it as something the owner did not say.
+   *
+   * Omit entirely unless the figure is confirmed. Nothing derives or estimates it, and
+   * the UI renders no price line at all when it is absent.
+   */
+  salePrice?: string;
   summary: string;
   description: string[];
   specs: SpecItem[];

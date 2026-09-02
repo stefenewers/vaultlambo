@@ -79,7 +79,20 @@ export function VehicleDetail({ vehicle, parent, related, canEnquire }: Props) {
               <p className="mt-4 text-[0.9375rem] text-bone-dim">{vehicle.statusNote}</p>
             ) : null}
             {vehicle.kind === 'inventory' ? (
-              <p className="mt-1 text-sm text-steel-dim">{vehicle.priceDisplay}</p>
+              <p className="mt-1 text-sm text-steel">{vehicle.priceDisplay}</p>
+            ) : null}
+            {/*
+              A sold price is shown only when the owner has confirmed the figure. When
+              `salePrice` is absent nothing is rendered — no "price on request", no
+              "undisclosed", nothing that invites a guess.
+            */}
+            {isSold && vehicle.salePrice ? (
+              <p className="mt-3 lg:mt-4">
+                <span className="label-xs block">Sold for</span>
+                <span className="mt-1.5 block text-lg tabular-nums text-bone sm:text-xl">
+                  {vehicle.salePrice}
+                </span>
+              </p>
             ) : null}
           </div>
         </div>

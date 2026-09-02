@@ -238,13 +238,33 @@ export function isProductionReady(): boolean {
 }
 
 /**
+ * True for a Vercel preview or development deployment.
+ *
+ * Vercel sets VERCEL_ENV to 'production', 'preview' or 'development'. A preview build
+ * is a complete, crawlable copy of the site on a throwaway hostname, and left alone it
+ * competes with production for the same terms — so previews are never indexable, even
+ * when every readiness check passes.
+ */
+export function isPreviewDeployment(): boolean {
+  const env = process.env.VERCEL_ENV;
+  return env === 'preview' || env === 'development';
+}
+
+/**
  * Whether search engines should be allowed to index this deployment.
  *
- * Anything incomplete is kept out of the index deliberately: a half-configured site
- * ranking for the brand name is worse than no result at all. `NEXT_PUBLIC_ALLOW_INDEXING`
- * set to 'false' forces it off for staging deployments that are otherwise complete.
+ * Three independent gates, any one of which is enough to refuse:
+ *
+ *   1. an explicit NEXT_PUBLIC_ALLOW_INDEXING=false, for a staging host that is
+ *      otherwise complete
+ *   2. a Vercel preview or development deployment
+ *   3. any blocking readiness finding
+ *
+ * A half-configured site ranking for the brand name is worse than no result at all,
+ * and de-indexing afterwards takes far longer than waiting.
  */
 export function shouldAllowIndexing(): boolean {
   if (process.env.NEXT_PUBLIC_ALLOW_INDEXING === 'false') return false;
+  if (isPreviewDeployment()) return false;
   return isProductionReady();
 }

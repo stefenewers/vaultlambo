@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Cancel superseded runs on the same branch rather than paying for both.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+
+    env:
+      # Promotes a localhost canonical in the build output from a warning to a
+      # blocker. A local build legitimately has one; CI has no excuse.
+      CI: 'true'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # `npm ci` rather than `npm install`: it installs exactly the lockfile and
+      # fails if package.json and the lockfile have drifted apart.
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+      # Scans the emitted HTML and chunks for placeholder contact details, false
+      # availability claims and sourcing models rendered as stock.
+      - name: Scan build output
+        run: npm run verify:build
+
+      # Reports what the owner still has to supply. Informational: an unconfigured
+      # fork should not fail CI, and the site already refuses to index itself when
+      # these are missing.
+      - name: Production readiness (informational)
+        run: npm run verify:production || true

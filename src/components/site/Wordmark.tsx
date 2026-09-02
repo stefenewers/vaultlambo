@@ -9,8 +9,8 @@ type Props = {
 };
 
 const SIZES = {
-  sm: { primary: 'text-[0.9375rem] tracking-[0.16em]', secondary: 'text-[0.5rem]' },
-  lg: { primary: 'text-2xl tracking-[0.18em]', secondary: 'text-[0.625rem]' },
+  sm: { primary: 'text-[1.0625rem] tracking-[0.17em]', secondary: 'text-[0.6875rem]' },
+  lg: { primary: 'text-[1.75rem] tracking-[0.19em]', secondary: 'text-xs' },
 } as const;
 
 export function Wordmark({ className = '', size = 'sm', asLink = true }: Props) {

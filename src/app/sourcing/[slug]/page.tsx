@@ -125,7 +125,7 @@ export default async function SourcingModelPage({ params }: Params) {
           <figcaption className="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
             <span className="text-xs text-steel">Representative model imagery</span>
             {credit ? (
-              <span className="text-[0.6875rem] text-steel-dim">{credit}</span>
+              <span className="text-xs text-steel-dim">{credit}</span>
             ) : null}
           </figcaption>
         </figure>

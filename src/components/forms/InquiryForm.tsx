@@ -1,7 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { useId, useRef, useState } from 'react';
-import { validateInquiry, type InquiryErrors } from '@/lib/inquiry';
+import { LIMITS, validateInquiry, type InquiryErrors } from '@/lib/inquiry';
 import { siteConfig } from '@/site.config';
 
 export type Option = { value: string; label: string };
@@ -39,7 +40,20 @@ export function InquiryForm({ groups, defaultVehicle, defaultMessage }: Props) {
   const [formError, setFormError] = useState<string | null>(null);
   const honeypot = useRef<HTMLInputElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
+  const summaryRef = useRef<HTMLDivElement>(null);
+  /** Errors are only summarised after a submit attempt, not while first typing. */
+  const [showSummary, setShowSummary] = useState(false);
   const formId = useId();
+
+  /** Field order for the summary, so it matches the visual order of the form. */
+  const FIELD_ORDER = ['name', 'email', 'phone', 'vehicle', 'message'] as const;
+
+  const summaryErrors = showSummary
+    ? FIELD_ORDER.flatMap((field) => {
+        const message = errors[field];
+        return message ? ([[field, message]] as [string, string][]) : [];
+      })
+    : [];
 
   const set = (key: keyof typeof values, value: string) => {
     const next = { ...values, [key]: value };
@@ -62,11 +76,14 @@ export function InquiryForm({ groups, defaultVehicle, defaultMessage }: Props) {
     setTouched({ name: true, email: true, phone: true, vehicle: true, message: true });
 
     if (Object.keys(nextErrors).length > 0) {
-      const firstKey = Object.keys(nextErrors)[0];
-      document.getElementById(`${formId}-${firstKey}`)?.focus();
+      // Move focus to the summary so the whole list is announced, rather than only
+      // the first bad field. The summary links on to each individual control.
+      setShowSummary(true);
+      requestAnimationFrame(() => summaryRef.current?.focus());
       return;
     }
 
+    setShowSummary(false);
     setStatus('submitting');
     try {
       const response = await fetch(siteConfig.inquiryEndpoint, {
@@ -156,6 +173,7 @@ export function InquiryForm({ groups, defaultVehicle, defaultMessage }: Props) {
     <form onSubmit={onSubmit} noValidate className="grid gap-6 sm:grid-cols-2">
       <Field
         id={`${formId}-name`}
+        name="name"
         label="Name"
         value={values.name}
         error={touched.name ? errors.name : undefined}
@@ -165,6 +183,7 @@ export function InquiryForm({ groups, defaultVehicle, defaultMessage }: Props) {
       />
       <Field
         id={`${formId}-email`}
+        name="email"
         label="Email"
         type="email"
         value={values.email}
@@ -176,6 +195,7 @@ export function InquiryForm({ groups, defaultVehicle, defaultMessage }: Props) {
       />
       <Field
         id={`${formId}-phone`}
+        name="phone"
         label="Phone"
         optional
         type="tel"
@@ -192,6 +212,7 @@ export function InquiryForm({ groups, defaultVehicle, defaultMessage }: Props) {
         <div className="relative">
           <select
             id={`${formId}-vehicle`}
+            name="vehicle"
             value={values.vehicle}
             onChange={(e) => set('vehicle', e.target.value)}
             onBlur={() => blur('vehicle')}
@@ -247,6 +268,8 @@ export function InquiryForm({ groups, defaultVehicle, defaultMessage }: Props) {
         <FieldLabel htmlFor={`${formId}-message`}>Message</FieldLabel>
         <textarea
           id={`${formId}-message`}
+          name="message"
+          maxLength={LIMITS.message}
           value={values.message}
           onChange={(e) => set('message', e.target.value)}
           onBlur={() => blur('message')}
@@ -278,14 +301,68 @@ export function InquiryForm({ groups, defaultVehicle, defaultMessage }: Props) {
         />
       </div>
 
-      <div className="flex flex-col gap-4 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
-        <button
-          type="submit"
-          disabled={status === 'submitting'}
-          className="btn btn-primary disabled:opacity-60"
+      {/*
+        Error summary. Announced on submit and linking to each invalid field, so a
+        screen-reader user gets the whole picture at once rather than discovering
+        problems one field at a time.
+      */}
+      {summaryErrors.length > 0 ? (
+        <div
+          ref={summaryRef}
+          tabIndex={-1}
+          role="alert"
+          className="border border-line-strong bg-ink-raised p-5 sm:col-span-2"
         >
-          {status === 'submitting' ? 'Sending…' : 'Send enquiry'}
-        </button>
+          <h3 className="text-sm font-medium text-bone">
+            {summaryErrors.length === 1
+              ? 'One field needs attention'
+              : `${summaryErrors.length} fields need attention`}
+          </h3>
+          <ul className="mt-3 space-y-1.5">
+            {summaryErrors.map(([field, message]) => (
+              <li key={field}>
+                <a
+                  href={`#${formId}-${field}`}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    document.getElementById(`${formId}-${field}`)?.focus();
+                  }}
+                  className="link-underline text-sm text-bone-dim hover:text-bone"
+                >
+                  {message}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      <div className="flex flex-col gap-4 sm:col-span-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <button
+            type="submit"
+            disabled={status === 'submitting'}
+            className="btn btn-primary disabled:opacity-60"
+          >
+            {status === 'submitting' ? 'Sending…' : 'Send enquiry'}
+          </button>
+          {/* Said plainly, next to the action it applies to. */}
+          <p className="mt-3 max-w-xs text-xs leading-relaxed text-steel-dim">
+            Your details are used only to answer this enquiry.{' '}
+            {/*
+              A link inside a paragraph carries a permanent underline. The animated
+              `link-underline` treatment used for navigation would leave this
+              distinguishable by colour alone until hovered.
+            */}
+            <Link
+              href="/privacy"
+              className="text-bone-dim underline underline-offset-2 transition-colors hover:text-bone"
+            >
+              How we handle enquiries
+            </Link>
+            .
+          </p>
+        </div>
 
         {siteConfig.contact.responseTime ? (
           <p className="text-xs leading-relaxed text-steel-dim sm:max-w-xs sm:text-right">
@@ -338,6 +415,7 @@ function FieldError({ id, children }: { id: string; children?: string }) {
 
 function Field({
   id,
+  name,
   label,
   value,
   onChange,
@@ -349,6 +427,8 @@ function Field({
   inputMode,
 }: {
   id: string;
+  /** Real form control name, so browser autofill and password managers behave. */
+  name: string;
   label: string;
   value: string;
   onChange: (value: string) => void;
@@ -366,6 +446,7 @@ function Field({
       </FieldLabel>
       <input
         id={id}
+        name={name}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}

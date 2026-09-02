@@ -15,7 +15,7 @@ export const homeCopy = {
     primaryCta: { label: 'Start a search', href: '/contact' },
     /** The second CTA depends on whether there is real inventory — see the homepage. */
     inventoryCta: { label: 'View inventory', href: '/inventory' },
-    soldCta: { label: 'View completed vehicles', href: '/sold-vehicles' },
+    soldCta: { label: 'View past commissions', href: '/commissions' },
   },
   inventory: {
     title: 'Available Now',
@@ -30,8 +30,8 @@ export const homeCopy = {
     title: 'How Sourcing Works',
   },
   completed: {
-    title: 'Recently Completed',
-    intro: 'Cars delivered to a client’s specification.',
+    title: 'Recent Commissions',
+    intro: 'Ordered to a client’s specification, and delivered.',
   },
   contactCta: {
     title: 'Tell us what you are after.',
@@ -49,6 +49,7 @@ export const aboutCopy = {
     'luxury and collector vehicles. Searches begin with the car itself: model, colour, ' +
     'equipment, condition and timing. Completed commissions remain documented ' +
     'privately, with selected vehicles retained in the public archive.',
+
   sections: [
     {
       title: 'Sourcing',
@@ -58,7 +59,8 @@ export const aboutCopy = {
       title: 'Representation',
       body: [
         'Where a specific vehicle is offered, its listing is built from the records and ' +
-          'photography available for that car.',
+          'photography available for that car. If a fact has not been verified, it is ' +
+          'left off the listing rather than estimated.',
       ],
     },
     {
@@ -69,6 +71,64 @@ export const aboutCopy = {
       ],
     },
   ],
+
+  /*
+   * Answers to the questions a buyer actually asks before making contact.
+   *
+   * Every answer here is either a description of the service or a statement about what
+   * this site does — both of which are checkable against the repository. Two questions
+   * a buyer would reasonably ask are deliberately absent because nobody has supplied
+   * the answer: what Marlowe charges, and who operates it. Both are listed in
+   * CONTENT_NEEDED.md. An invented fee structure or a fictional founder biography would
+   * be the single most damaging thing on the page.
+   */
+  faq: {
+    title: 'Common questions',
+    items: [
+      {
+        question: 'Is Marlowe a dealer or a sourcing service?',
+        answer:
+          'A sourcing and representation service. We are not a franchised or authorised ' +
+          'dealer for any manufacturer, and we are not affiliated with one. Where a ' +
+          'specific car is offered here, the listing says so explicitly.',
+      },
+      {
+        question: 'How does a search start?',
+        answer:
+          'With a brief. Tell us the model and how you want it specified, including ' +
+          'where you have latitude and where you do not, and how the timing works. The ' +
+          'tighter the brief, the shorter the search.',
+      },
+      {
+        question: 'Do you only source the models listed under Sourcing?',
+        answer:
+          'No. Those are models we know well and are a useful starting point, not a ' +
+          'catalogue of what we can look for. The photography on those pages is ' +
+          'representative of the model and does not show a car we hold.',
+      },
+      {
+        question: 'Why is nothing listed under Inventory?',
+        answer:
+          'A car appears under Inventory only when it is genuinely being offered, with ' +
+          'its own photography and its own verified details. Most sourcing work is ' +
+          'private and never reaches a public listing.',
+      },
+      {
+        question: 'How are inspections and documents handled?',
+        answer:
+          'An independent inspection and a documentation review can be arranged before ' +
+          'anything is agreed, and you see the inspector’s report as it was issued. ' +
+          'Configuration and service records are reviewed where they exist.',
+      },
+      {
+        question: 'What happens to the details I send?',
+        answer:
+          'They are used to answer your enquiry and nothing else. They are not sold or ' +
+          'shared for marketing. The privacy page sets out exactly what is collected ' +
+          'and how to have it removed.',
+      },
+    ],
+  },
 } as const;
 
 export const sourcingCopy = {
@@ -79,6 +139,12 @@ export const sourcingCopy = {
   catalogueNote:
     'Photography on this page is representative of the model. It does not show a ' +
     'vehicle held by Marlowe Motorcars.',
+  /*
+   * Each step describes what is done for a client, in the conditional. Earlier drafts
+   * asserted standing trade contacts, held order slots and an in-house logistics
+   * operation — none of which is established, and all of which would be a claim about
+   * the business rather than a description of the service.
+   */
   steps: [
     {
       title: 'The brief',
@@ -89,20 +155,21 @@ export const sourcingCopy = {
     {
       title: 'The search',
       body:
-        'Trade contacts, private owners and, where the car has not been built yet, an ' +
-        'order slot with the specification fixed at the point of order.',
+        'Cars publicly for sale, cars available to order, and anything that can be ' +
+        'found privately. Where the car has not been built yet, that can mean a ' +
+        'factory order with the specification fixed at the point of order.',
     },
     {
       title: 'Inspection',
       body:
-        'Independent inspection and documentation review before anything is agreed. ' +
-        'You see the report, not a summary of it.',
+        'An independent inspection and a documentation review can be arranged before ' +
+        'anything is agreed. You see the inspector’s report as it was issued.',
     },
     {
-      title: 'Delivery',
+      title: 'Handover',
       body:
-        'Transport, paperwork and handover arranged and tracked through to the car ' +
-        'arriving.',
+        'Transport, paperwork and handover can be arranged and tracked through to the ' +
+        'car arriving.',
     },
   ],
   cta: { label: 'Send a brief', href: '/contact' },
@@ -142,9 +209,12 @@ export const inventoryCopy = {
 } as const;
 
 export const soldCopy = {
-  headline: 'Completed Vehicles',
-  intro: 'Cars delivered to a client’s specification, documented individually.',
-  empty: 'No completed vehicles are published yet.',
+  headline: 'Past Commissions',
+  intro:
+    'Cars ordered and delivered to a client’s specification. Each one is documented ' +
+    'individually; most stay private, and only those a client is happy to have shown ' +
+    'appear here.',
+  empty: 'No commissions are published yet.',
 } as const;
 
 export const creditsCopy = {
