@@ -19,6 +19,28 @@ export function VehicleGallery({ images, vehicleName }: Props) {
   const count = images.length;
   const active = images[index];
 
+  /**
+   * Which stage images are mounted.
+   *
+   * The stage cross-fades between images, which previously meant every full-resolution
+   * gallery image downloaded on first paint — ten of them on the Temerario. Only the
+   * current image and its immediate neighbours are mounted, and anything already
+   * visited stays mounted so stepping back through the gallery stays instant.
+   */
+  const [mounted, setMounted] = useState<Set<number>>(() => new Set([0]));
+
+  useEffect(() => {
+    setMounted((previous) => {
+      const next = new Set(previous);
+      next.add(index);
+      if (index + 1 < count) next.add(index + 1);
+      if (index - 1 >= 0) next.add(index - 1);
+      return next;
+    });
+  }, [index, count]);
+
+  const isNear = (i: number) => mounted.has(i);
+
   const thumbRailRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
@@ -141,13 +163,10 @@ export function VehicleGallery({ images, vehicleName }: Props) {
     go(delta < 0 ? 1 : -1);
   };
 
-  if (count === 0 || !active) {
-    return (
-      <div className="photo-pending flex aspect-[16/10] w-full items-end border border-line p-6">
-        <span className="label-xs text-steel-dim">Photography pending</span>
-      </div>
-    );
-  }
+  // A specific vehicle cannot be published without at least one image (see `ImageSet`),
+  // so this is a defensive guard rather than a state the site renders. It shows
+  // nothing rather than a placeholder announcing a missing asset.
+  if (count === 0 || !active) return null;
 
   return (
     <section aria-label={`${vehicleName} gallery`} className="w-full">
@@ -158,20 +177,23 @@ export function VehicleGallery({ images, vehicleName }: Props) {
         onTouchEnd={onTouchEnd}
       >
         <div className="relative aspect-[4/3] w-full sm:aspect-[3/2] lg:aspect-[3/2]">
-          {images.map((image, i) => (
-            <Image
-              key={image.src}
-              src={image.src}
-              alt={image.alt}
-              fill
-              priority={i === 0}
-              sizes="(min-width: 1280px) 68vw, (min-width: 768px) 92vw, 100vw"
-              className={`object-contain transition-opacity duration-500 ${
-                i === index ? 'opacity-100' : 'pointer-events-none opacity-0'
-              }`}
-              aria-hidden={i === index ? undefined : true}
-            />
-          ))}
+          {images.map((image, i) =>
+            isNear(i) ? (
+              <Image
+                key={image.src}
+                src={image.src}
+                alt={image.alt}
+                fill
+                priority={i === 0}
+                loading={i === 0 ? undefined : 'lazy'}
+                sizes="(min-width: 1280px) 68vw, (min-width: 768px) 92vw, 100vw"
+                className={`object-contain transition-opacity duration-500 motion-reduce:transition-none ${
+                  i === index ? 'opacity-100' : 'pointer-events-none opacity-0'
+                }`}
+                aria-hidden={i === index ? undefined : true}
+              />
+            ) : null,
+          )}
 
           <button
             type="button"
@@ -242,6 +264,7 @@ export function VehicleGallery({ images, vehicleName }: Props) {
                 src={image.src}
                 alt=""
                 fill
+                loading="lazy"
                 sizes="96px"
                 className={`object-cover transition-opacity duration-300 ${
                   i === index ? 'opacity-100' : 'opacity-55 hover:opacity-85'

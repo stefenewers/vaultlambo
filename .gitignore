@@ -4,6 +4,7 @@ out
 .DS_Store
 *.tsbuildinfo
 next-env.d.ts
+.env
 .env*.local
 
 # Owner-supplied source documents and originals — never deploy.

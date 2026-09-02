@@ -4,10 +4,18 @@ import { useId, useRef, useState } from 'react';
 import { validateInquiry, type InquiryErrors } from '@/lib/inquiry';
 import { siteConfig } from '@/site.config';
 
+export type Option = { value: string; label: string };
+
+/**
+ * Options grouped by collection. Grouping matters here: it keeps "Models we source"
+ * visibly separate from "Available now", so choosing a model brief never reads as
+ * choosing a car in stock.
+ */
+export type OptionGroup = { label: string; options: Option[] };
+
 type Props = {
-  /** Options for the "vehicle of interest" select. */
-  vehicleOptions: { value: string; label: string }[];
-  /** Preselects the vehicle, e.g. when the form is reached from a detail page. */
+  groups: OptionGroup[];
+  /** Preselects the entry, e.g. when the form is reached from a detail page. */
   defaultVehicle?: string;
   /** Prefills the message. */
   defaultMessage?: string;
@@ -17,7 +25,7 @@ type Status = 'idle' | 'submitting' | 'success' | 'error';
 
 const OTHER = 'Something else';
 
-export function InquiryForm({ vehicleOptions, defaultVehicle, defaultMessage }: Props) {
+export function InquiryForm({ groups, defaultVehicle, defaultMessage }: Props) {
   const [values, setValues] = useState({
     name: '',
     email: '',
@@ -74,7 +82,9 @@ export function InquiryForm({ vehicleOptions, defaultVehicle, defaultMessage }: 
         if (data?.errors) setErrors(data.errors);
         setFormError(
           data?.error ??
-            'The message could not be sent. Please try again, or email us directly.',
+            (siteConfig.contact.email
+              ? `The message could not be sent. Please try again, or email ${siteConfig.contact.email} directly.`
+              : 'The message could not be sent. Please try again in a moment.'),
         );
         setStatus('error');
         return;
@@ -84,7 +94,9 @@ export function InquiryForm({ vehicleOptions, defaultVehicle, defaultMessage }: 
       requestAnimationFrame(() => successRef.current?.focus());
     } catch {
       setFormError(
-        'The message could not be sent. Please try again, or email us directly.',
+        siteConfig.contact.email
+          ? `The message could not be sent. Please try again, or email ${siteConfig.contact.email} directly.`
+          : 'The message could not be sent. Please try again in a moment.',
       );
       setStatus('error');
     }
@@ -103,15 +115,20 @@ export function InquiryForm({ vehicleOptions, defaultVehicle, defaultMessage }: 
           Thanks &mdash; we have it.
         </h2>
         <p className="mt-4 max-w-md text-[0.9375rem] leading-relaxed text-bone-dim">
-          Your enquiry about <strong className="text-bone">{values.vehicle}</strong>{' '}
-          has been received and will be answered directly. If it is urgent, email{' '}
-          <a
-            href={`mailto:${siteConfig.contact.email}`}
-            className="link-underline text-bone"
-          >
-            {siteConfig.contact.email}
-          </a>
-          .
+          Your enquiry about <strong className="text-bone">{values.vehicle}</strong> has
+          been sent and will be answered directly.
+          {siteConfig.contact.email ? (
+            <>
+              {' '}If it is urgent, email{' '}
+              <a
+                href={`mailto:${siteConfig.contact.email}`}
+                className="link-underline text-bone"
+              >
+                {siteConfig.contact.email}
+              </a>
+              .
+            </>
+          ) : null}
         </p>
         <button
           type="button"
@@ -171,7 +188,7 @@ export function InquiryForm({ vehicleOptions, defaultVehicle, defaultMessage }: 
       />
 
       <div>
-        <FieldLabel htmlFor={`${formId}-vehicle`}>Vehicle of interest</FieldLabel>
+        <FieldLabel htmlFor={`${formId}-vehicle`}>Vehicle or model</FieldLabel>
         <div className="relative">
           <select
             id={`${formId}-vehicle`}
@@ -189,12 +206,24 @@ export function InquiryForm({ vehicleOptions, defaultVehicle, defaultMessage }: 
             }`}
           >
             <option value="" className="bg-[#101012]">
-              Select a vehicle…
+              Select a vehicle or model…
             </option>
-            {vehicleOptions.map((o) => (
-              <option key={o.value} value={o.value} className="bg-[#101012] text-[#f3f0ea]">
-                {o.label}
-              </option>
+            {groups.map((group) => (
+              <optgroup
+                key={group.label}
+                label={group.label}
+                className="bg-[#101012] text-[#f3f0ea]"
+              >
+                {group.options.map((o) => (
+                  <option
+                    key={o.value}
+                    value={o.value}
+                    className="bg-[#101012] text-[#f3f0ea]"
+                  >
+                    {o.label}
+                  </option>
+                ))}
+              </optgroup>
             ))}
             <option value={OTHER} className="bg-[#101012] text-[#f3f0ea]">
               {OTHER}
@@ -258,9 +287,11 @@ export function InquiryForm({ vehicleOptions, defaultVehicle, defaultMessage }: 
           {status === 'submitting' ? 'Sending…' : 'Send enquiry'}
         </button>
 
-        <p className="text-xs leading-relaxed text-steel-dim sm:max-w-xs sm:text-right">
-          {siteConfig.contact.responseTime}
-        </p>
+        {siteConfig.contact.responseTime ? (
+          <p className="text-xs leading-relaxed text-steel-dim sm:max-w-xs sm:text-right">
+            {siteConfig.contact.responseTime}
+          </p>
+        ) : null}
       </div>
 
       {formError ? (

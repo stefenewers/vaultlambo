@@ -1,170 +1,269 @@
 # Marlowe Motorcars
 
-An independent luxury and performance car dealer site, built with Next.js 15
-(App Router), TypeScript and Tailwind CSS v4. Dark editorial layout with a filterable
-inventory, per-vehicle detail pages, a sold-vehicle record and a sourcing enquiry flow.
+Site for an independent automotive sourcing and vehicle representation business, built
+with Next.js 15 (App Router), TypeScript and Tailwind CSS v4.
 
 ```bash
 npm install
-npm run dev        # http://localhost:3000
-npm run build      # production build
-npm start          # serve the production build
-npm run lint       # eslint
-npm run typecheck  # tsc --noEmit
+cp .env.example .env.local   # then fill in the values below
+npm run dev                  # http://localhost:3000
+
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+npm run verify:production    # what is still missing before this can go live
 ```
+
+## Before this site goes live
+
+`npm run verify:production` lists every factual input that has not been supplied yet,
+and exits non-zero while anything is blocking. Until it passes, the site sets
+`noindex`, `robots.txt` disallows crawling, and no organisation structured data is
+emitted. That is deliberate — see [Honesty rules](#honesty-rules).
+
+Do not make the script pass by inventing a value.
+
+## Content model
+
+The site holds three separate collections. They are a discriminated union in
+`src/lib/types.ts`, not one record with a status string, so a model description cannot
+be rendered where a specific car is implied.
+
+| Collection | File | What belongs in it | Public labels |
+| --- | --- | --- | --- |
+| `inventory` | `src/data/inventory.ts` | Specific cars genuinely on offer | Available, Reserved |
+| `soldVehicles` | `src/data/sold.ts` | Specific cars sold, documented individually | Sold |
+| `sourcingCatalogue` | `src/data/sourcing.ts` | Models we can discuss or locate — **not cars** | Sourcing, Model brief, Source this model, Discuss your specification |
+
+A `SourcingModel` has no `availability`, no `priceDisplay`, no `statusNote` and no
+model year. Those fields do not exist on the type, so a model brief cannot acquire
+them.
+
+Every record carries `published`. All read access goes through the accessors in
+`src/lib/vehicles.ts`, which filter on it, so a draft never reaches a route, the
+sitemap or structured data.
+
+### Publishing a car to `inventory`
+
+Required, and partly enforced by the compiler:
+
+1. A unique, identifiable vehicle — not a model.
+2. Real photography in `public/images/vehicles/<slug>/`. *(The `ImageSet` type requires
+   at least one image.)*
+3. A verified year. *(Required by the type.)*
+4. Verified make, model and variant.
+5. Verified availability — `'available'` or `'reserved'`. Use `'reserved'` and a
+   "Deposit taken" note only when that has actually happened.
+6. At least three meaningful vehicle-specific facts. *(The `specs` tuple requires three.)*
+7. A working enquiry destination — `npm run verify:production` passing.
+
+Never invent mileage, VIN, stock number, price, ownership, history or specification.
+Omit what is not known; the layouts are built to omit rather than pad.
+
+While `inventory` is empty the homepage inventory section hides, `Inventory` drops out
+of the navigation, `/inventory` renders an honest empty state, and no inventory detail
+routes are generated.
 
 ## Routes
 
 | Route | What it is |
 | --- | --- |
-| `/` | Hero, featured inventory, browse by category, recently sold, sourcing |
-| `/inventory` | Full list with client-side search and filters |
-| `/inventory/[slug]` | Vehicle detail template (gallery, specs, equipment, similar) |
-| `/sold-vehicles` | Cars that have sold (`/sold` permanently redirects here) |
-| `/sourcing` | How a search is run, and how to send a brief |
-| `/about` | Short positioning statement |
-| `/contact` | Enquiry form with validation and a success state |
-| `/api/inquiries` | Enquiry sink — validates and logs; swap in a real provider |
-| `/sitemap.xml`, `/robots.txt` | Generated from the vehicle data |
+| `/` | Multi-marque hero, inventory (when any), models we source, process, recently completed, contact |
+| `/inventory` | Active inventory with search and filters, or an honest empty state |
+| `/inventory/[slug]` | A specific car on offer |
+| `/sourcing` | Sourcing catalogue grouped by category, plus the process |
+| `/sourcing/[slug]` | A model brief |
+| `/sold-vehicles` | Completed vehicles |
+| `/sold-vehicles/[slug]` | A specific completed car |
+| `/about` | The operating model |
+| `/contact` | Enquiry form, or a direct email address when delivery is unconfigured |
+| `/privacy` | What the enquiry form collects and how to have it removed |
+| `/terms` | Manufacturer independence, verification, imagery |
+| `/credits` | Image attribution, generated from the ledger |
+| `/api/inquiries` | Enquiry delivery |
+| `/sitemap.xml`, `/robots.txt` | Generated; drafts excluded, indexing gated on readiness |
 
-Every vehicle route is pre-rendered via `generateStaticParams`, so detail pages resolve
-on a cold refresh. Unknown slugs fall through to `src/app/not-found.tsx`.
+Redirects in `next.config.ts` preserve every previously published URL: `/sold`,
+the Temerario's old `/inventory/…` address, and the model briefs that moved out of
+inventory into `/sourcing/…`.
 
-The inventory page reads `?category=` and `?availability=` on load, which is how the
-home page category row and the footer links deep-link into a filtered view.
+## Environment variables
 
-## Where to change things
+Full list with comments in `.env.example`.
 
-### Site name and contact details
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | Recommended | Branded canonical origin. Falls back to the Vercel URL. |
+| `NEXT_PUBLIC_CONTACT_EMAIL` | **Yes** | Public enquiry address |
+| `NEXT_PUBLIC_CONTACT_PHONE` | No | Unset hides the phone number everywhere |
+| `NEXT_PUBLIC_SERVICE_AREA` | No | Truthful service area — not a showroom address |
+| `NEXT_PUBLIC_LEGAL_ENTITY` | No | Registered trading entity, once there is one |
+| `NEXT_PUBLIC_BUSINESS_CLASSIFICATION` | Recommended | `sourcing-agent` or `dealer` |
+| `NEXT_PUBLIC_DEALER_LICENSE_NUMBER` | Only if a dealer | Required to claim dealer status |
+| `NEXT_PUBLIC_DEALER_LICENSE_JURISDICTION` | Only if a dealer | Required to claim dealer status |
+| `NEXT_PUBLIC_SOCIAL_LINKS` | No | `Label\|https://…` pairs, comma-separated |
+| `RESEND_API_KEY` | **Yes** | Enquiry delivery |
+| `INQUIRY_FROM_EMAIL` | **Yes** | Sender, on a domain verified in Resend |
+| `INQUIRY_TO_EMAIL` | No | Destination; defaults to `NEXT_PUBLIC_CONTACT_EMAIL` |
+| `NEXT_PUBLIC_ALLOW_INDEXING` | No | `false` forces `noindex` on a complete staging deploy |
 
-**`src/site.config.ts`** — the only place any brand string lives. Company name, the
-two-part wordmark (`MARLOWE` / `MOTORCARS`), tagline, email, phone, location,
-response-time line, social links, navigation, and every legal string. No component
-hard-codes any of these.
+### Connecting the branded domain
 
-The canonical origin is resolved rather than hard-coded, because a wrong canonical on a
-live site points search engines at the wrong host. Order of precedence:
+1. Add the domain to the project in Vercel and point the DNS records it gives you.
+2. Set `NEXT_PUBLIC_SITE_URL` to the domain, with scheme and no trailing slash
+   (`https://marlowemotorcars.com`), in the Production environment.
+3. Redeploy, then confirm `/sitemap.xml` and the `<link rel="canonical">` tags carry
+   the branded host.
 
-1. `CANONICAL_URL` at the top of `src/site.config.ts` — set this once a real domain is
-   in place
-2. `NEXT_PUBLIC_SITE_URL`
-3. `VERCEL_PROJECT_PRODUCTION_URL`, then `VERCEL_URL` (both set automatically on Vercel)
-4. `http://localhost:3000`
+Until step 2, canonicals resolve to the Vercel deployment URL. That is correct — the
+canonical points at where the site is actually served — but it is off-brand, so
+`verify:production` reports it as an incomplete item rather than a blocker.
 
-It is only ever read on the server — in `layout.tsx`, `sitemap.ts`, `robots.ts` and
-`lib/jsonld.ts`.
+### Enquiry email
 
-### Vehicle data
+1. Create a Resend account and verify a sending domain.
+2. Create an API key, set `RESEND_API_KEY`.
+3. Set `INQUIRY_FROM_EMAIL` to an address on the verified domain.
+4. Set `INQUIRY_TO_EMAIL` if enquiries should land somewhere other than the public
+   contact address.
 
-**`src/data/vehicles.ts`** — the inventory records and the exported `vehicles` array.
-**`src/data/temerario.ts`** — kept separate because its content is transcribed from an
-actual factory configuration document.
+`src/app/api/inquiries/route.ts` validates, applies a honeypot and per-client rate
+limiting, and returns success **only after Resend accepts the message**. Reply-To is
+set to the sender so replying from the inbox reaches them. The route does not log the
+enquiry body or the sender's details — only a failure reason.
 
-The shape is defined in `src/lib/types.ts`. Notable fields:
+The rate limiter (`src/lib/rate-limit.ts`) is in-memory, so on a multi-instance
+deployment the limit is per instance. Move it to a shared store behind the same
+`checkRateLimit` signature if a hard guarantee is ever needed.
 
-- `year` is **optional** — a vehicle carries a year only when the year is genuinely
-  known. Nothing is inferred.
-- `priceDisplay` is a string, not a number. There are no numeric prices in this data
-  set; every listed car uses `'Price on request'`, and the price line is hidden
-  entirely once a car is sold.
-- `availability` is `'available' | 'reserved' | 'sold'`.
-- `category` is `'Performance' | 'Grand Touring' | 'Luxury SUV' | 'Collector'` and
-  drives the browse-by-category row, the footer links and the inventory filter. Adding
-  a category means extending `Category` in `src/lib/types.ts` and `CATEGORY_ORDER` /
-  `CATEGORY_BLURB` in `src/lib/vehicles.ts`.
-- `documentation` is set only for cars that came with a factory configuration summary.
-  It switches the specification section's heading to "Configuration".
+When the provider is not configured the contact page shows the direct email address
+instead of a form, and the enquiry CTAs on vehicle and model pages are hidden. A form
+that silently discards a message is worse than no form.
 
-### Imagery
+## Imagery
 
-Vehicle photography lives in **`public/images/vehicles/<slug>/`**. Add the files, then
-list them in that vehicle's `images` array with `src`, `alt`, `width` and `height`.
-`alt` is required by the type — it is never decorative on this site.
+Every externally obtained image is recorded in `src/data/image-sources.ts` with its
+source URL, creator, licence, attribution requirement and access date. `/credits`
+renders the entries that require attribution; adding an image to the ledger is what
+puts it on that page.
 
-While a vehicle's `images` array is empty, the card, the gallery and the sold-list
-thumbnail fall back to `VehicleImagePanel` — a typographic charcoal panel carrying the
-marque, model and category. It is a deliberate treatment rather than a missing-asset
-state, and it disappears the moment an image is added, with no other change needed.
+Sourcing photography is **representative of the model** and is labelled as such. It
+never implies that the pictured car is held by Marlowe.
 
-No stock imagery or remote image hosts are configured; `next.config.ts` deliberately
-declares no `remotePatterns`.
+Rules for adding imagery, in priority order:
 
-### The Temerario's availability status
+1. Owner-supplied photography.
+2. Manufacturer press assets whose terms allow the intended use.
+3. Creative Commons photography with commercial reuse permitted.
+4. Properly licensed stock for atmosphere and detail.
 
-**`src/data/temerario.ts`** — change `availability` (`'available' | 'pending' | 'sold'`)
-and `statusNote` (the short line beside the chip, currently `'Custom order fulfilled'`).
-The badge, the detail-page CTA wording, the home page featured slot and the `/sold`
-listing all follow from those two fields.
+Never use dealership inventory photos, auction listings (Bring a Trailer, Cars & Bids),
+social-media images, watermarked images, or anything whose licensing cannot be
+established. Nothing is hotlinked — `next.config.ts` declares no `remotePatterns` on
+purpose. If no rights-cleared image can be found, leave the record `published: false`
+rather than publishing without one.
 
-The Temerario appears in `/sold-vehicles` and in the Recently Sold list on the home
-page. It is not featured anywhere else — the home page hero is typographic and shows no
-single car.
+ShareAlike note: the cropped and re-encoded derivatives published here remain under the
+same licence as their source, as recorded in the ledger.
 
-### Copy
+## Honesty rules
 
-**`src/content/copy.ts`** — headlines, intros and section text for the home, about,
-sourcing, contact, inventory and sold pages, plus the hero marque line. Components read
-from it; they don't contain prose.
+These are the constraints the site is built around. Most are enforced by types or
+tests rather than by convention.
 
-### Wiring up email
+- **Nothing claims a status it cannot support.** Available, Reserved, Deposit taken,
+  In stock and Recently sold are only used for specific cars with evidence behind them.
+- **Model briefs are not stock.** Enforced by the discriminated union; `vehicleJsonLd`
+  cannot even be called with a `SourcingModel`.
+- **Structured data asserts nothing unsupported.** `AutoDealer` requires a confirmed
+  dealer classification *and* licence details on file; otherwise a conservative
+  `Organization`, or nothing at all. No `offers`, `price`, VIN, mileage, condition,
+  seller or location anywhere.
+- **Renderings are not photographs.** A factory configurator rendering is captioned as
+  one, kept out of `image` in structured data, and separated from documentary
+  photography in the data model.
+- **An incomplete deployment is not indexed.** Readiness gates `robots.txt` and the
+  `robots` meta tag.
+- **No invented business facts.** No years in business, vehicles sold, staff,
+  partnerships, manufacturer relationships, testimonials, press, awards, showroom,
+  finance, shipping volume, review counts, trust badges or activity feeds.
+- **Private material stays private.** `private-source/` is git-ignored and never
+  served. No buyer identity, full VIN, address, invoice price, customs or transaction
+  paperwork appears anywhere on the site.
 
-`src/app/api/inquiries/route.ts` validates the submission and currently logs it
-server-side. Replace the `deliverInquiry` function with a Resend, Formspree or SMTP
-call — the contract (validated payload in, throw on failure) is all the form depends
-on. The form posts to `siteConfig.inquiryEndpoint`, so pointing it at a third-party
-endpoint instead is a one-line change.
+## Still to be confirmed by the owner
 
-## Components
+These need a decision or a document; none of them can be filled in from the code.
 
-| Component | Purpose |
-| --- | --- |
-| `VehicleCard` | Grid card — image, title, metadata, status, "View vehicle" |
-| `VehicleGallery` | Stage, thumbnail rail, lightbox, keyboard and touch navigation |
-| `AvailabilityBadge` | Quiet status chip in three sizes, with an optional qualifier |
-| `SpecRow` / `SpecSection` | Metadata strip and the two-column grouped equipment layout |
-| `FilterBar` | Search plus availability / make / category / year, mobile disclosure |
-| `InventoryBrowser` | Owns filter state, reads deep-link params, renders the grid |
-| `InquiryForm` | Client-side validation, honeypot, submitting and success states |
-| `VehicleThumb` | Lead image, falling back to `VehicleImagePanel` |
-| `VehicleImagePanel` | Typographic stand-in for listings without photography |
+1. **Public email address** — blocks launch.
+2. **Resend account, verified sending domain, API key** — blocks launch.
+3. **Branded domain** — for canonicals and for the Vercel URL to stop being the public
+   address.
+4. **Business classification** — is Marlowe operating as a sourcing agent, or as a
+   licensed motor vehicle dealer? This changes the structured data, the footer and
+   whether "dealer" may be used at all. If a dealer, the licence number and issuing
+   jurisdiction are needed.
+5. **Legal entity name**, once registered.
+6. **Service area** — a truthful city/state or region, or leave it unset.
+7. **Phone number**, if there is to be a public one.
+8. **Social profiles**, if any exist.
+
+### Legal review still outstanding
+
+Deliberately not written, because they require a confirmed business location and
+professional review:
+
+- Jurisdiction-specific motor trade or dealer disclosures.
+- Statutory consumer rights language, cooling-off periods and cancellation terms.
+- Jurisdiction-specific privacy rights (GDPR/UK GDPR/CCPA request procedures, lawful
+  basis, controller identity, any supervisory-authority details). `/privacy` describes
+  what actually happens to an enquiry and how to have it deleted, and stops there.
+- Any warranty, guarantee or returns position.
+
+`/terms` states manufacturer independence, that vehicle information is subject to
+verification, and that nothing on the site creates a warranty. It claims no authorised
+dealer status.
+
+## Testing
+
+`npm run test` (Vitest, `tests/`) covers the things that would be credibility failures
+if they regressed:
+
+- Separation of inventory, sold and sourcing records, and per-kind routing.
+- Sourcing models carrying no availability, price, status or year.
+- Draft exclusion from accessors, routes and the sitemap.
+- The empty-inventory state and the "no inventory" navigation behaviour.
+- Enquiry validation, header-injection sanitising, rate limiting, and delivery
+  configuration — including that a missing provider throws rather than reporting
+  success.
+- Production-readiness detection: `example.com`, zero-filled phones, TODO markers,
+  localhost canonicals, missing email and domain.
+- Structured-data selection across every configuration state.
+- Image-ledger completeness for every image in use.
+
+No test sends an email. `RESEND_API_KEY` values in tests are inert strings.
 
 ## Accessibility
 
-- Skip link, landmark structure, and a visible focus ring on every interactive element.
-- The lightbox is a modal dialog: focus trap, `Escape` to close, `←`/`→`/`Home`/`End`
-  to navigate, focus returned to the opener on close, scroll lock while open.
-- The gallery supports touch swipe on both the stage and the lightbox.
-- Filter results are announced through a polite live region.
-- Form errors are tied to inputs with `aria-describedby` / `aria-invalid`, and focus
-  moves to the first invalid field on submit.
-- `prefers-reduced-motion` disables transitions and smooth scrolling.
+- Skip link, landmark structure, visible focus ring on every interactive element.
+- The lightbox is a modal dialog: focus trap, `Escape` to close, `←`/`→`/`Home`/`End`,
+  focus returned to the opener, scroll lock while open.
+- Touch swipe on the gallery stage and in the lightbox.
+- Filter results announced through a polite live region.
+- Form errors tied to inputs with `aria-describedby` / `aria-invalid`; focus moves to
+  the first invalid field on submit.
+- `prefers-reduced-motion` disables transitions, smooth scrolling and hover scaling.
 
-## Structured data
+## Performance notes
 
-`src/lib/jsonld.ts` emits an `AutoDealer` block site-wide and a `Vehicle` block on each
-detail page. It is deliberately conservative: no `offers`, `price`,
-`vehicleIdentificationNumber`, `mileageFromOdometer`, `itemCondition` or `seller`,
-because none of those are known. Optional fields are emitted only when the data
-actually holds them.
+- The gallery mounts only the active image and its neighbours, so a ten-image gallery
+  no longer downloads every full-resolution file on first paint.
+- Every `Image` carries a `sizes` hint matched to its grid; only above-fold hero images
+  use `priority`.
+- All imagery is local, sized, and served as AVIF/WebP by the image pipeline.
 
 ## Source material
 
-`private-source/` holds the owner-supplied configuration PDF, the original photograph
-and the supplied configurator renders. It is git-ignored and never served — the site
-references the existence of that documentation but does not publish it. See
-`private-source/README.md`.
-
-## Notes on content accuracy
-
-Listing copy and equipment lists describe the model and its factory specification.
-Per-car facts that are not held — mileage, service history, registration, ownership,
-price — are omitted rather than invented, which is why `priceDisplay` is a string and
-why `year` is optional on the `Vehicle` type.
-
-The Temerario's configuration is transcribed from the car's own factory configuration
-summary. It carries no VIN, price, mileage, registration, location, prior owner,
-history or transaction date.
-
-The site makes no claim of affiliation with any manufacturer, invents no company
-history, location, sales figures or awards, and carries no reviews, press logos, buyer
-names or activity feeds.
+`private-source/` holds the owner-supplied configuration PDF, the original delivery
+photograph and the supplied configurator renders. It is git-ignored and never served.

@@ -1,26 +1,46 @@
 import type { MetadataRoute } from 'next';
-import { getAllVehicles } from '@/lib/vehicles';
+import {
+  getPublishedInventory,
+  getPublishedSoldVehicles,
+  getPublishedSourcingModels,
+  hasPublishedInventory,
+  recordHref,
+} from '@/lib/vehicles';
 import { siteConfig } from '@/site.config';
 
+/**
+ * Sitemap.
+ *
+ * Built from the published accessors, so an unpublished draft can never appear here.
+ * `/inventory` itself is listed only when something is on offer — submitting an empty
+ * listing page for indexing is not useful to anyone.
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [
     '',
-    '/inventory',
-    '/sold-vehicles',
+    ...(hasPublishedInventory() ? ['/inventory'] : []),
     '/sourcing',
+    '/sold-vehicles',
     '/about',
     '/contact',
+    '/privacy',
+    '/terms',
+    '/credits',
   ].map((path) => ({
     url: `${siteConfig.url}${path}`,
     changeFrequency: 'weekly' as const,
     priority: path === '' ? 1 : 0.8,
   }));
 
-  const vehicleRoutes = getAllVehicles().map((v) => ({
-    url: `${siteConfig.url}/inventory/${v.slug}`,
+  const records = [
+    ...getPublishedInventory(),
+    ...getPublishedSoldVehicles(),
+    ...getPublishedSourcingModels(),
+  ].map((record) => ({
+    url: `${siteConfig.url}${recordHref(record)}`,
     changeFrequency: 'monthly' as const,
-    priority: 0.7,
+    priority: record.kind === 'inventory' ? 0.9 : 0.7,
   }));
 
-  return [...staticRoutes, ...vehicleRoutes];
+  return [...staticRoutes, ...records];
 }

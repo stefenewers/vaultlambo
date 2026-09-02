@@ -7,9 +7,26 @@ import { Container } from '@/components/site/Container';
 import { Wordmark } from '@/components/site/Wordmark';
 import { siteConfig } from '@/site.config';
 
-export function Header() {
+type Props = {
+  /**
+   * Whether anything is actually listed. Computed on the server and passed in so the
+   * whole vehicle data set is not bundled into the client just to count it.
+   */
+  showInventory: boolean;
+};
+
+export function Header({ showInventory }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  /**
+   * Inventory is dropped from the navigation while nothing is listed. The route stays
+   * live and reachable — it just is not offered as a primary destination when it has
+   * nothing to show.
+   */
+  const nav = showInventory
+    ? siteConfig.nav
+    : siteConfig.nav.filter((item) => item.href !== '/inventory');
 
   // Close the panel on navigation.
   useEffect(() => {
@@ -42,7 +59,7 @@ export function Header() {
 
           <nav aria-label="Primary" className="hidden md:block">
             <ul className="flex items-center gap-7">
-              {siteConfig.nav.map((item) => (
+              {nav.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
@@ -96,7 +113,7 @@ export function Header() {
         <Container>
           <nav aria-label="Primary, mobile">
             <ul className="py-2">
-              {siteConfig.nav.map((item) => (
+              {nav.map((item) => (
                 <li key={item.href} className="border-b border-line last:border-b-0">
                   <Link
                     href={item.href}

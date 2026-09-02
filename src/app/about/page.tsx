@@ -11,7 +11,17 @@ export const metadata: Metadata = {
   alternates: { canonical: '/about' },
 };
 
+/**
+ * About.
+ *
+ * Explains the operating model and nothing else. No years in business, vehicles sold,
+ * staff, partnerships, manufacturer relationships, testimonials, press, showroom,
+ * awards, finance or shipping volume — none of those are established, so none of them
+ * are claimed.
+ */
 export default function AboutPage() {
+  const { contact } = siteConfig;
+
   return (
     <>
       <PageHeader title={aboutCopy.headline} intro={aboutCopy.intro} />
@@ -41,18 +51,20 @@ export default function AboutPage() {
           </h2>
           <div>
             <p className="max-w-xl text-[0.9375rem] leading-relaxed text-bone-dim sm:text-base">
-              Enquiries about a listed car, or about finding one, reach us the same way.
+              {contact.appointmentPolicy}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link href="/contact" className="btn btn-primary">
                 Contact us
               </Link>
-              <a
-                href={`mailto:${siteConfig.contact.email}`}
-                className="link-underline text-sm text-bone-dim transition-colors hover:text-bone"
-              >
-                {siteConfig.contact.email}
-              </a>
+              {contact.email ? (
+                <a
+                  href={`mailto:${contact.email}`}
+                  className="link-underline text-sm text-bone-dim transition-colors hover:text-bone"
+                >
+                  {contact.email}
+                </a>
+              ) : null}
             </div>
           </div>
         </div>

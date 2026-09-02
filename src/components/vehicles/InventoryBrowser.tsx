@@ -5,14 +5,20 @@ import { useMemo, useState } from 'react';
 import { EMPTY_FILTERS, FilterBar, type Filters } from '@/components/vehicles/FilterBar';
 import { VehicleCard } from '@/components/vehicles/VehicleCard';
 import { inventoryCopy } from '@/content/copy';
-import type { Vehicle } from '@/lib/types';
+import type { InventoryVehicle } from '@/lib/types';
 import { CATEGORY_ORDER, uniqueSorted, vehicleTitle } from '@/lib/vehicles';
 
-export function InventoryBrowser({ vehicles }: { vehicles: Vehicle[] }) {
+/**
+ * Filter and search over active inventory.
+ *
+ * Only ever receives `InventoryVehicle[]` — specific cars actually on offer. Sold cars
+ * and sourcing models cannot reach it, so the availability filter no longer offers
+ * "Sold" as a way to browse model briefs.
+ */
+export function InventoryBrowser({ vehicles }: { vehicles: InventoryVehicle[] }) {
   const params = useSearchParams();
 
-  // Category and availability can be deep-linked, e.g. from the footer or the
-  // browse-by-category row on the home page.
+  // Category and availability can be deep-linked, e.g. from the footer.
   const [filters, setFilters] = useState<Filters>(() => {
     const category = params.get('category');
     const availability = params.get('availability');
@@ -21,11 +27,7 @@ export function InventoryBrowser({ vehicles }: { vehicles: Vehicle[] }) {
       category:
         category && CATEGORY_ORDER.some((c) => c === category) ? category : 'all',
       availability:
-        availability === 'available' ||
-        availability === 'reserved' ||
-        availability === 'sold'
-          ? availability
-          : 'all',
+        availability === 'available' || availability === 'reserved' ? availability : 'all',
     };
   });
 
@@ -38,9 +40,7 @@ export function InventoryBrowser({ vehicles }: { vehicles: Vehicle[] }) {
 
   const years = useMemo(
     () =>
-      Array.from(
-        new Set(vehicles.map((v) => v.year).filter((y): y is number => y != null)),
-      )
+      Array.from(new Set(vehicles.map((v) => v.year)))
         .sort((a, b) => b - a)
         .map(String),
     [vehicles],
@@ -55,7 +55,7 @@ export function InventoryBrowser({ vehicles }: { vehicles: Vehicle[] }) {
       }
       if (filters.make !== 'all' && v.make !== filters.make) return false;
       if (filters.category !== 'all' && v.category !== filters.category) return false;
-      if (filters.year !== 'all' && String(v.year ?? '') !== filters.year) return false;
+      if (filters.year !== 'all' && String(v.year) !== filters.year) return false;
       if (q) {
         const haystack = [vehicleTitle(v), v.category, v.bodyStyle, v.subtitle ?? '']
           .join(' ')

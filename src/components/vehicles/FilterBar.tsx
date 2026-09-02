@@ -2,11 +2,14 @@
 
 import { useId, useState } from 'react';
 import type { Availability } from '@/lib/types';
-import { AVAILABILITY_LABEL, AVAILABILITY_ORDER } from '@/lib/vehicles';
+import { AVAILABILITY_LABEL, INVENTORY_AVAILABILITY } from '@/lib/vehicles';
+
+/** Only states an active listing can hold. 'sold' has its own section, not a filter. */
+type InventoryAvailability = Extract<Availability, 'available' | 'reserved'>;
 
 export type Filters = {
   query: string;
-  availability: Availability | 'all';
+  availability: InventoryAvailability | 'all';
   make: string;
   category: string;
   year: string;
@@ -108,10 +111,13 @@ export function FilterBar({
         <Select
           label="Availability"
           value={filters.availability}
-          onChange={(v) => set('availability', v as Availability | 'all')}
+          onChange={(v) => set('availability', v as InventoryAvailability | 'all')}
           options={[
             { value: 'all', label: 'Any availability' },
-            ...AVAILABILITY_ORDER.map((a) => ({ value: a, label: AVAILABILITY_LABEL[a] })),
+            ...INVENTORY_AVAILABILITY.map((a) => ({
+              value: a,
+              label: AVAILABILITY_LABEL[a],
+            })),
           ]}
         />
         <Select

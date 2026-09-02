@@ -1,48 +1,42 @@
-import type { Vehicle } from '@/lib/types';
+import type { SoldVehicle } from '@/lib/types';
 
 const DIR = '/images/vehicles/lamborghini-temerario-giallo-inti';
 
 /**
- * Lamborghini Temerario, configuration code AKTT2X.
+ * Lamborghini Temerario, configuration code AKTT2X. Sold.
  *
- * Every option below is transcribed from the vehicle's official Lamborghini Car
+ * Every option below is transcribed from this car's official Lamborghini Car
  * Configurator summary, which is held in `private-source/` and is not published.
- * Deliberately absent, because they are not known: VIN, price, mileage, registration,
- * location, prior owner, history and any transaction date.
+ * Deliberately absent, because they are not known and will not be guessed: VIN, price,
+ * mileage, registration, location, prior owner, history and transaction date.
  *
- * To change the public status of this vehicle, edit `availability` and `statusNote`.
+ * The gallery separates the two kinds of image it holds. Items marked `factory-render`
+ * are configurator output for this exact specification; the photograph of the car is
+ * held in `documentaryImages` and captioned as a photograph, so a rendering is never
+ * presented as documentation of the finished car.
  */
-export const temerario: Vehicle = {
+export const temerario: SoldVehicle = {
+  kind: 'sold',
+  published: true,
   slug: 'lamborghini-temerario-giallo-inti',
   make: 'Lamborghini',
   model: 'Temerario',
   subtitle: 'Giallo Inti · Custom Commission',
   bodyStyle: 'Coupe',
   category: 'Performance',
-  availability: 'sold',
   statusNote: 'Custom order fulfilled',
-  priceDisplay: 'Price on request',
 
   summary:
     'Ordered to a customer specification in Giallo Inti over Nero Ade, with Giallo ' +
     'Taurus contrast stitching and piping throughout.',
 
   description: [
-    'Built to a customer order rather than taken from a standing allocation. The ' +
-    'specification was fixed at the point of order under configuration code AKTT2X, ' +
-    'and the car was produced to it: Giallo Inti over a Nero Ade cabin in unicolor ' +
-    'leather and Corsa Tex, with Giallo Taurus contrast stitching and piping through ' +
-    'the interior.',
+    'Configured in Giallo Inti over Nero Ade leather and Corsa Tex, with Giallo Taurus ' +
+      'contrast stitching throughout. Shiny-black exterior detailing, Velador forged ' +
+      'wheels and Nero Lucido carbon-ceramic calipers complete the specification.',
 
-    'The exterior is consistent throughout. Roof, upper hood cover and kidney are ' +
-    'finished in shiny black; the High Gloss Black style package carries that ' +
-    'treatment across the body details; and the Velador forged wheels, wheel caps, ' +
-    'tailpipes and rear bumper centre section follow the same dark theme against the ' +
-    'yellow. Nero Lucido carbon-ceramic calipers sit behind the forged rims.',
-
-    'The car has been sold. It remains listed so the specification stays on record ' +
-    'for anyone researching the model. Sale price and transaction detail are not ' +
-    'published.',
+    'The car was built to a fixed customer specification under configuration code ' +
+      'AKTT2X and has since been delivered and sold.',
   ],
 
   specs: [
@@ -54,6 +48,11 @@ export const temerario: Vehicle = {
     },
     { label: 'Configuration Code', value: 'AKTT2X' },
   ],
+
+  specSectionTitle: 'Configuration',
+  specSectionIntro:
+    'As specified at the point of order, taken from the car’s factory configuration summary.',
+  specSectionFootnote: 'Option names follow the manufacturer’s configurator wording.',
 
   specGroups: [
     {
@@ -114,105 +113,122 @@ export const temerario: Vehicle = {
     },
   ],
 
-  documentation:
-    'The original factory configuration summary for code AKTT2X is held on file, ' +
-    'together with the import documentation for this vehicle.',
-
   /**
-   * Gallery. Items 1–9 are configuration renders for this exact specification, taken
-   * at full resolution from the car's own configuration document. Item 10 is a
-   * photograph of the car. Nothing here is generated or stock imagery.
+   * Factory configuration renderings for this exact specification, extracted at full
+   * resolution from the car's own configuration document. These are renderings, not
+   * photographs, and every caption says so.
    */
   images: [
     {
       src: `${DIR}/01-front-three-quarter.jpg`,
       width: 1123,
       height: 794,
+      kind: 'factory-render',
       alt:
-        'Lamborghini Temerario in Giallo Inti, front three-quarter view, showing the ' +
-        'gloss black roof and black forged wheels.',
-      caption: 'Front three-quarter — Giallo Inti over shiny black roof',
+        'Factory configuration rendering of the Lamborghini Temerario in Giallo Inti, ' +
+        'front three-quarter view, showing the gloss black roof and black forged wheels.',
+      caption: 'Factory configuration rendering — front three-quarter',
     },
     {
       src: `${DIR}/02-rear-three-quarter.jpg`,
       width: 1123,
       height: 794,
+      kind: 'factory-render',
       alt:
-        'Rear three-quarter view of the yellow Lamborghini Temerario, showing the ' +
-        'gloss black rear bumper centre section and matt black tailpipes.',
-      caption: 'Rear three-quarter — shiny black bumper centre, matt black tailpipes',
+        'Factory configuration rendering, rear three-quarter view of the yellow ' +
+        'Temerario, showing the shiny black rear bumper centre section and matt black ' +
+        'tailpipes.',
+      caption: 'Factory configuration rendering — rear three-quarter',
     },
     {
       src: `${DIR}/03-forged-wheel-detail.jpg`,
       width: 1123,
       height: 553,
+      kind: 'factory-render',
       alt:
-        'Close view of the front wheel: Velador forged wheel in shiny black with a ' +
-        'matt carbon wheel cap and a Nero Lucido carbon-ceramic brake caliper.',
-      caption: 'Velador forged 20"/21" in shiny black, Nero Lucido CCB caliper',
+        'Factory configuration rendering of the front wheel: Velador forged wheel in ' +
+        'shiny black with a matt carbon wheel cap and a Nero Lucido carbon-ceramic ' +
+        'brake caliper.',
+      caption: 'Factory configuration rendering — Velador forged wheel and CCB caliper',
     },
     {
       src: `${DIR}/04-roof-top-view.jpg`,
       width: 1123,
       height: 559,
+      kind: 'factory-render',
       alt:
-        'Overhead view of the Temerario showing the roof, upper hood cover and kidney ' +
-        'finished in shiny black against the Giallo Inti bodywork.',
-      caption: 'Roof, upper hood cover and kidney in shiny black',
+        'Factory configuration rendering, overhead view showing the roof, upper hood ' +
+        'cover and kidney finished in shiny black against the Giallo Inti bodywork.',
+      caption: 'Factory configuration rendering — shiny black roof treatment',
     },
     {
       src: `${DIR}/05-cockpit.jpg`,
       width: 1123,
       height: 794,
+      kind: 'factory-render',
       alt:
-        'Driver’s cockpit with the digital instrument cluster, centre touchscreen and ' +
-        'Giallo Taurus stitching on the Nero Ade trim.',
-      caption: 'Cockpit — Nero Ade with Giallo Taurus stitching',
+        'Factory configuration rendering of the driver’s cockpit with the digital ' +
+        'instrument cluster, centre touchscreen and Giallo Taurus stitching on the ' +
+        'Nero Ade trim.',
+      caption: 'Factory configuration rendering — Nero Ade cockpit',
     },
     {
       src: `${DIR}/06-seat-stitching-detail.jpg`,
       width: 561,
       height: 559,
+      kind: 'factory-render',
       alt:
-        'Driver’s comfort seat in Nero Ade leather with an embroidered shield on the ' +
-        'headrest and yellow contrast stitching and piping.',
-      caption: 'Embroidered headrest shield, Giallo Taurus piping',
+        'Factory configuration rendering of the driver’s comfort seat in Nero Ade ' +
+        'leather with an embroidered shield on the headrest and yellow contrast ' +
+        'stitching and piping.',
+      caption: 'Factory configuration rendering — embroidered headrest, Giallo Taurus piping',
     },
     {
       src: `${DIR}/07-cabin.jpg`,
       width: 561,
       height: 561,
+      kind: 'factory-render',
       alt:
-        'Both seats and the centre console of the Temerario cabin, trimmed in Nero Ade ' +
-        'leather and Corsa Tex.',
-      caption: 'Cabin — unicolor leather and Corsa Tex',
+        'Factory configuration rendering of both seats and the centre console, trimmed ' +
+        'in Nero Ade leather and Corsa Tex.',
+      caption: 'Factory configuration rendering — Nero Ade cabin',
     },
     {
       src: `${DIR}/08-cabin-passenger-side.jpg`,
       width: 1123,
       height: 794,
+      kind: 'factory-render',
       alt:
-        'Cabin viewed from the passenger side, showing the console, armrest and door ' +
-        'trim with yellow contrast stitching.',
-      caption: 'Cabin from the passenger side',
+        'Factory configuration rendering of the cabin viewed from the passenger side, ' +
+        'showing the console, armrest and door trim with yellow contrast stitching.',
+      caption: 'Factory configuration rendering — cabin from the passenger side',
     },
     {
       src: `${DIR}/09-console-passenger-display.jpg`,
       width: 370,
       height: 705,
+      kind: 'factory-render',
       alt:
-        'Centre console detail with the touchscreen, drive mode controls and the ' +
-        'passenger display to the right.',
-      caption: 'Centre console and passenger display',
+        'Factory configuration rendering of the centre console with the touchscreen, ' +
+        'drive mode controls and the passenger display to the right.',
+      caption: 'Factory configuration rendering — centre console and passenger display',
     },
+  ],
+
+  /**
+   * The one photograph of the finished car. Portrait, taken on arrival, and shown in
+   * its own documentary block rather than stretched across the main gallery.
+   */
+  documentaryImages: [
     {
       src: `${DIR}/10-delivery-photograph.jpg`,
       width: 960,
       height: 1280,
+      kind: 'vehicle-photograph',
       alt:
-        'Photograph of the Temerario’s cabin taken from the driver’s seat, showing the ' +
-        'steering wheel and dashboard with yellow contrast stitching.',
-      caption: 'Photographed on arrival',
+        'Photograph of the Temerario’s cabin taken from the driver’s seat on delivery, ' +
+        'showing the steering wheel and dashboard with yellow contrast stitching.',
+      caption: 'Delivery photograph',
     },
   ],
 };

@@ -1,11 +1,27 @@
 import type { SpecGroup, SpecItem } from '@/lib/types';
 
-/** Horizontal metadata strip used directly under a vehicle heading. */
+/**
+ * Horizontal metadata strip used directly under a vehicle heading.
+ *
+ * The column count follows the number of facts rather than being fixed at four, so a
+ * record with three verified facts fills its row instead of leaving an empty cell that
+ * reads as a missing value.
+ */
+const ROW_COLUMNS: Record<number, string> = {
+  1: 'lg:grid-cols-1',
+  2: 'lg:grid-cols-2',
+  3: 'lg:grid-cols-3',
+};
+
 export function SpecRow({ items }: { items: SpecItem[] }) {
   if (items.length === 0) return null;
 
+  const columns = ROW_COLUMNS[items.length] ?? 'lg:grid-cols-4';
+
   return (
-    <dl className="rule grid grid-cols-1 gap-px border-b border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+    <dl
+      className={`rule grid grid-cols-1 gap-px border-b border-line bg-line sm:grid-cols-2 ${columns}`}
+    >
       {items.map((item) => (
         <div key={item.label} className="bg-ink px-0 py-5 sm:px-5 lg:py-6">
           <dt className="label-xs">{item.label}</dt>

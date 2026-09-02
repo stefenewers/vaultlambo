@@ -12,6 +12,9 @@ type Props = {
 /**
  * Quiet status marker. Hairline border in every state — the only colour is the dot,
  * and only for Reserved. Sold reads as legible but settled rather than shouted.
+ *
+ * These labels are claims about a specific car. The type system only ever supplies one
+ * here for an inventory or sold record; a sourcing model has no availability to show.
  */
 const CHIP: Record<Availability, string> = {
   available: 'border-line-strong text-bone',
@@ -48,7 +51,7 @@ export function AvailabilityBadge({
         />
         {AVAILABILITY_LABEL[availability]}
       </span>
-      {note ? <span className="text-xs text-steel">{note}</span> : null}
+      {note ? <span className="text-[0.8125rem] text-steel">{note}</span> : null}
     </span>
   );
 }
