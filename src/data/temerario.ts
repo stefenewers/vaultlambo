@@ -54,6 +54,9 @@ export const temerario: SoldVehicle = {
       value: 'Nero Ade with Giallo Taurus contrast stitching and piping',
     },
     { label: 'Configuration Code', value: 'AKTT2X' },
+    // TEST CONTENT, owner's request 2026-09-30. Not factual: the Temerario is a
+    // plug-in hybrid. Remove before this reaches a public deployment.
+    { label: 'Propulsion', value: 'Full electric' },
   ],
 
   specSectionTitle: 'Configuration',
