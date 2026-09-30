@@ -153,10 +153,17 @@ describe('active inventory', () => {
 });
 
 describe('completed vehicles', () => {
-  it('publishes only the documented Temerario', () => {
+  it('publishes only the documented commissions', () => {
+    // The Temerario (owner-supplied configuration and delivery photograph) and the
+    // SF90 Spider (joint commission with Exotic Cars, confirmed by the owner). Adding a
+    // third should be a deliberate change to this list.
     const sold = getPublishedSoldVehicles();
-    expect(sold).toHaveLength(1);
-    expect(sold.map((v) => v.slug)).toEqual(['lamborghini-temerario-giallo-inti']);
+    expect(sold.map((v) => v.slug)).toEqual([
+      'lamborghini-temerario-giallo-inti',
+      'ferrari-sf90-spider-assetto-fiorano',
+      'lamborghini-sian-roadster',
+      'bmw-m5-2025',
+    ]);
   });
 
   it('does not present the BMW M3 CS as a completed sale', () => {
@@ -170,12 +177,58 @@ describe('completed vehicles', () => {
 
   it('keeps factory renderings out of the documentary photographs', () => {
     for (const vehicle of getPublishedSoldVehicles()) {
-      for (const image of vehicle.images) {
-        expect(image.kind).not.toBe('vehicle-photograph');
-      }
       for (const image of vehicle.documentaryImages ?? []) {
         expect(image.kind).toBe('vehicle-photograph');
       }
+    }
+  });
+
+  it('publishes no Dubai detail on any commission', () => {
+    // Owner's instruction: clients are not shown where partner cars were sourced.
+    for (const vehicle of getPublishedSoldVehicles()) {
+      expect(JSON.stringify(vehicle).toLowerCase(), vehicle.slug).not.toContain('dubai');
+    }
+  });
+
+  it('never mixes renderings and photographs in one gallery', () => {
+    // A gallery is either configuration renderings (with any photographs held apart in
+    // documentaryImages) or photographs of the car. A mixed gallery is how a rendering
+    // ends up read as a photograph.
+    for (const vehicle of getPublishedSoldVehicles()) {
+      const kinds = new Set(vehicle.images.map((image) => image.kind));
+      expect(kinds.size, vehicle.slug).toBe(1);
+    }
+  });
+
+  it('keeps joint commissions free of claims their dealer listings made', () => {
+    // The SF90 and Sián arrived as a partner's sales listings: mileage, condition,
+    // warranty, location. None of that is this site's to claim.
+    const joint = getPublishedSoldVehicles().filter((v) =>
+      v.statusNote?.toLowerCase().includes('joint commission'),
+    );
+    expect(joint.map((v) => v.slug)).toEqual([
+      'ferrari-sf90-spider-assetto-fiorano',
+      'lamborghini-sian-roadster',
+    ]);
+    for (const vehicle of joint) {
+      const text = JSON.stringify(vehicle).toLowerCase();
+      for (const phrase of [
+        'warranty',
+        'for sale',
+        'kilomet',
+        'mileage',
+        'odometer',
+        'brand-new',
+        'brand new',
+        'gcc',
+      ]) {
+        expect(text, `${vehicle.slug} mentions "${phrase}"`).not.toContain(phrase);
+      }
+      // Owner's instruction (2026-09-29): no Dubai or location detail on any listing.
+      expect(text, `${vehicle.slug} mentions Dubai`).not.toContain('dubai');
+      // A distance in km (as opposed to a km/h manufacturer figure) would be a mileage.
+      expect(text, vehicle.slug).not.toMatch(/\d\s*km(?!\/h)/);
+      expect(vehicle.salePrice, vehicle.slug).toBeUndefined();
     }
   });
 
@@ -254,22 +307,29 @@ describe('draft records', () => {
 });
 
 describe('no external photography', () => {
-  it('holds only owner-supplied material in the ledger', () => {
+  it('holds only owner-supplied or permission-granted material in the ledger', () => {
     // A set of Creative Commons marque and editorial photographs was removed: legally
     // fine, but pictures of other people's cars by different photographers in
-    // different places, which made the site read as a classifieds page.
+    // different places, which made the site read as a classifieds page. What is
+    // allowed is the owner's own material, or a rights holder's photographs of a car
+    // this business handled, used with that rights holder's permission.
     for (const source of imageSources) {
       expect(
-        source.license,
+        ['Owner supplied — all rights reserved', 'Used with permission of the rights holder'],
         `${source.path} is externally licensed and must not be in use`,
-      ).toBe('Owner supplied — all rights reserved');
+      ).toContain(source.license);
     }
   });
 
-  it('needs no public attribution interface', () => {
-    // /credits existed to attribute Creative Commons images. With none left, nothing
-    // requires a visible credit and the page has gone.
-    expect(attributableSources()).toEqual([]);
+  it('credits every attributable image in its own caption', () => {
+    // There is no separate credits page: the credit travels with the image.
+    const images = soldVehicles.flatMap((v) => [...v.images, ...(v.documentaryImages ?? [])]);
+    for (const source of attributableSources()) {
+      const image = images.find((i) => i.src === source.path);
+      if (!image) continue;
+      const creator = source.creator.split(',')[0]!;
+      expect(image.caption, `${source.path} is not credited`).toContain(creator);
+    }
   });
 
   it('references no image outside the owner-supplied vehicle directory', () => {

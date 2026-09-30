@@ -35,7 +35,13 @@ export type ImageLicense =
   | 'CC BY 4.0'
   | 'CC BY 2.0'
   | 'CC0 1.0'
-  | 'Owner supplied — all rights reserved';
+  | 'Owner supplied — all rights reserved'
+  /*
+   * Another rights holder's photograph of a car this business handled, published with
+   * that rights holder's permission. Requires a source URL and a credit, which is
+   * carried in the image's own caption wherever it appears.
+   */
+  | 'Used with permission of the rights holder';
 
 export type ImageSource = {
   /** Path under /public, exactly as referenced by the data records. */
@@ -83,6 +89,89 @@ export const imageSources: ImageSource[] = [
         : 'Extracted at full resolution from the supplied factory configuration document.',
   })),
 
+  // ---------------------------------------------------------------------------
+  // Ferrari SF90 Spider Assetto Fiorano — a joint commission with Exotic Cars,
+  // Photographed by Exotic Cars for their listing and used here with their
+  // permission, as confirmed by the owner on 2026-09-29. Credited in each caption.
+  // The as-supplied set, including frames not published here, is kept in
+  // private-source/ferrari-sf90-spider-assetto-fiorano/.
+  // ---------------------------------------------------------------------------
+  ...(
+    [
+      ['01-nose-detail', 'image-24396667'],
+      ['02-cabin-door-open', 'image-6646024'],
+      ['03-cockpit', 'image-3892844'],
+      ['04-dashboard', 'image-12191565'],
+      ['05-seats', 'image-1632261'],
+      ['06-centre-console', 'image-4933115'],
+      ['07-seat-shell', 'image-7341846'],
+      ['08-assetto-fiorano-sill', 'image-5790058'],
+    ] as const
+  ).map<ImageSource>(([name, original]) => ({
+    path: `/images/vehicles/ferrari-sf90-spider-assetto-fiorano/${name}.jpg`,
+    sourceUrl: `https://exoticcars.ae/uploads/cars/ferrari-sf90-spider-assetto-fiorano/${original}.jpg`,
+    creator: 'Exotic Cars',
+    license: 'Used with permission of the rights holder',
+    attributionRequired: true,
+    accessed: '2026-09-29',
+    modifications: 'None. Renamed only.',
+  })),
+
+  // ---------------------------------------------------------------------------
+  // BMW M5 (2025). Marlowe's own photography, confirmed by the owner 2026-09-29.
+  // The as-supplied set is in private-source/bmw-m5-2025/.
+  // ---------------------------------------------------------------------------
+  ...[
+    '01-front-three-quarter',
+    '02-side-profile',
+    '03-front',
+    '04-carbon-roof',
+    '05-carbon-mirror',
+    '06-carbon-spoiler',
+    '07-wheel-and-brake',
+    '08-dashboard',
+    '09-cabin',
+    '10-front-seats',
+    '11-seat-detail',
+  ].map<ImageSource>((name) => ({
+    path: `/images/vehicles/bmw-m5-2025/${name}.jpg`,
+    creator: 'Marlowe Motorcars',
+    license: 'Owner supplied — all rights reserved',
+    attributionRequired: false,
+    accessed: '2026-09-29',
+    modifications:
+      name === '09-cabin' ? 'Cropped to exclude a door-jamb sticker.' : 'None. Renamed only.',
+  })),
+
+  // ---------------------------------------------------------------------------
+  // Lamborghini Sián Roadster — a joint commission with Exotic Cars.
+  // Exotic Cars' own photography, used with their permission (confirmed by the
+  // owner, 2026-09-29) and credited in each caption. Supplied without embedded
+  // metadata; the as-supplied set is in private-source/lamborghini-sian-roadster/.
+  // ---------------------------------------------------------------------------
+  ...(
+    [
+      ['01-front-three-quarter', 'None. Renamed only.'],
+      ['02-side-profile', 'None. Renamed only.'],
+      ['03-front', 'None. Renamed only.'],
+      ['04-rear-wing-and-lights', "Cropped to exclude the supplying dealer's number plate."],
+      ['05-wheel-and-brake', 'None. Renamed only.'],
+      ['06-cockpit', 'None. Renamed only.'],
+      ['07-cabin-from-above', 'None. Renamed only.'],
+      ['08-seats', 'None. Renamed only.'],
+      ['09-carbon-bulkhead', 'None. Renamed only.'],
+      ['10-door', 'None. Renamed only.'],
+    ] as const
+  ).map<ImageSource>(([name, modifications]) => ({
+    path: `/images/vehicles/lamborghini-sian-roadster/${name}.jpg`,
+    sourceUrl: 'https://exoticcars.ae',
+    creator: 'Exotic Cars',
+    license: 'Used with permission of the rights holder',
+    attributionRequired: true,
+    accessed: '2026-09-29',
+    modifications,
+  })),
+
 ];
 
 /** Ledger entry for a given public path, if one is recorded. */
@@ -93,8 +182,9 @@ export function imageSourceFor(path: string): ImageSource | undefined {
 /**
  * Entries whose licence obliges a visible credit.
  *
- * Currently empty, which is why there is no public credits page. Add an attributable
- * image and one has to come back — see the note in the README.
+ * Credits are given in context — in the caption beneath each image — rather than on a
+ * separate credits page. A test asserts every attributable image in use carries its
+ * creator in its caption.
  */
 export function attributableSources(): ImageSource[] {
   return imageSources.filter((s) => s.attributionRequired);

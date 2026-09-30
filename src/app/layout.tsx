@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter_Tight } from 'next/font/google';
+import { Instrument_Serif, Inter_Tight } from 'next/font/google';
 import { Footer } from '@/components/site/Footer';
 import { Header } from '@/components/site/Header';
 import { isReachable } from '@/lib/contact';
@@ -7,6 +7,7 @@ import { JsonLd } from '@/components/site/JsonLd';
 import { organizationJsonLd } from '@/lib/jsonld';
 import { shouldAllowIndexing } from '@/lib/production-readiness';
 import { hasPublishedInventory } from '@/lib/vehicles';
+import { heroMedia } from '@/content/media';
 import { siteConfig } from '@/site.config';
 import './globals.css';
 
@@ -14,6 +15,18 @@ const interTight = Inter_Tight({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter-tight',
+});
+
+/**
+ * Display serif, for headlines only. Self-hosted by next/font at build time like Inter
+ * Tight, so the CSP's `font-src 'self'` still holds.
+ */
+const instrumentSerif = Instrument_Serif({
+  subsets: ['latin'],
+  weight: '400',
+  style: ['normal', 'italic'],
+  display: 'swap',
+  variable: '--font-instrument-serif',
 });
 
 /**
@@ -60,7 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const organization = organizationJsonLd();
 
   return (
-    <html lang="en" className={interTight.variable}>
+    <html lang="en" className={`${interTight.variable} ${instrumentSerif.variable}`}>
       <body className="flex min-h-dvh flex-col overflow-x-hidden antialiased">
         <a
           href="#main"
@@ -68,8 +81,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <Header showInventory={hasPublishedInventory()} canContact={isReachable()} />
-        <main id="main" className="flex-1">
+        <Header
+          showInventory={hasPublishedInventory()}
+          canContact={isReachable()}
+          overlayHome={heroMedia != null}
+        />
+        {/*
+          Space above the footer lives here, not on the footer, so a page that ends on
+          a full-bleed section can cancel it with a matching negative margin.
+        */}
+        <main id="main" className="flex-1 pb-28 sm:pb-36">
           {children}
         </main>
         <Footer />

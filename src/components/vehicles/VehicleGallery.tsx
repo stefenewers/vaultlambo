@@ -3,17 +3,24 @@
 import Image from 'next/image';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { focusStyle } from '@/lib/media';
 import type { VehicleImage } from '@/lib/types';
 
 type Props = {
   images: VehicleImage[];
   /** Used in the lightbox announcement, e.g. "Lamborghini Temerario". */
   vehicleName: string;
+  /**
+   * Whether the first stage image is the page's LCP candidate. False when the page
+   * already leads with a larger image above the gallery, so there is still exactly
+   * one `priority` image per page.
+   */
+  priority?: boolean;
 };
 
 const SWIPE_THRESHOLD = 44;
 
-export function VehicleGallery({ images, vehicleName }: Props) {
+export function VehicleGallery({ images, vehicleName, priority = true }: Props) {
   const [index, setIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
@@ -238,7 +245,7 @@ export function VehicleGallery({ images, vehicleName }: Props) {
     <section aria-label={`${vehicleName} gallery`} className="w-full">
       {/* Stage */}
       <div
-        className="group relative w-full overflow-hidden border border-line bg-ink-panel"
+        className="group relative w-full overflow-hidden border border-line bg-black"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
@@ -255,8 +262,8 @@ export function VehicleGallery({ images, vehicleName }: Props) {
                  * else, including neighbours prefetched for fast navigation, loads
                  * lazily.
                  */
-                priority={i === 0}
-                loading={i === 0 ? undefined : 'lazy'}
+                priority={priority && i === 0}
+                loading={priority && i === 0 ? undefined : 'lazy'}
                 sizes="(min-width: 1280px) 68vw, (min-width: 768px) 92vw, 100vw"
                 className={`object-contain transition-opacity duration-500 motion-reduce:transition-none ${
                   i === index ? 'opacity-100' : 'pointer-events-none opacity-0'
@@ -343,6 +350,7 @@ export function VehicleGallery({ images, vehicleName }: Props) {
                 fill
                 loading="lazy"
                 sizes="96px"
+                style={focusStyle(image)}
                 className={`object-cover transition-opacity duration-300 motion-reduce:transition-none ${
                   i === index ? 'opacity-100' : 'opacity-60 hover:opacity-90'
                 }`}

@@ -71,6 +71,17 @@ describe('colour contrast', () => {
     expect(contrast(token('giallo'), token('ink'))).toBeGreaterThanOrEqual(AA_LARGE);
   });
 
+  for (const fg of ['ink', 'ink-soft'] as const) {
+    it(`${fg} on paper meets WCAG AA for normal text`, () => {
+      // The light section uses only these two text colours. The dark-surface greys
+      // are overridden inside .surface-paper because they fail here.
+      const ratio = contrast(token(fg), token('paper'));
+      expect(ratio, `${fg} on paper = ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(
+        AA_NORMAL,
+      );
+    });
+  }
+
   it('primary buttons are legible: ink text on a bone fill', () => {
     expect(contrast(token('ink'), token('bone'))).toBeGreaterThanOrEqual(AA_NORMAL);
   });

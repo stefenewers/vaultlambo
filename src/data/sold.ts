@@ -1,3 +1,6 @@
+import { m5 } from '@/data/m5';
+import { sf90 } from '@/data/sf90';
+import { sian } from '@/data/sian';
 import { temerario } from '@/data/temerario';
 import type { SoldVehicle } from '@/lib/types';
 
@@ -13,4 +16,8 @@ import type { SoldVehicle } from '@/lib/types';
  * vehicle-specific evidence and no photography, so it is not published as a completed
  * sale. It now lives in the sourcing catalogue as a model brief, where it is honest.
  */
-export const soldVehicles: SoldVehicle[] = [temerario];
+/**
+ * Order matters: the first published record is the homepage feature. The Temerario
+ * stays first until the owner confirms which commission is the more recent.
+ */
+export const soldVehicles: SoldVehicle[] = [temerario, sf90, sian, m5];

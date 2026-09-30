@@ -41,6 +41,12 @@ export type VehicleImage = {
   /** Short caption shown beneath the image in the gallery and lightbox. */
   caption?: string;
   kind: ImageKind;
+  /**
+   * Where the subject sits, as a CSS object-position (e.g. '45% 60%'). Every cropped
+   * frame on the site uses it, so a car is never cut off by a fixed centre crop.
+   * Defaults to the centre.
+   */
+  focus?: string;
 };
 
 /** At least one image. Publishing a specific car without photography is a type error. */

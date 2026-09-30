@@ -22,6 +22,13 @@
   */
   --color-steel-dim: #7e7e86;
   --color-giallo: #f2c230;
+  /*
+    Light surface. A warm bone ground used for one section at a time, so the page has
+    a change of register rather than one continuous charcoal scroll. Text on it uses
+    ink and ink-soft only; the dark-surface greys fail contrast here.
+  */
+  --color-paper: #ece6db;
+  --color-ink-soft: #4d4a45;
   --color-giallo-deep: #c99a12;
 
   /* Hairline rules. Defined here so `border-line` / `bg-line` exist as utilities. */
@@ -31,6 +38,9 @@
   --font-sans:
     var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, sans-serif;
+  --font-serif:
+    var(--font-instrument-serif), ui-serif, 'Iowan Old Style', Georgia, 'Times New Roman',
+    serif;
   --font-display:
     var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, sans-serif;
@@ -107,36 +117,57 @@
   }
 
   /*
-    Hero scale. Only ever used once per page, on the homepage h1.
-    Larger and tighter than display-1: with no photography carrying the composition,
-    the type has to do it.
+    Display scale.
+
+    A tight, heavy grotesk carries the automotive weight; the serif appears only as an
+    italic accent on a single word (.accent-serif). Sizes step dramatically rather than
+    evenly, so sections read at different scales instead of one repeated rhythm.
   */
+
+  /* Homepage h1 over the hero media. Used once. */
   .display-hero {
     font-family: var(--font-display);
-    font-weight: 500;
-    letter-spacing: -0.035em;
-    line-height: 0.96;
-    font-size: clamp(2.75rem, 7.5vw, 5.5rem);
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    line-height: 0.88;
+    font-size: clamp(3.75rem, 11.5vw, 11.5rem);
     text-wrap: balance;
   }
 
-  /* Editorial headline scale. Tight tracking, generous size, no gradients. */
+  /* Poster type: the commission's model name, the closing frame. */
+  .display-mega {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.055em;
+    line-height: 0.82;
+    font-size: clamp(3.5rem, 15vw, 15rem);
+    text-transform: uppercase;
+  }
+
   .display-1 {
     font-family: var(--font-display);
-    font-weight: 500;
-    letter-spacing: -0.03em;
-    line-height: 1.02;
-    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 0.95;
+    font-size: clamp(2.75rem, 7vw, 6.5rem);
     text-wrap: balance;
   }
 
   .display-2 {
     font-family: var(--font-display);
     font-weight: 500;
-    letter-spacing: -0.03em;
-    line-height: 1.03;
-    font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    font-size: clamp(2.25rem, 4.2vw, 3.75rem);
     text-wrap: balance;
+  }
+
+  /* One italic serif word inside a grotesk headline. */
+  .accent-serif {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.02em;
   }
 
   .display-3 {
@@ -148,6 +179,36 @@
     text-wrap: balance;
   }
 
+  /*
+    Light section. Scoped overrides so shared components (labels, rules, buttons,
+    focus) stay legible on paper without a second set of utilities.
+  */
+  .surface-paper {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    --color-line: rgb(10 10 11 / 0.14);
+    --color-line-strong: rgb(10 10 11 / 0.3);
+  }
+
+  .surface-paper .label-xs {
+    color: var(--color-ink-soft);
+  }
+
+  .surface-paper :focus-visible {
+    outline-color: var(--color-ink);
+  }
+
+  .surface-paper .btn-primary {
+    background-color: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-bone);
+  }
+
+  .surface-paper .btn-primary:hover {
+    background-color: #000;
+    border-color: #000;
+  }
+
   .prose-body p {
     color: var(--color-bone-dim);
     line-height: 1.7;
@@ -156,7 +217,37 @@
   }
 
   @media (min-width: 768px) {
-    .prose-body p {
+    /*
+    Light section. Scoped overrides so shared components (labels, rules, buttons,
+    focus) stay legible on paper without a second set of utilities.
+  */
+  .surface-paper {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    --color-line: rgb(10 10 11 / 0.14);
+    --color-line-strong: rgb(10 10 11 / 0.3);
+  }
+
+  .surface-paper .label-xs {
+    color: var(--color-ink-soft);
+  }
+
+  .surface-paper :focus-visible {
+    outline-color: var(--color-ink);
+  }
+
+  .surface-paper .btn-primary {
+    background-color: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-bone);
+  }
+
+  .surface-paper .btn-primary:hover {
+    background-color: #000;
+    border-color: #000;
+  }
+
+  .prose-body p {
       font-size: 1.0625rem;
     }
   }
@@ -230,6 +321,22 @@
     border-color: rgb(243 240 234 / 0.42);
   }
 
+  /*
+    Over media: transparent with a light hairline, so a second action reads clearly on
+    a photograph without competing with the solid primary.
+  */
+  .btn-ghost {
+    background-color: rgb(10 10 11 / 0.2);
+    border-color: rgb(243 240 234 / 0.45);
+    color: var(--color-bone);
+    backdrop-filter: blur(6px);
+  }
+
+  .btn-ghost:hover {
+    background-color: rgb(243 240 234 / 0.1);
+    border-color: var(--color-bone);
+  }
+
   .btn-tertiary {
     color: var(--color-bone-dim);
   }
@@ -237,6 +344,20 @@
   .btn-tertiary:hover {
     border-color: var(--color-line-strong);
     color: var(--color-bone);
+  }
+
+  /* Hero-weight button: taller and a touch wider, for the one decision per page. */
+  .btn-lg {
+    height: 3.5rem;
+    padding-inline: 2rem;
+    font-size: 0.875rem;
+  }
+
+  /* The closing frame's one action. */
+  .btn-xl {
+    height: 4rem;
+    padding-inline: 2.5rem;
+    font-size: 0.9375rem;
   }
 
   .btn-sm {
@@ -251,5 +372,96 @@
   */
   .image-panel {
     background-color: var(--color-ink-panel);
+  }
+}
+
+/*
+  Motion.
+
+  CSS only. Every animation here is declared inside a no-preference query, so a
+  visitor who has asked for reduced motion gets the finished state with nothing
+  moving — the global reduced-motion rule above is a second line of defence, not the
+  first.
+*/
+@layer components {
+  /* Hero media settles from a slight push-in. Runs once. */
+  @keyframes hero-settle {
+    from {
+      transform: scale(1.08);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  /* Text rises into place, once, on load. */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.6em);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Scroll-linked entrance for sections, where the browser supports it. */
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translateY(2.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-settle {
+      animation: hero-settle 2.8s var(--ease-out) both;
+    }
+
+    .rise {
+      animation: rise 1.1s var(--ease-out) both;
+    }
+    .rise-1 {
+      animation-delay: 0.12s;
+    }
+    .rise-2 {
+      animation-delay: 0.26s;
+    }
+    .rise-3 {
+      animation-delay: 0.4s;
+    }
+
+    /*
+      Browsers without scroll-driven animations simply show the content. Nothing is
+      ever hidden waiting for script.
+    */
+    @supports (animation-timeline: view()) {
+      .reveal {
+        animation: enter linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 40%;
+      }
+    }
+
+    .media-zoom img {
+      transition: transform 1.1s var(--ease-out);
+    }
+    .group:hover .media-zoom img,
+    .group:focus-visible .media-zoom img {
+      transform: scale(1.03);
+    }
+
+    .arrow-nudge {
+      transition: transform 0.45s var(--ease-out);
+    }
+    .group:hover .arrow-nudge,
+    .group:focus-visible .arrow-nudge {
+      transform: translateX(0.35em);
+    }
   }
 }

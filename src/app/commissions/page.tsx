@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { Container } from '@/components/site/Container';
 import { PageHeader } from '@/components/site/PageHeader';
 import { soldCopy } from '@/content/copy';
+import { focusStyle } from '@/lib/media';
 import type { SoldVehicle } from '@/lib/types';
-import { getPublishedSoldVehicles, recordHref, vehicleHeading } from '@/lib/vehicles';
+import { getPublishedSoldVehicles, recordHref } from '@/lib/vehicles';
 
 export const metadata: Metadata = {
   title: 'Commissions',
@@ -21,126 +22,121 @@ export const metadata: Metadata = {
 /**
  * Commissions.
  *
- * There is exactly one published commission, and the page is built for that rather
- * than against it. A single card in the first cell of a three-column archive grid
- * advertises the two empty cells beside it; one car given the full width reads as a
- * considered case study.
- *
- * The layout adapts if more are added: the first is always the feature, and anything
- * after it falls into a plain two-column list below.
+ * One treatment for every car, in order: a wide frame, then the index number, the name
+ * at display size and the facts on the record. Earlier versions gave the first car a
+ * feature layout and dropped the rest into a two-column grid, which mixed crops,
+ * stranded an odd card on its own row, and forced wide studio panoramas into 3:2 boxes
+ * that cut the cars off. A single wide format suits every source the site holds.
  */
 export default function CommissionsPage() {
   const commissions = getPublishedSoldVehicles();
-  const [feature, ...rest] = commissions;
 
   return (
     <>
       <PageHeader title={soldCopy.headline} intro={soldCopy.intro} />
 
-      <Container>
-        {!feature ? (
+      <Container size="wide">
+        {commissions.length === 0 ? (
           <p className="rule py-16 text-sm text-steel">{soldCopy.empty}</p>
         ) : (
-          <>
-            <CommissionFeature vehicle={feature} />
-
-            {rest.length > 0 ? (
-              <ul className="mt-24 grid grid-cols-1 gap-x-10 gap-y-14 border-t border-line pt-14 sm:grid-cols-2">
-                {rest.map((vehicle) => (
-                  <li key={vehicle.slug}>
-                    <Link href={recordHref(vehicle)} className="group block">
-                      <div className="relative aspect-[3/2] w-full overflow-hidden border border-line bg-ink-panel">
-                        <Image
-                          src={vehicle.images[0].src}
-                          alt={vehicle.images[0].alt}
-                          fill
-                          sizes="(min-width: 640px) 45vw, 92vw"
-                          loading="lazy"
-                          className="object-cover"
-                        />
-                      </div>
-                      <h3 className="mt-5 text-lg font-medium tracking-[-0.015em] text-bone">
-                        {vehicleHeading(vehicle)}
-                      </h3>
-                      {vehicle.salePrice ? (
-                        <p className="mt-2 text-sm tabular-nums text-steel">
-                          Sold for {vehicle.salePrice}
-                        </p>
-                      ) : null}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </>
+          <ol className="border-t border-line">
+            {commissions.map((vehicle, i) => (
+              <li key={vehicle.slug} className="border-b border-line py-14 sm:py-20">
+                <CommissionRow vehicle={vehicle} index={i} priority={i === 0} />
+              </li>
+            ))}
+          </ol>
         )}
       </Container>
     </>
   );
 }
 
-/**
- * The lead commission, as a case study.
- *
- * Every field rendered here comes off the record. Nothing is inferred and nothing is
- * padded: there is no "challenge / approach / outcome" narrative, because none of that
- * was supplied, and writing one would mean inventing the story of someone else's
- * purchase.
- */
-function CommissionFeature({ vehicle }: { vehicle: SoldVehicle }) {
+function CommissionRow({
+  vehicle,
+  index,
+  priority,
+}: {
+  vehicle: SoldVehicle;
+  index: number;
+  priority: boolean;
+}) {
   const lead = vehicle.images[0];
+  const href = recordHref(vehicle);
 
   const facts = [
     { label: 'Status', value: vehicle.statusNote ?? 'Delivered' },
-    ...(vehicle.salePrice ? [{ label: 'Sold for', value: vehicle.salePrice }] : []),
+    ...(vehicle.year ? [{ label: 'Year', value: String(vehicle.year) }] : []),
     ...vehicle.specs
-      .filter((spec) => spec.label === 'Exterior' || spec.label === 'Configuration Code')
+      .filter((spec) => spec.label === 'Exterior')
       .map((spec) => ({ label: spec.label, value: spec.value })),
+    ...(vehicle.salePrice ? [{ label: 'Sold for', value: vehicle.salePrice }] : []),
   ];
 
   return (
-    <article className="rule pt-12 sm:pt-16">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-16">
-        <Link
-          href={recordHref(vehicle)}
-          aria-label={`${vehicleHeading(vehicle)} — full commission record`}
-          className="group relative block overflow-hidden border border-line bg-ink-panel"
-        >
-          <div className="relative aspect-[4/3] w-full sm:aspect-[3/2]">
+    <article className="group">
+      <figure className="reveal">
+        <Link href={href} tabIndex={-1} aria-hidden="true" className="block">
+          <div className="media-zoom relative aspect-[16/9] w-full overflow-hidden bg-black lg:aspect-[21/9]">
             <Image
               src={lead.src}
               alt={lead.alt}
               fill
-              priority
-              sizes="(min-width: 1024px) 60vw, 92vw"
-              className="object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:scale-[1.02] motion-reduce:transition-none"
+              priority={priority}
+              loading={priority ? undefined : 'lazy'}
+              sizes="(min-width: 1664px) 1600px, 96vw"
+              className="object-cover"
+              style={focusStyle(lead)}
             />
           </div>
         </Link>
+        {lead.caption ? (
+          <figcaption className="mt-3 text-xs leading-relaxed text-steel">
+            {lead.caption}
+          </figcaption>
+        ) : null}
+      </figure>
 
-        <div className="lg:pt-2">
-          <h2 className="display-2 text-bone">{vehicleHeading(vehicle)}</h2>
+      <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-20">
+        <div>
+          <p className="label-xs tabular-nums text-giallo">
+            {String(index + 1).padStart(2, '0')}
+          </p>
+          <h2 className="display-1 mt-5 text-bone">
+            <Link href={href} className="transition-colors hover:text-bone-dim">
+              {vehicle.make}{' '}
+              <span className="block">
+                {[vehicle.model, vehicle.variant].filter(Boolean).join(' ')}
+              </span>
+            </Link>
+          </h2>
           {vehicle.subtitle ? (
-            <p className="mt-4 text-lg text-steel">{vehicle.subtitle}</p>
+            <p className="mt-5 text-lg text-steel">{vehicle.subtitle}</p>
           ) : null}
+        </div>
 
-          <p className="mt-7 max-w-lg text-[0.9375rem] leading-relaxed text-bone-dim sm:text-base">
+        <div className="flex flex-col justify-end">
+          <p className="max-w-xl text-base leading-relaxed text-bone-dim sm:text-lg">
             {vehicle.summary}
           </p>
-
-          <dl className="mt-9 grid grid-cols-2 gap-x-8 gap-y-6 border-t border-line pt-7">
+          <dl className="mt-8 grid grid-cols-2 gap-x-8 gap-y-6 border-t border-line pt-7">
             {facts.map((fact) => (
               <div key={fact.label}>
                 <dt className="label-xs">{fact.label}</dt>
-                <dd className="mt-2 text-[0.9375rem] leading-snug text-bone">
+                <dd className="mt-2 text-[0.9375rem] leading-snug tabular-nums text-bone">
                   {fact.value}
                 </dd>
               </div>
             ))}
           </dl>
-
-          <Link href={recordHref(vehicle)} className="btn btn-secondary mt-9">
-            Full specification
+          <Link
+            href={href}
+            className="mt-9 inline-flex items-center self-start text-sm font-medium text-bone"
+          >
+            <span className="link-underline">View commission</span>
+            <span aria-hidden="true" className="arrow-nudge ml-2">
+              →
+            </span>
           </Link>
         </div>
       </div>

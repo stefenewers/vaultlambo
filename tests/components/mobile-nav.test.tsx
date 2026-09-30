@@ -159,3 +159,32 @@ describe('mobile navigation', () => {
     expect(current.length).toBeGreaterThan(0);
   });
 });
+
+describe('header over hero media', () => {
+  function header(): HTMLElement {
+    return document.querySelector('header')!;
+  }
+
+  it('starts transparent on the homepage when the hero has media', () => {
+    render(<Header showInventory={false} canContact overlayHome />);
+    expect(header().dataset.transparent).toBe('true');
+  });
+
+  it('turns solid as soon as the menu opens', async () => {
+    const user = userEvent.setup();
+    render(<Header showInventory={false} canContact overlayHome />);
+    await user.click(screen.getByRole('button', { name: 'Open menu' }));
+    expect(header().dataset.transparent).toBe('false');
+  });
+
+  it('is always solid on other pages', () => {
+    pathname.current = '/sourcing';
+    render(<Header showInventory={false} canContact overlayHome />);
+    expect(header().dataset.transparent).toBe('false');
+  });
+
+  it('is always solid when the homepage has no hero media', () => {
+    render(<Header showInventory={false} canContact />);
+    expect(header().dataset.transparent).toBe('false');
+  });
+});

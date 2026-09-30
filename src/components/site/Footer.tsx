@@ -26,7 +26,7 @@ export function Footer() {
   const hasContactColumn = Boolean(email || contact.phone || social.length > 0);
 
   return (
-    <footer className="mt-28 border-t border-line bg-ink sm:mt-36">
+    <footer className="border-t border-line bg-ink">
       <Container>
         <div
           className={`grid gap-12 py-16 sm:py-20 lg:gap-12 ${

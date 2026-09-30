@@ -19,11 +19,18 @@ type Props = {
    * cannot, because the page they lead to has nothing to offer.
    */
   canContact: boolean;
+  /**
+   * Whether the homepage opens on full-bleed hero media. When it does, the header sits
+   * transparent over it and turns solid once the page scrolls or the menu opens. On
+   * every other page, and on a typographic homepage, it is always solid.
+   */
+  overlayHome?: boolean;
 };
 
-export function Header({ showInventory, canContact }: Props) {
+export function Header({ showInventory, canContact, overlayHome = false }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const panelId = useId();
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -126,11 +133,27 @@ export function Header({ showInventory, canContact }: Props) {
     };
   }, [open, close]);
 
+  useEffect(() => {
+    const sync = () => setScrolled(window.scrollY > 24);
+    sync();
+    window.addEventListener('scroll', sync, { passive: true });
+    return () => window.removeEventListener('scroll', sync);
+  }, []);
+
+  const transparent = overlayHome && pathname === '/' && !scrolled && !open;
+
   const isActive = (href: string) =>
     pathname === href || (href !== '/' && pathname.startsWith(`${href}/`));
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-ink/85 backdrop-blur-md">
+    <header
+      data-transparent={transparent ? 'true' : 'false'}
+      className={`sticky top-0 z-50 border-b transition-[background-color,border-color,backdrop-filter] duration-500 ${
+        transparent
+          ? 'border-transparent bg-transparent'
+          : 'border-line bg-ink/90 backdrop-blur-md'
+      }`}
+    >
       <Container>
         <div className="flex h-[4.5rem] items-center justify-between gap-6 sm:h-20">
           <Wordmark />
@@ -152,7 +175,9 @@ export function Header({ showInventory, canContact }: Props) {
                       className={`relative py-1 text-[0.8125rem] tracking-[0.02em] transition-colors after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:transition-colors ${
                         active
                           ? 'text-bone after:bg-giallo'
-                          : 'text-steel after:bg-transparent hover:text-bone hover:after:bg-line-strong'
+                          : `${
+                              transparent ? 'text-bone' : 'text-steel'
+                            } after:bg-transparent hover:text-bone hover:after:bg-line-strong`
                       }`}
                     >
                       {item.label}

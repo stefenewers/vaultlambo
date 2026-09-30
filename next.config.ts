@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import { embedFrameOrigins } from './src/content/media-embed';
 
 /**
  * Content Security Policy.
@@ -15,7 +16,15 @@ import type { NextConfig } from 'next';
  *
  * `frame-ancestors 'none'` is what actually prevents framing — it supersedes
  * X-Frame-Options and covers the same attack.
+ *
+ * `next dev` alone gets two relaxations, and the production header is unchanged:
+ * `'unsafe-eval'`, because the dev runtime evaluates modules for fast refresh; and no
+ * `upgrade-insecure-requests`, because the dev server is plain http and some browsers
+ * (Safari on localhost, any browser on a LAN address) would otherwise rewrite every
+ * stylesheet, script and image request to an https origin that does not exist.
  */
+const IS_DEV = process.env.NODE_ENV === 'development';
+
 const CSP = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -25,9 +34,15 @@ const CSP = [
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
-  "script-src 'self' 'unsafe-inline'",
+  IS_DEV ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'" : "script-src 'self' 'unsafe-inline'",
   "connect-src 'self'",
-  'upgrade-insecure-requests',
+  "media-src 'self'",
+  /*
+   * Closed unless a brand film is deliberately configured as a YouTube or Vimeo embed
+   * in src/content/media-embed.ts, and then open to that one player origin only.
+   */
+  `frame-src ${embedFrameOrigins().length > 0 ? embedFrameOrigins().join(' ') : "'none'"}`,
+  ...(IS_DEV ? [] : ['upgrade-insecure-requests']),
 ].join('; ');
 
 const SECURITY_HEADERS = [

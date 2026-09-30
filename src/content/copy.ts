@@ -13,63 +13,67 @@
 
 export const homeCopy = {
   hero: {
-    eyebrow: 'MARLOWE MOTORCARS',
+    eyebrow: 'Marlowe Motorcars',
     headline: 'Cars worth finding.',
-    subhead:
-      'An independent sourcing service for performance, luxury and collector vehicles. ' +
-      'We work to an agreed brief and search until the right car turns up.',
+    /** The closing word of the headline, set in the accent. Must end `headline`. */
+    headlineAccent: 'finding.',
+    subhead: 'Independent sourcing for performance, luxury and collector vehicles.',
     primaryCta: { label: 'Start a search', href: '/contact' },
+    /** Always available: the commission is proof whether or not contact is live. */
+    workCta: { label: 'View our work', href: '/commissions' },
     secondaryCta: { label: 'How sourcing works', href: '/sourcing' },
-    /** Three short statements set beneath the headline as a rule-separated row. */
-    marks: [
-      { term: 'Brief-led', detail: 'The search starts from your specification, not from stock.' },
-      { term: 'Independent', detail: 'No franchise, no allocation to clear, no house car to push.' },
-      { term: 'Documented', detail: 'Configuration and history reviewed before anything is agreed.' },
-    ],
-  },
-  briefs: {
-    title: 'Representative briefs',
-    intro:
-      'Examples of the categories and vehicles a search may cover. Availability is ' +
-      'established only after a brief is agreed.',
-  },
-  process: {
-    title: 'How it works',
-    cta: { label: 'The full process', href: '/sourcing' },
   },
   commission: {
+    index: '01',
     eyebrow: 'Recent commission',
-    cta: { label: 'All commissions', href: '/commissions' },
+    cta: { label: 'View commission' },
+    archive: { label: 'All commissions', href: '/commissions' },
+  },
+  statement: {
+    /** Two lines; the second ends in the accent word. */
+    lines: ['You tell us the car.', 'We go find it.'],
+    accent: 'find it.',
+    body:
+      'A search starts from the car you want rather than the cars someone has to sell. ' +
+      'The brief is agreed in writing, candidates are measured against it, and nothing ' +
+      'is presented until its paperwork has been read.',
+  },
+  categories: {
+    eyebrow: 'Sourcing categories',
+    title: 'What kind of car?',
+    intro: 'Example briefs a search can cover. If yours is not here, ask anyway.',
+  },
+  process: {
+    eyebrow: 'The process',
+    title: 'How a search runs',
+    cta: { label: 'The full process', href: '/sourcing' },
   },
   principles: {
-    title: 'How we work',
+    eyebrow: 'How we work',
     items: [
       {
-        title: 'One brief at a time',
-        body:
-          'A search is defined before it starts: model, specification, condition, ' +
-          'timing, and where each of those can move.',
+        term: 'Independent',
+        body: 'The search starts with the brief, not stock.',
       },
       {
-        title: 'Nothing stated that is not known',
-        body:
-          'Where a fact about a car has not been verified, it is left out rather than ' +
-          'estimated. That applies to this site as much as to a listing.',
+        term: 'Brief-led',
+        body: 'Model, specification, condition and timing are defined first.',
       },
       {
-        title: 'The client sees the same paperwork',
-        body:
-          'Inspection reports and configuration records are passed on as issued, not ' +
-          'summarised.',
+        term: 'Documented',
+        body: 'Configuration and history are reviewed before a decision.',
+      },
+      {
+        term: 'Verified',
+        body: 'If something has not been established, it is not presented as fact.',
       },
     ],
   },
-  contactCta: {
-    title: 'Tell us what you are after.',
-    body:
-      'Model, colour, transmission, options, timing — and how much room there is on ' +
-      'each. The tighter the brief, the shorter the search.',
+  closing: {
+    lines: ['What are you', 'looking for?'],
     cta: { label: 'Start a search', href: '/contact' },
+    /** Used when there is no contact route: the frame still leads somewhere real. */
+    fallback: { label: 'How sourcing works', href: '/sourcing' },
   },
 } as const;
 
@@ -104,14 +108,13 @@ export const aboutCopy = {
       ],
     },
     {
-      title: 'What we do not claim',
+      title: 'Independence',
       body: [
-        'We are not a franchised or authorised dealer for any manufacturer, and we are ' +
-          'not affiliated with one. We hold no standing allocation and no stock beyond ' +
-          'what is published under Inventory — which, at the moment, is nothing.',
-        'This site publishes one completed commission because one client has agreed to ' +
-          'it being shown. It is not a summary of everything that has been done, and it ' +
-          'is not presented as a track record.',
+        'There is no franchise to represent and no allocation to clear, so the ' +
+          'recommendation follows the brief rather than a stock position.',
+        'Completed work is published with the client’s permission. What appears under ' +
+          'Commissions is shown on that basis, with the specification and ' +
+          'documentation behind it.',
       ],
     },
   ],
@@ -130,8 +133,8 @@ export const aboutCopy = {
       {
         question: 'Are you a dealer?',
         answer:
-          'No. We are an independent sourcing service, not a franchised or authorised ' +
-          'dealer, and we are not affiliated with any manufacturer.',
+          'Marlowe is an independent sourcing service rather than a franchised or ' +
+          'authorised dealer, and is not affiliated with any manufacturer.',
       },
       {
         question: 'Do you only source the categories listed under Sourcing?',
@@ -140,16 +143,17 @@ export const aboutCopy = {
           'brief a search covers. If the car you want is not among them, say so.',
       },
       {
-        question: 'Why is nothing listed under Inventory?',
+        question: 'Do you hold stock?',
         answer:
-          'Because nothing is currently being offered. A car appears there only when it ' +
-          'is genuinely on offer, with its own photography and verified details.',
+          'Cars are found to a brief rather than held in stock. When a specific car is ' +
+          'on offer it appears under Inventory, with its own photography and verified ' +
+          'details.',
       },
       {
-        question: 'Why is only one commission shown?',
+        question: 'Can I see previous work?',
         answer:
-          'Because only one client has agreed to have their car published. Completed ' +
-          'work is shown with permission and not otherwise.',
+          'Completed commissions are published with the client’s permission, and those ' +
+          'that are appear under Commissions with their specification.',
       },
       {
         question: 'How are inspections and documents handled?',
@@ -172,13 +176,17 @@ export const aboutCopy = {
 export const sourcingCopy = {
   headline: 'Sourcing',
   intro:
-    'How a search runs, from the first conversation to the car arriving. Nothing on ' +
-    'this page is a car for sale.',
+    'How a search runs, from the first conversation to the car arriving.',
 
-  /** The service, in the order it actually happens. */
+  /**
+   * The service, in the order it actually happens. `short` and `summary` are the
+   * homepage's condensed form of the same step; `title` and `body` are the full text.
+   */
   steps: [
     {
       title: 'You describe the car',
+      short: 'Describe',
+      summary: 'Model, specification, colour, condition and timing — or just the shape of what you want.',
       body:
         'Model and specification if you know them, or the shape of what you want if ' +
         'you do not. Colour, transmission, condition, mileage tolerance, and how ' +
@@ -186,6 +194,8 @@ export const sourcingCopy = {
     },
     {
       title: 'We agree the brief',
+      short: 'Agree',
+      summary: 'Written down first: what is firm, what can move, and what rules a car out.',
       body:
         'The brief is written down before anything starts: what is firm, what can ' +
         'move, and what would rule a car out. That is what the search is measured ' +
@@ -193,6 +203,8 @@ export const sourcingCopy = {
     },
     {
       title: 'Candidates are identified',
+      short: 'Search',
+      summary: 'Cars for sale, cars available to order, and cars found privately.',
       body:
         'Cars publicly for sale, cars available to order, and anything that can be ' +
         'found privately. Where the car has not been built yet, that can mean a ' +
@@ -200,6 +212,8 @@ export const sourcingCopy = {
     },
     {
       title: 'History and documents are reviewed',
+      short: 'Review',
+      summary: 'Configuration, service and ownership records read. An independent inspection can be arranged.',
       body:
         'Configuration records, service history and ownership records are read where ' +
         'they exist, and what is missing is reported as missing. An independent ' +
@@ -207,12 +221,16 @@ export const sourcingCopy = {
     },
     {
       title: 'Before you commit',
+      short: 'Decide',
+      summary: 'What is known and what is not, in writing, while you can still walk away.',
       body:
         'You get what is known about the car and what is not, in writing, while there ' +
         'is still time to walk away. Nothing is agreed on a phone call.',
     },
     {
       title: 'Handover',
+      short: 'Handover',
+      summary: 'Transport, paperwork and handover arranged and tracked through to arrival.',
       body:
         'Transport, paperwork and handover can be arranged and tracked through to the ' +
         'car arriving.',
@@ -223,7 +241,7 @@ export const sourcingCopy = {
     title: 'Representative briefs',
     intro:
       'Examples of the categories and vehicles a search may cover. Availability is ' +
-      'established only after a brief is agreed.',
+      'established once a brief is agreed.',
   },
 
   cta: {

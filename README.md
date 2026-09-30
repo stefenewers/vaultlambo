@@ -3,7 +3,7 @@
 A private vehicle sourcing and commission service for performance, luxury and collector
 cars. Next.js 15 (App Router), TypeScript, Tailwind CSS v4.
 
-**Read `CONTENT_NEEDED.md` and `LAUNCH_CHECKLIST.md` before deploying publicly.** The
+**Read `CONTENT_NEEDED.md`, `MEDIA_NEEDED.md` and `LAUNCH_CHECKLIST.md` before deploying publicly.** The
 site is built to fail safe: with no business details configured it refuses to be
 indexed, hides the enquiry form rather than discarding messages, and emits no
 organisation structured data.
@@ -129,6 +129,19 @@ no stock photography, no Creative Commons photography and no marque imagery anyw
 Only `vehicle-photograph` images are offered to search engines as pictures of the car,
 so a configurator rendering is never presented as documentation of a finished vehicle.
 
+### Hero and brand film
+
+`src/content/media.ts` configures the homepage hero and the brand film; the components
+never need editing to swap footage. Every still declares its `kind`, and a
+`factory-render` must carry a caption containing "rendering", which the hero shows on
+screen — asserted in `tests/media.test.ts`. With no footage yet, the hero stands on the
+Temerario's own front three-quarter rendering; the brand film section does not render
+at all. `MEDIA_NEEDED.md` has the asset inventory, the shot list, formats and sizes.
+
+A YouTube or Vimeo film is supported only when configured in
+`src/content/media-embed.ts`, which is also what opens the CSP `frame-src` to that
+player. Otherwise `frame-src` is `'none'`.
+
 `src/data/image-sources.ts` is still the ledger, and the rules in its header still
 apply to anything added later: source URL, creator, licence and access date for
 anything not supplied by an owner. It currently contains only owner-supplied entries,
@@ -142,7 +155,7 @@ ledger and the interface agree.
 
 | Route | What it is |
 | --- | --- |
-| `/` | Photography-led hero, what we source, how sourcing works, recent commissions |
+| `/` | Full-height media hero, recent commission, statement, sourcing categories, brand film (when configured), process, principles, closing CTA |
 | `/inventory` | Verified active listings, or an honest empty state |
 | `/inventory/[slug]` | A specific car being offered |
 | `/sourcing` | How a search runs, and the categories it can cover |
@@ -304,7 +317,16 @@ route stays reachable by direct URL and is honest about the state.
   and availability chips carry text
 - All text meets WCAG AA contrast, asserted numerically in `tests/design-tokens.test.ts`
 - No meaningful text below 12px, also asserted in that test
-- `prefers-reduced-motion` disables transitions and smooth scrolling
+- `prefers-reduced-motion` disables transitions and smooth scrolling. Every animation
+  (hero settle, text rise, scroll-linked section entrances, hover zoom, arrow motion) is
+  declared inside a `no-preference` query, so reduced-motion visitors get the finished
+  state; ambient video does not start for them
+- Scroll-linked entrances use CSS `animation-timeline: view()` inside `@supports`, so a
+  browser without it shows content immediately — nothing waits on script
+- The header is transparent only over homepage hero media, and turns solid on scroll or
+  when the menu opens; its text is bone over a darkening gradient in both states
+- Stacked display headings keep a real space between their lines, so they are announced
+  as "Lamborghini Temerario", not "LamborghiniTemerario"
 
 ---
 
@@ -313,7 +335,12 @@ route stays reachable by direct URL and is honest about the state.
 - The gallery mounts only the active stage image and its immediate neighbours. It
   previously stacked all ten full-resolution images and cross-faded opacity, which
   downloaded every one on first paint.
-- Exactly one image per page carries `priority` — the genuine LCP candidate.
+- Exactly one image per page carries `priority` — the genuine LCP candidate: the hero
+  still on the homepage, the lead image on a vehicle page (the gallery's own first image
+  is demoted there).
+- Hero video has no `autoplay` attribute; it is started from script only when the
+  visitor has not asked for reduced motion, over a poster that is already painted.
+  Brand film uses `preload="none"` and fetches nothing until played.
 - Everything below the fold is lazy-loaded with explicit `sizes`.
 - Images are pre-cropped WebP at the aspect ratio they render at, so there is no layout
   shift and no oversized download.
@@ -341,6 +368,9 @@ npm run test
 | `tests/components/inquiry-form.test.tsx` | Client validation, no false success |
 | `tests/components/mobile-nav.test.tsx` | Conditional Contact and Enquire affordances |
 | `tests/components/accessibility.test.tsx` | axe-core over the interactive components |
+| `tests/components/homepage.test.tsx` | Section order, render captioning, contact-gated CTAs, category links, one h1 |
+| `tests/components/media.test.tsx` | Brand film absent without footage; ambient video never plays under reduced motion |
+| `tests/media.test.ts` | Media config: files exist, renderings captioned, nothing hotlinked, CSP `frame-src` |
 
 Data and validation tests run in `node`; component tests declare
 `@vitest-environment jsdom` per file.

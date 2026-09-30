@@ -8,7 +8,9 @@ const DIR = '/images/vehicles/lamborghini-temerario-giallo-inti';
  * Every option below is transcribed from this car's official Lamborghini Car
  * Configurator summary, which is held in `private-source/` and is not published.
  *
- * The sale price is owner-supplied and published with the owner's instruction. Still
+ * The sale price is owner-supplied and published with the owner's instruction, as is
+ * the client's nationality (Jamaican; supplied 2026-09-29). The client is not named and
+ * no other detail about them is published. Still
  * deliberately absent, because they are not known and will not be guessed: VIN,
  * mileage, registration, location, prior owner, history and transaction date.
  *
@@ -32,7 +34,7 @@ export const temerario: SoldVehicle = {
   salePrice: '$150,000 USD',
 
   summary:
-    'Ordered to a customer specification in Giallo Inti over Nero Ade, with Giallo ' +
+    'Custom-ordered for a Jamaican client in Giallo Inti over Nero Ade, with Giallo ' +
     'Taurus contrast stitching and piping throughout.',
 
   description: [
@@ -40,8 +42,8 @@ export const temerario: SoldVehicle = {
       'contrast stitching throughout. Shiny-black exterior detailing, Velador forged ' +
       'wheels and Nero Lucido carbon-ceramic calipers complete the specification.',
 
-    'The car was built to a fixed customer specification under configuration code ' +
-      'AKTT2X, delivered, and sold for $150,000 USD.',
+    'A custom order for a Jamaican client, the car was built to a fixed specification ' +
+      'under configuration code AKTT2X, delivered, and sold for $150,000 USD.',
   ],
 
   specs: [
@@ -126,6 +128,7 @@ export const temerario: SoldVehicle = {
   images: [
     {
       src: `${DIR}/01-front-three-quarter.jpg`,
+      focus: '50% 62%',
       width: 1123,
       height: 794,
       kind: 'factory-render',
@@ -136,6 +139,7 @@ export const temerario: SoldVehicle = {
     },
     {
       src: `${DIR}/02-rear-three-quarter.jpg`,
+      focus: '50% 58%',
       width: 1123,
       height: 794,
       kind: 'factory-render',
@@ -147,6 +151,7 @@ export const temerario: SoldVehicle = {
     },
     {
       src: `${DIR}/03-forged-wheel-detail.jpg`,
+      focus: '55% 50%',
       width: 1123,
       height: 553,
       kind: 'factory-render',

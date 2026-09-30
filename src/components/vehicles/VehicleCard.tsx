@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { AvailabilityBadge } from '@/components/vehicles/AvailabilityBadge';
+import { focusStyle } from '@/lib/media';
 import type { SpecificVehicle } from '@/lib/types';
 import { recordHref, vehicleTitle } from '@/lib/vehicles';
 
@@ -37,6 +38,7 @@ export function VehicleCard({
           sizes={sizes}
           priority={priority}
           loading={priority ? undefined : 'lazy'}
+          style={focusStyle(lead)}
           className="object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
         />
         <div className="absolute left-4 top-4">

@@ -30,11 +30,13 @@ export function BriefCategories({ categories, headingLevel = 'h3' }: Props) {
       {categories.map((entry, i) => (
         <li
           key={entry.id}
+          /* Anchor target for the homepage category rows. */
+          id={entry.id}
           /*
            * Borders rather than gaps, so the grid reads as a single ruled table.
            * The right-hand rule is dropped on the last column at each breakpoint.
            */
-          className="border-b border-line py-9 sm:py-11 sm:odd:pr-10 sm:even:border-l sm:even:pl-10"
+          className="scroll-mt-28 border-b border-line py-9 sm:py-11 sm:odd:pr-10 sm:even:border-l sm:even:pl-10"
         >
           <div className="flex items-baseline gap-4">
             <span className="label-xs tabular-nums text-steel-dim" aria-hidden="true">

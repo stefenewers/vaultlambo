@@ -9,6 +9,7 @@ import {
   getPublishedInventory,
   getPublishedSoldVehicles,
   getPublishedSourcingCategories,
+  sourcingBriefValue,
   vehicleTitle,
 } from '@/lib/vehicles';
 import { siteConfig } from '@/site.config';
@@ -59,7 +60,7 @@ export default function ContactPage() {
     {
       label: 'Sourcing a car',
       options: getPublishedSourcingCategories().map((c) => ({
-        value: `${c.category} — sourcing brief`,
+        value: sourcingBriefValue(c.category),
         label: c.category,
       })),
     },

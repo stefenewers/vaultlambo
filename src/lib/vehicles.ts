@@ -115,3 +115,12 @@ export function vehicleHeading(vehicle: SpecificVehicle): string {
 export function uniqueSorted(values: string[]): string[] {
   return Array.from(new Set(values)).sort((a, b) => a.localeCompare(b));
 }
+
+/**
+ * The enquiry-form value for a sourcing category. Shared by the contact page, which
+ * lists it as an option, and anything that links to the form with `?vehicle=` so the
+ * category arrives preselected.
+ */
+export function sourcingBriefValue(category: string): string {
+  return `${category} — sourcing brief`;
+}
