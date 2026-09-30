@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   description: contactCopy.intro,
   alternates: { canonical: '/contact' },
   openGraph: {
-    title: 'Contact — Marlowe Motorcars',
+    title: 'Contact | Marlowe Motorcars',
     description: contactCopy.intro,
     url: '/contact',
   },
@@ -159,7 +159,7 @@ export default function ContactPage() {
                 >
                   <span
                     aria-hidden="true"
-                    className="mt-[0.62em] h-px w-3 shrink-0 bg-steel-dim"
+                    className="mt-[0.6em] h-1 w-1 shrink-0 rounded-full bg-steel-dim"
                   />
                   <span>{item}</span>
                 </li>

@@ -27,7 +27,7 @@ export const sourcingCategories: SourcingCategory[] = [
     id: 'performance',
     category: 'Performance',
     summary:
-      'Mid- and rear-engined cars where specification changes the car materially — ' +
+      'Mid- and rear-engined cars where specification changes the car materially: ' +
       'transmission, aero, seats, brakes.',
     examples: [
       'Porsche 911 GT3 and GT3 Touring',

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: soldCopy.intro,
   alternates: { canonical: '/commissions' },
   openGraph: {
-    title: 'Commissions — Marlowe Motorcars',
+    title: 'Commissions | Marlowe Motorcars',
     description: soldCopy.intro,
     url: '/commissions',
   },
@@ -42,7 +42,7 @@ export default function CommissionsPage() {
           <ol className="border-t border-line">
             {commissions.map((vehicle, i) => (
               <li key={vehicle.slug} className="border-b border-line py-14 sm:py-20">
-                <CommissionRow vehicle={vehicle} index={i} priority={i === 0} />
+                <CommissionRow vehicle={vehicle} priority={i === 0} />
               </li>
             ))}
           </ol>
@@ -54,11 +54,9 @@ export default function CommissionsPage() {
 
 function CommissionRow({
   vehicle,
-  index,
   priority,
 }: {
   vehicle: SoldVehicle;
-  index: number;
   priority: boolean;
 }) {
   const lead = vehicle.images[0];
@@ -75,7 +73,7 @@ function CommissionRow({
 
   return (
     <article className="group">
-      <figure className="reveal">
+      <figure>
         <Link href={href} tabIndex={-1} aria-hidden="true" className="block">
           <div className="media-zoom relative aspect-[16/9] w-full overflow-hidden bg-black lg:aspect-[21/9]">
             <Image
@@ -99,10 +97,7 @@ function CommissionRow({
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-20">
         <div>
-          <p className="label-xs tabular-nums text-giallo">
-            {String(index + 1).padStart(2, '0')}
-          </p>
-          <h2 className="display-1 mt-5 text-bone">
+          <h2 className="display-1 text-bone">
             <Link href={href} className="transition-colors hover:text-bone-dim">
               {vehicle.make}{' '}
               <span className="block">

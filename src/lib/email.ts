@@ -118,7 +118,7 @@ export async function deliverInquiry(values: InquiryValues): Promise<void> {
 
   const resend = new Resend(config.apiKey);
   const subject = sanitiseHeaderValue(
-    `Enquiry — ${values.vehicle} — ${values.name}`,
+    `Enquiry: ${values.vehicle}, from ${values.name}`,
   ).slice(0, 200);
 
   let result: Awaited<ReturnType<typeof resend.emails.send>>;

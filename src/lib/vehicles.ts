@@ -122,5 +122,5 @@ export function uniqueSorted(values: string[]): string[] {
  * category arrives preselected.
  */
 export function sourcingBriefValue(category: string): string {
-  return `${category} — sourcing brief`;
+  return `${category} sourcing brief`;
 }

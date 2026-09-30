@@ -103,10 +103,12 @@ export const siteConfig = {
   classification: resolveClassification(),
 
   contact: {
-    /** Public enquiry address. Null until a real one is configured. */
-    email: env('NEXT_PUBLIC_CONTACT_EMAIL'),
-    /** Null hides the phone number across the site. */
-    phone: env('NEXT_PUBLIC_CONTACT_PHONE'),
+    /**
+     * Public enquiry address and phone, supplied by the owner on 2026-09-30. The
+     * environment variables still override them, e.g. for a staging inbox.
+     */
+    email: env('NEXT_PUBLIC_CONTACT_EMAIL') ?? 'luxury@marlowemotors.com',
+    phone: env('NEXT_PUBLIC_CONTACT_PHONE') ?? '+1 470-546-2187',
     /**
      * A truthful service area or city/state. Not a showroom address — there is no
      * showroom, and the site does not imply one.

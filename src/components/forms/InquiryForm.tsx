@@ -129,7 +129,7 @@ export function InquiryForm({ groups, defaultVehicle, defaultMessage }: Props) {
       >
         <p className="label-xs">Received</p>
         <h2 className="mt-3 text-xl font-medium tracking-[-0.015em] text-bone">
-          Thanks &mdash; we have it.
+          Thanks, we have it.
         </h2>
         <p className="mt-4 max-w-md text-[0.9375rem] leading-relaxed text-bone-dim">
           Your enquiry about <strong className="text-bone">{values.vehicle}</strong> has
@@ -278,7 +278,7 @@ export function InquiryForm({ groups, defaultVehicle, defaultMessage }: Props) {
           aria-describedby={
             touched.message && errors.message ? `${formId}-message-error` : undefined
           }
-          placeholder="Specification, colour, timing — anything that narrows the search."
+          placeholder="Specification, colour, timing. Anything that narrows the search."
           className={`w-full resize-y border bg-ink-raised p-3.5 text-[0.9375rem] leading-relaxed text-bone placeholder:text-steel-dim transition-colors focus:border-line-strong ${
             touched.message && errors.message ? 'border-line-strong' : 'border-line'
           }`}

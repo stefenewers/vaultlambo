@@ -77,7 +77,7 @@ export function SpecSection({ title, intro, groups, footnote }: SpecSectionProps
                   >
                     <span
                       aria-hidden="true"
-                      className="mt-[0.6em] h-px w-3 shrink-0 bg-steel-dim"
+                      className="mt-[0.6em] h-1 w-1 shrink-0 rounded-full bg-steel-dim"
                     />
                     <span>{item}</span>
                   </li>

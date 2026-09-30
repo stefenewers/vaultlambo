@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     'candidates, reviewing history and documentation, and handover.',
   alternates: { canonical: '/sourcing' },
   openGraph: {
-    title: 'Sourcing — Marlowe Motorcars',
+    title: 'Sourcing | Marlowe Motorcars',
     description:
       'How a vehicle search runs, from the first conversation to the car arriving.',
     url: '/sourcing',

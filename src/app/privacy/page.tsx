@@ -46,7 +46,7 @@ const SECTIONS: { title: string; body: string[] }[] = [
   {
     title: 'How long we keep it',
     body: [
-      'Enquiry correspondence is kept while it is useful — during a search, and for ' +
+      'Enquiry correspondence is kept while it is useful: during a search, and for ' +
         'as long as we may reasonably need to refer back to it afterwards. It is not ' +
         'added to a mailing list, and you will not receive marketing because you sent ' +
         'an enquiry.',
@@ -56,8 +56,8 @@ const SECTIONS: { title: string; body: string[] }[] = [
     title: 'We do not sell enquiry information',
     body: [
       'Enquiry details are not sold, rented or passed to third parties for their own ' +
-        'marketing. They are shared only where a transaction genuinely requires it — ' +
-        'for example with an inspector or transporter you have asked us to arrange — ' +
+        'marketing. They are shared only where a transaction genuinely requires it, ' +
+        'for example with an inspector or transporter you have asked us to arrange, ' +
         'and only to the extent needed.',
     ],
   },

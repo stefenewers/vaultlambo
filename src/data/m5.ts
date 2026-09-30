@@ -93,7 +93,7 @@ export const m5: SoldVehicle = {
       ],
     },
     {
-      title: 'Powertrain — manufacturer figures',
+      title: 'Powertrain (manufacturer figures)',
       items: [
         '4.4-litre twin-turbocharged V8 with an electric motor in the transmission',
         '727 PS and 1,000 Nm combined',
@@ -102,7 +102,7 @@ export const m5: SoldVehicle = {
       ],
     },
     {
-      title: 'Performance — manufacturer figures',
+      title: 'Performance (manufacturer figures)',
       items: ['0–100 km/h in 3.5 seconds'],
     },
   ],

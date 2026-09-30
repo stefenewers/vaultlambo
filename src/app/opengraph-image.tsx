@@ -8,7 +8,7 @@ import { siteConfig } from '@/site.config';
  * descriptor, on the site's own charcoal. Individual vehicle and model pages override
  * this with their own photography through `openGraph.images` in their metadata.
  */
-export const alt = `${siteConfig.name} — ${siteConfig.tagline}`;
+export const alt = `${siteConfig.name} | ${siteConfig.tagline}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 

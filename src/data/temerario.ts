@@ -138,7 +138,7 @@ export const temerario: SoldVehicle = {
       alt:
         'Factory configuration rendering of the Lamborghini Temerario in Giallo Inti, ' +
         'front three-quarter view, showing the gloss black roof and black forged wheels.',
-      caption: 'Factory configuration rendering — front three-quarter',
+      caption: 'Factory configuration rendering: front three-quarter',
     },
     {
       src: `${DIR}/02-rear-three-quarter.jpg`,
@@ -150,7 +150,7 @@ export const temerario: SoldVehicle = {
         'Factory configuration rendering, rear three-quarter view of the yellow ' +
         'Temerario, showing the shiny black rear bumper centre section and matt black ' +
         'tailpipes.',
-      caption: 'Factory configuration rendering — rear three-quarter',
+      caption: 'Factory configuration rendering: rear three-quarter',
     },
     {
       src: `${DIR}/03-forged-wheel-detail.jpg`,
@@ -162,7 +162,7 @@ export const temerario: SoldVehicle = {
         'Factory configuration rendering of the front wheel: Velador forged wheel in ' +
         'shiny black with a matt carbon wheel cap and a Nero Lucido carbon-ceramic ' +
         'brake caliper.',
-      caption: 'Factory configuration rendering — Velador forged wheel and CCB caliper',
+      caption: 'Factory configuration rendering: Velador forged wheel and CCB caliper',
     },
     {
       src: `${DIR}/04-roof-top-view.jpg`,
@@ -172,7 +172,7 @@ export const temerario: SoldVehicle = {
       alt:
         'Factory configuration rendering, overhead view showing the roof, upper hood ' +
         'cover and kidney finished in shiny black against the Giallo Inti bodywork.',
-      caption: 'Factory configuration rendering — shiny black roof treatment',
+      caption: 'Factory configuration rendering: shiny black roof treatment',
     },
     {
       src: `${DIR}/05-cockpit.jpg`,
@@ -183,7 +183,7 @@ export const temerario: SoldVehicle = {
         'Factory configuration rendering of the driver’s cockpit with the digital ' +
         'instrument cluster, centre touchscreen and Giallo Taurus stitching on the ' +
         'Nero Ade trim.',
-      caption: 'Factory configuration rendering — Nero Ade cockpit',
+      caption: 'Factory configuration rendering: Nero Ade cockpit',
     },
     {
       src: `${DIR}/06-seat-stitching-detail.jpg`,
@@ -194,7 +194,7 @@ export const temerario: SoldVehicle = {
         'Factory configuration rendering of the driver’s comfort seat in Nero Ade ' +
         'leather with an embroidered shield on the headrest and yellow contrast ' +
         'stitching and piping.',
-      caption: 'Factory configuration rendering — embroidered headrest, Giallo Taurus piping',
+      caption: 'Factory configuration rendering: embroidered headrest, Giallo Taurus piping',
     },
     {
       src: `${DIR}/07-cabin.jpg`,
@@ -204,7 +204,7 @@ export const temerario: SoldVehicle = {
       alt:
         'Factory configuration rendering of both seats and the centre console, trimmed ' +
         'in Nero Ade leather and Corsa Tex.',
-      caption: 'Factory configuration rendering — Nero Ade cabin',
+      caption: 'Factory configuration rendering: Nero Ade cabin',
     },
     {
       src: `${DIR}/08-cabin-passenger-side.jpg`,
@@ -214,7 +214,7 @@ export const temerario: SoldVehicle = {
       alt:
         'Factory configuration rendering of the cabin viewed from the passenger side, ' +
         'showing the console, armrest and door trim with yellow contrast stitching.',
-      caption: 'Factory configuration rendering — cabin from the passenger side',
+      caption: 'Factory configuration rendering: cabin from the passenger side',
     },
     {
       src: `${DIR}/09-console-passenger-display.jpg`,
@@ -224,7 +224,7 @@ export const temerario: SoldVehicle = {
       alt:
         'Factory configuration rendering of the centre console with the touchscreen, ' +
         'drive mode controls and the passenger display to the right.',
-      caption: 'Factory configuration rendering — centre console and passenger display',
+      caption: 'Factory configuration rendering: centre console and passenger display',
     },
   ],
 

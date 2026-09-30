@@ -68,7 +68,7 @@ export function VehicleDetail({ vehicle, parent, canEnquire }: Props) {
             .join(' · ')}
         </p>
         {/* Full width: the model name is the image until the image arrives. */}
-        <h1 className="display-mega rise mt-6 text-[clamp(3.25rem,13.5vw,14rem)] text-bone [overflow-wrap:break-word]">
+        <h1 className="display-mega mt-6 text-[clamp(3.25rem,13.5vw,14rem)] text-bone [overflow-wrap:break-word]">
           <span className="block text-[0.3em] leading-none tracking-[-0.02em] text-bone-dim">
             {vehicle.make}
           </span>{' '}
@@ -144,7 +144,7 @@ export function VehicleDetail({ vehicle, parent, canEnquire }: Props) {
           <h2 id="overview" className="display-2 text-bone">
             Overview
           </h2>
-          <div className="prose-body reveal [&_p]:max-w-[58ch] [&_p]:text-lg sm:[&_p]:text-xl [&_p]:leading-relaxed">
+          <div className="prose-body [&_p]:max-w-[58ch] [&_p]:text-lg sm:[&_p]:text-xl [&_p]:leading-relaxed">
             {vehicle.description.map((paragraph) => (
               <p key={paragraph.slice(0, 40)}>{paragraph}</p>
             ))}
@@ -196,7 +196,7 @@ export function VehicleDetail({ vehicle, parent, canEnquire }: Props) {
               </div>
               <ul className="grid gap-5 sm:grid-cols-2 lg:order-1 lg:grid-cols-1">
                 {documentary.map((image) => (
-                  <li key={image.src} className="reveal">
+                  <li key={image.src}>
                     <figure className="mx-auto max-w-[26rem] lg:mx-0">
                       <div className="relative w-full overflow-hidden bg-ink-panel">
                         <Image

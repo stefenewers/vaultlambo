@@ -58,13 +58,7 @@ export function CommissionFeature({ vehicle, avoidSrc }: Props) {
     >
       <Container size="wide" className="pt-20 sm:pt-28 lg:pt-32">
         <div className="flex items-center justify-between gap-6">
-          <p className="label-xs text-bone-dim">
-            <span className="tabular-nums text-giallo">{homeCopy.commission.index}</span>
-            <span aria-hidden="true" className="mx-3 text-steel-dim">
-              /
-            </span>
-            {homeCopy.commission.eyebrow}
-          </p>
+          <p className="label-xs text-bone-dim">{homeCopy.commission.eyebrow}</p>
           <Link
             href={homeCopy.commission.archive.href}
             className="link-underline text-sm text-bone-dim transition-colors hover:text-bone"
@@ -76,7 +70,7 @@ export function CommissionFeature({ vehicle, avoidSrc }: Props) {
 
         <h2
           id={`${COMMISSION_ANCHOR}-heading`}
-          className="reveal display-mega mt-10 text-bone [overflow-wrap:anywhere] sm:mt-14"
+          className="display-mega mt-10 text-bone [overflow-wrap:anywhere] sm:mt-14"
         >
           <span className="block text-[0.3em] leading-none tracking-[-0.02em] text-bone-dim">
             {vehicle.make}
@@ -88,10 +82,10 @@ export function CommissionFeature({ vehicle, avoidSrc }: Props) {
       {/* The lead image, wide. Held inside the wide measure rather than bled to the
           viewport edge: the supplied files are 1123px across and soften beyond it. */}
       <Container size="wide" className="mt-10 sm:mt-14">
-        <figure className="reveal">
+        <figure>
           <Link
             href={href}
-            aria-label={`${vehicle.make} ${vehicle.model} — view commission`}
+            aria-label={`View the ${vehicle.make} ${vehicle.model} commission`}
             className="group block"
           >
             <div className="media-zoom relative aspect-[16/9] w-full overflow-hidden bg-black lg:aspect-[21/9]">
@@ -142,7 +136,7 @@ export function CommissionFeature({ vehicle, avoidSrc }: Props) {
         {details.length > 0 ? (
           <ul className="mt-16 grid grid-cols-2 gap-3 sm:mt-20 sm:gap-4 lg:grid-cols-4">
             {details.map((image) => (
-              <li key={image.src} className="reveal">
+              <li key={image.src}>
                 <figure>
                   <div className="relative aspect-square w-full overflow-hidden bg-ink-panel">
                     <Image

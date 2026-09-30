@@ -15,8 +15,6 @@ export const homeCopy = {
   hero: {
     eyebrow: 'Marlowe Motorcars',
     headline: 'Cars worth finding.',
-    /** The closing word of the headline, set in the accent. Must end `headline`. */
-    headlineAccent: 'finding.',
     subhead: 'Independent sourcing for performance, luxury and collector vehicles.',
     primaryCta: { label: 'Start a search', href: '/contact' },
     /** Always available: the commission is proof whether or not contact is live. */
@@ -24,53 +22,27 @@ export const homeCopy = {
     secondaryCta: { label: 'How sourcing works', href: '/sourcing' },
   },
   commission: {
-    index: '01',
     eyebrow: 'Recent commission',
     cta: { label: 'View commission' },
     archive: { label: 'All commissions', href: '/commissions' },
   },
   statement: {
-    /** Two lines; the second ends in the accent word. */
-    lines: ['You tell us the car.', 'We go find it.'],
-    accent: 'find it.',
+    title: 'Tell us the car you want and we will find it.',
     body:
-      'A search starts from the car you want rather than the cars someone has to sell. ' +
-      'The brief is agreed in writing, candidates are measured against it, and nothing ' +
-      'is presented until its paperwork has been read.',
+      'We agree the brief with you in writing and check every candidate against it. ' +
+      'You only see a car once we have read its paperwork.',
   },
   categories: {
     eyebrow: 'Sourcing categories',
     title: 'What kind of car?',
-    intro: 'Example briefs a search can cover. If yours is not here, ask anyway.',
+    intro: 'A few examples of what we look for. If yours is not here, ask anyway.',
   },
   process: {
-    eyebrow: 'The process',
     title: 'How a search runs',
     cta: { label: 'The full process', href: '/sourcing' },
   },
-  principles: {
-    eyebrow: 'How we work',
-    items: [
-      {
-        term: 'Independent',
-        body: 'The search starts with the brief, not stock.',
-      },
-      {
-        term: 'Brief-led',
-        body: 'Model, specification, condition and timing are defined first.',
-      },
-      {
-        term: 'Documented',
-        body: 'Configuration and history are reviewed before a decision.',
-      },
-      {
-        term: 'Verified',
-        body: 'If something has not been established, it is not presented as fact.',
-      },
-    ],
-  },
   closing: {
-    lines: ['What are you', 'looking for?'],
+    title: 'What are you looking for?',
     cta: { label: 'Start a search', href: '/contact' },
     /** Used when there is no contact route: the frame still leads somewhere real. */
     fallback: { label: 'How sourcing works', href: '/sourcing' },
@@ -87,22 +59,20 @@ export const aboutCopy = {
     {
       title: 'What we do',
       body: [
-        'A client describes the car they are after — model, specification, colour, ' +
-          'condition, timing — and we go and look for it. Candidates are presented for ' +
-          'review with what is known about each one, and the search continues until ' +
-          'something fits or the brief changes.',
-        'Where a car has not been built yet, that can mean a factory order with the ' +
-          'specification fixed at the point of order, as with the Temerario in the ' +
-          'commission archive.',
+        'You tell us the car you are after: model, specification, colour, condition ' +
+          'and timing. We go and look for it, show you each candidate with what we know ' +
+          'about it, and keep going until something fits or the brief changes.',
+        'If the car has not been built yet, we can place a factory order with the ' +
+          'specification fixed at that point. The Temerario under Commissions was ' +
+          'ordered that way.',
       ],
     },
     {
       title: 'How we approach a brief',
       body: [
-        'The tighter the brief, the shorter the search. It helps to know early which ' +
-          'parts are firm — transmission, colour, a particular option — and which are ' +
-          'negotiable, because that is usually what decides how many cars are worth ' +
-          'looking at.',
+        'The tighter the brief, the shorter the search. Tell us early which parts are ' +
+          'fixed, such as the transmission, colour or a particular option, and which ' +
+          'are negotiable. That usually decides how many cars are worth looking at.',
         'An independent inspection and a documentation review can be arranged before ' +
           'anything is agreed. The report is passed on as it was issued.',
       ],
@@ -110,11 +80,10 @@ export const aboutCopy = {
     {
       title: 'Independence',
       body: [
-        'There is no franchise to represent and no allocation to clear, so the ' +
-          'recommendation follows the brief rather than a stock position.',
-        'Completed work is published with the client’s permission. What appears under ' +
-          'Commissions is shown on that basis, with the specification and ' +
-          'documentation behind it.',
+        'We do not represent a franchise or hold stock we need to sell, so the only ' +
+          'car we recommend is the one that fits your brief.',
+        'We publish completed work only with the client’s permission. Everything under ' +
+          'Commissions is shown on that basis.',
       ],
     },
   ],
@@ -133,27 +102,26 @@ export const aboutCopy = {
       {
         question: 'Are you a dealer?',
         answer:
-          'Marlowe is an independent sourcing service rather than a franchised or ' +
-          'authorised dealer, and is not affiliated with any manufacturer.',
+          'No. Marlowe is an independent sourcing service. We are not a franchised or ' +
+          'authorised dealer and are not affiliated with any manufacturer.',
       },
       {
         question: 'Do you only source the categories listed under Sourcing?',
         answer:
-          'Those are examples of scope, not a menu. They are there to show the kind of ' +
-          'brief a search covers. If the car you want is not among them, say so.',
+          'No. They are examples to show the kind of car we look for. If the one you ' +
+          'want is not listed, ask.',
       },
       {
         question: 'Do you hold stock?',
         answer:
-          'Cars are found to a brief rather than held in stock. When a specific car is ' +
-          'on offer it appears under Inventory, with its own photography and verified ' +
-          'details.',
+          'Most cars are found to a brief. When we have a specific car on offer, it is ' +
+          'listed under Inventory with its own photographs and details.',
       },
       {
         question: 'Can I see previous work?',
         answer:
-          'Completed commissions are published with the client’s permission, and those ' +
-          'that are appear under Commissions with their specification.',
+          'Yes. Commissions shows completed cars whose owners have agreed to be ' +
+          'included.',
       },
       {
         question: 'How are inspections and documents handled?',
@@ -165,9 +133,8 @@ export const aboutCopy = {
       {
         question: 'What happens to the details I send?',
         answer:
-          'They are used to answer your enquiry and nothing else. They are not sold or ' +
-          'shared for marketing. The privacy page sets out what is collected and how to ' +
-          'have it removed.',
+          'We use them to answer your enquiry. We do not sell them or share them for ' +
+          'marketing. The privacy page explains what we keep and how to have it removed.',
       },
     ],
   },
@@ -186,7 +153,7 @@ export const sourcingCopy = {
     {
       title: 'You describe the car',
       short: 'Describe',
-      summary: 'Model, specification, colour, condition and timing — or just the shape of what you want.',
+      summary: 'Model, specification, colour, condition and timing, or just a rough idea.',
       body:
         'Model and specification if you know them, or the shape of what you want if ' +
         'you do not. Colour, transmission, condition, mileage tolerance, and how ' +
@@ -195,11 +162,11 @@ export const sourcingCopy = {
     {
       title: 'We agree the brief',
       short: 'Agree',
-      summary: 'Written down first: what is firm, what can move, and what rules a car out.',
+      summary: 'We write down what is fixed, what can move and what rules a car out.',
       body:
         'The brief is written down before anything starts: what is firm, what can ' +
         'move, and what would rule a car out. That is what the search is measured ' +
-        'against, and it is what stops a near-miss being presented as a match.',
+        'against, so a near miss is never passed off as a match.',
     },
     {
       title: 'Candidates are identified',
@@ -213,7 +180,7 @@ export const sourcingCopy = {
     {
       title: 'History and documents are reviewed',
       short: 'Review',
-      summary: 'Configuration, service and ownership records read. An independent inspection can be arranged.',
+      summary: 'We read the configuration, service and ownership records, and can arrange an inspection.',
       body:
         'Configuration records, service history and ownership records are read where ' +
         'they exist, and what is missing is reported as missing. An independent ' +
@@ -222,7 +189,7 @@ export const sourcingCopy = {
     {
       title: 'Before you commit',
       short: 'Decide',
-      summary: 'What is known and what is not, in writing, while you can still walk away.',
+      summary: 'You get what we know and what we do not, in writing, before you commit.',
       body:
         'You get what is known about the car and what is not, in writing, while there ' +
         'is still time to walk away. Nothing is agreed on a phone call.',
@@ -230,7 +197,7 @@ export const sourcingCopy = {
     {
       title: 'Handover',
       short: 'Handover',
-      summary: 'Transport, paperwork and handover arranged and tracked through to arrival.',
+      summary: 'We can arrange transport, paperwork and handover through to delivery.',
       body:
         'Transport, paperwork and handover can be arranged and tracked through to the ' +
         'car arriving.',
@@ -257,8 +224,7 @@ export const sourcingCopy = {
 export const contactCopy = {
   headline: 'Tell us what you are looking for.',
   intro:
-    'Model, specification, colour, timing — anything that narrows the search is worth ' +
-    'including.',
+    'Model, specification, colour and timing. Anything that narrows the search helps.',
   helps: [
     'Model and specification, if you know it',
     'Colour and interior preferences',

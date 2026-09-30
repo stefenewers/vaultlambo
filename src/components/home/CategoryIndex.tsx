@@ -38,7 +38,7 @@ export function CategoryIndex({ categories, canContact }: Props) {
         </div>
 
         <ol className="mt-14 border-t border-line-strong sm:mt-20">
-          {categories.map((entry, i) => {
+          {categories.map((entry) => {
             const href = canContact
               ? `/contact?vehicle=${encodeURIComponent(sourcingBriefValue(entry.category))}`
               : `/sourcing#${entry.id}`;
@@ -47,20 +47,13 @@ export function CategoryIndex({ categories, canContact }: Props) {
               <li key={entry.id} className="border-b border-line-strong">
                 <Link
                   href={href}
-                  className="group relative grid grid-cols-[2.25rem_minmax(0,1fr)_auto] items-center gap-x-4 py-7 sm:grid-cols-[4rem_minmax(0,1fr)_auto] sm:gap-x-6 sm:py-10 lg:grid-cols-[5rem_minmax(0,1fr)_minmax(0,22rem)_auto] lg:gap-x-10"
+                  className="group relative grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 py-7 sm:gap-x-6 sm:py-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)_auto] lg:gap-x-10"
                 >
                   {/* Background wash on hover and focus. */}
                   <span
                     aria-hidden="true"
                     className="absolute inset-y-0 -left-5 -right-5 -z-0 origin-bottom scale-y-0 bg-ink-raised transition-transform duration-500 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:scale-y-100 group-focus-visible:scale-y-100 motion-reduce:transition-none sm:-left-8 sm:-right-8"
                   />
-
-                  <span
-                    aria-hidden="true"
-                    className="relative text-sm tabular-nums text-steel-dim transition-colors group-hover:text-giallo"
-                  >
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
 
                   <span className="relative min-w-0">
                     <span className="block text-[clamp(2rem,6.5vw,5.75rem)] font-semibold uppercase leading-[0.92] tracking-[-0.045em] text-bone transition-transform duration-500 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:translate-x-2 motion-reduce:transition-none">
@@ -88,7 +81,7 @@ export function CategoryIndex({ categories, canContact }: Props) {
                   </span>
 
                   <span className="sr-only">
-                    {canContact ? ' — start a search in this category' : ' — sourcing details'}
+                    {canContact ? ': start a search in this category' : ': sourcing details'}
                   </span>
                 </Link>
               </li>

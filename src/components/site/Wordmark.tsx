@@ -35,7 +35,7 @@ export function Wordmark({ className = '', size = 'sm', asLink = true }: Props) 
     <Link
       href="/"
       className={`inline-block ${className}`}
-      aria-label={`${siteConfig.name} — home`}
+      aria-label={`${siteConfig.name} home`}
     >
       {mark}
     </Link>

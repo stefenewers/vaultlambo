@@ -219,7 +219,7 @@ export function productionFindings(): Finding[] {
       problem: 'No social links are configured.',
       remedy:
         'Add real profiles as "Label|https://…" pairs, comma-separated. Leave unset if ' +
-        'there are none — the row hides itself.',
+        'there are none. The row hides itself.',
     });
   }
 

@@ -19,7 +19,7 @@ import {
  *
  * Desire first, documentation second: full-height hero media, the most recent
  * commission as proof at scale, a one-line statement of the service, the categories a
- * search covers, an optional brand film, the process, how we work, and a closing frame.
+ * search covers, an optional brand film, the process, and a closing frame.
  *
  * Earlier versions were typography-only, a reaction to borrowed third-party car
  * photography. That removed the problem and the energy with it. The rule now is the
@@ -38,8 +38,7 @@ export default function HomePage() {
 
   /** The single most recent commission carries the feature. */
   const feature = commissions[0];
-  const { statement, process, principles, closing } = homeCopy;
-  const accentStart = statement.lines[1].length - statement.accent.length;
+  const { statement, process, closing } = homeCopy;
   const closingAction = canContact ? closing.cta : closing.fallback;
 
   return (
@@ -86,15 +85,11 @@ export default function HomePage() {
       {/* Statement — the change of register. Large type, one explanation. */}
       <section aria-labelledby="statement" className="surface-paper">
         <Container size="wide" className="py-24 sm:py-36 lg:py-44">
-          <h2 id="statement" className="display-1 reveal max-w-[16ch] text-ink">
-            <span className="block">{statement.lines[0]}</span>{' '}
-            <span className="block">
-              {statement.lines[1].slice(0, accentStart)}
-              <span className="accent-serif">{statement.accent}</span>
-            </span>
+          <h2 id="statement" className="display-1 max-w-[18ch] text-ink">
+            {statement.title}
           </h2>
           <div className="mt-12 grid sm:mt-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,34rem)]">
-            <p className="reveal text-lg leading-relaxed text-ink-soft sm:text-xl sm:leading-relaxed lg:col-start-2">
+            <p className="text-lg leading-relaxed text-ink-soft sm:text-xl sm:leading-relaxed lg:col-start-2">
               {statement.body}
             </p>
           </div>
@@ -111,8 +106,7 @@ export default function HomePage() {
         <Container size="wide" className="py-24 sm:py-32 lg:py-40">
           <div className="grid gap-14 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-24">
             <div className="lg:sticky lg:top-32 lg:self-start">
-              <p className="label-xs">{process.eyebrow}</p>
-              <h2 id="process" className="display-1 mt-6 max-w-[10ch] text-ink">
+              <h2 id="process" className="display-1 max-w-[10ch] text-ink">
                 {process.title}
               </h2>
               <Link
@@ -130,7 +124,7 @@ export default function HomePage() {
               {sourcingCopy.steps.map((step, i) => (
                 <li
                   key={step.title}
-                  className="reveal grid grid-cols-[4.5rem_minmax(0,1fr)] gap-x-5 border-b border-line-strong py-8 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-x-8 sm:py-10"
+                  className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-x-5 border-b border-line-strong py-8 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-x-8 sm:py-10"
                 >
                   <span
                     aria-hidden="true"
@@ -154,30 +148,6 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* How we work */}
-      <section aria-labelledby="principles" className="bg-ink">
-        <Container size="wide" className="py-24 sm:py-32">
-          <h2 id="principles" className="label-xs">
-            {principles.eyebrow}
-          </h2>
-          <ul className="mt-10 grid grid-cols-1 gap-px bg-line sm:grid-cols-2 lg:grid-cols-4">
-            {principles.items.map((item, i) => (
-              <li key={item.term} className="reveal bg-ink py-8 sm:px-8 sm:py-10">
-                <p aria-hidden="true" className="text-sm tabular-nums text-giallo">
-                  {String(i + 1).padStart(2, '0')}
-                </p>
-                <h3 className="mt-6 text-3xl font-semibold uppercase tracking-[-0.04em] text-bone sm:text-4xl">
-                  {item.term}
-                </h3>
-                <p className="mt-4 max-w-[26ch] text-base leading-relaxed text-steel">
-                  {item.body}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </Container>
-      </section>
-
       {/* Closing frame. Leads to the enquiry form only when it can deliver. */}
       <section
         aria-labelledby="closing"
@@ -186,10 +156,9 @@ export default function HomePage() {
         <Container size="wide" className="py-24">
           <h2
             id="closing"
-            className="display-mega reveal text-[clamp(3rem,11vw,12rem)] text-bone"
+            className="display-mega text-[clamp(3rem,11vw,12rem)] text-bone"
           >
-            <span className="block">{closing.lines[0]}</span>{' '}
-            <span className="block text-giallo">{closing.lines[1]}</span>
+            {closing.title}
           </h2>
           <div className="mt-12 flex flex-col gap-5 sm:mt-16 sm:flex-row sm:items-center sm:gap-8">
             <Link

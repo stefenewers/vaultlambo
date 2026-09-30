@@ -95,7 +95,9 @@ describe('findings drive indexing', () => {
     expect(shouldAllowIndexing()).toBe(false);
 
     const fields = productionFindings().map((f) => f.field);
-    expect(fields).toContain('NEXT_PUBLIC_CONTACT_EMAIL');
+    // The public address now has an owner-supplied default in site.config, so an
+    // unset variable no longer means "no contact email". Delivery still blocks.
+    expect(fields).not.toContain('NEXT_PUBLIC_CONTACT_EMAIL');
     expect(fields).toContain('RESEND_API_KEY');
     expect(fields).toContain('INQUIRY_FROM_EMAIL');
     expect(fields).toContain('NEXT_PUBLIC_SITE_URL');

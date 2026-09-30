@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Instrument_Serif, Inter_Tight } from 'next/font/google';
+import { Inter_Tight } from 'next/font/google';
 import { Footer } from '@/components/site/Footer';
 import { Header } from '@/components/site/Header';
 import { isReachable } from '@/lib/contact';
@@ -18,18 +18,6 @@ const interTight = Inter_Tight({
 });
 
 /**
- * Display serif, for headlines only. Self-hosted by next/font at build time like Inter
- * Tight, so the CSP's `font-src 'self'` still holds.
- */
-const instrumentSerif = Instrument_Serif({
-  subsets: ['latin'],
-  weight: '400',
-  style: ['normal', 'italic'],
-  display: 'swap',
-  variable: '--font-instrument-serif',
-});
-
-/**
  * Indexing is tied to production readiness.
  *
  * An incomplete deployment — placeholder contact details, no delivery configured, a
@@ -41,8 +29,8 @@ const allowIndexing = shouldAllowIndexing();
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name} — ${siteConfig.tagline}`,
-    template: `%s — ${siteConfig.name}`,
+    default: `${siteConfig.name} | ${siteConfig.tagline}`,
+    template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
@@ -50,13 +38,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     siteName: siteConfig.name,
-    title: `${siteConfig.name} — ${siteConfig.tagline}`,
+    title: `${siteConfig.name} | ${siteConfig.tagline}`,
     description: siteConfig.description,
     url: siteConfig.url,
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${siteConfig.name} — ${siteConfig.tagline}`,
+    title: `${siteConfig.name} | ${siteConfig.tagline}`,
     description: siteConfig.description,
   },
   robots: allowIndexing
@@ -73,7 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const organization = organizationJsonLd();
 
   return (
-    <html lang="en" className={`${interTight.variable} ${instrumentSerif.variable}`}>
+    <html lang="en" className={interTight.variable}>
       <body className="flex min-h-dvh flex-col overflow-x-hidden antialiased">
         <a
           href="#main"

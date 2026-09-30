@@ -102,7 +102,7 @@ export const heroMedia: HeroMedia | null = {
     alt:
       'Factory configuration rendering of the Lamborghini Temerario commission in ' +
       'Giallo Inti, front three-quarter view.',
-    caption: 'Factory configuration rendering — Lamborghini Temerario commission',
+    caption: 'Factory configuration rendering of the Lamborghini Temerario commission',
     position: '58% 55%',
     /* Keeps the nose and headlight in a portrait crop. */
     mobilePosition: '30% 60%',

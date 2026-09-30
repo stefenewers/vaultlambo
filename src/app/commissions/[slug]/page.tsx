@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     alternates: { canonical },
     openGraph: {
       type: 'website',
-      title: `${title} — ${siteConfig.name}`,
+      title: `${title} | ${siteConfig.name}`,
       description: vehicle.summary,
       url: canonical,
       images: [

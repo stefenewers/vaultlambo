@@ -59,7 +59,7 @@ export function BriefCategories({ categories, headingLevel = 'h3' }: Props) {
               >
                 <span
                   aria-hidden="true"
-                  className="mt-[0.62em] h-px w-3 shrink-0 bg-steel-dim"
+                  className="mt-[0.6em] h-1 w-1 shrink-0 rounded-full bg-steel-dim"
                 />
                 <span>{example}</span>
               </li>

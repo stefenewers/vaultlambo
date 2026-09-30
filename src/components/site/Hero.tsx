@@ -31,7 +31,6 @@ type Props = {
  */
 export function Hero({ canContact, media, workHref }: Props) {
   const { hero } = homeCopy;
-  const lead = hero.headline.slice(0, hero.headline.length - hero.headlineAccent.length);
   const frame = media ? (media.video?.poster ?? media.still) : null;
   const provenance = frame?.kind === 'factory-render' ? frame.caption : undefined;
 
@@ -81,20 +80,19 @@ export function Hero({ canContact, media, workHref }: Props) {
       ) : null}
 
       <Container className="relative flex flex-1 flex-col justify-end pb-10 pt-36 sm:pb-14 lg:pb-16">
-        <div className="rise flex items-center gap-4">
+        <div className="flex items-center gap-4">
           <span aria-hidden="true" className="h-px w-10 shrink-0 bg-giallo" />
           <p className="label-xs shrink-0 text-bone">{hero.eyebrow}</p>
         </div>
 
         <h1
           id="hero-heading"
-          className="display-hero rise rise-1 mt-7 max-w-[10ch] text-bone sm:mt-9"
+          className="display-hero mt-7 max-w-[10ch] text-bone sm:mt-9"
         >
-          {lead}
-          <span className="accent-serif text-giallo">{hero.headlineAccent}</span>
+          {hero.headline}
         </h1>
 
-        <div className="rise rise-2 mt-8 grid gap-8 sm:mt-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="mt-8 grid gap-8 sm:mt-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <p className="max-w-[30rem] text-lg leading-snug text-bone sm:text-2xl sm:leading-snug">
             {hero.subhead}
           </p>
@@ -120,7 +118,7 @@ export function Hero({ canContact, media, workHref }: Props) {
         </div>
 
         {provenance ? (
-          <p className="rise rise-3 mt-10 text-xs leading-relaxed text-bone-dim sm:mt-12 lg:text-right">
+          <p className="mt-10 text-xs leading-relaxed text-bone-dim sm:mt-12 lg:text-right">
             {provenance}
           </p>
         ) : null}

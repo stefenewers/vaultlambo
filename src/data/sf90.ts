@@ -39,7 +39,7 @@ const photo = (
   kind: 'vehicle-photograph',
   alt,
   ...(focus ? { focus } : {}),
-  caption: `${caption} — ${CREDIT}`,
+  caption: `${caption}. ${CREDIT}.`,
 });
 
 export const sf90: SoldVehicle = {
@@ -108,7 +108,7 @@ export const sf90: SoldVehicle = {
       ],
     },
     {
-      title: 'Powertrain — manufacturer figures',
+      title: 'Powertrain (manufacturer figures)',
       items: [
         '4.0-litre twin-turbocharged V8 with three electric motors',
         '1,000 cv combined (780 cv V8, 220 cv electric)',
@@ -117,7 +117,7 @@ export const sf90: SoldVehicle = {
       ],
     },
     {
-      title: 'Performance — manufacturer figures',
+      title: 'Performance (manufacturer figures)',
       items: ['0–100 km/h in 2.5 seconds', '0–200 km/h in 7.0 seconds', '340 km/h maximum'],
     },
   ],

@@ -41,7 +41,7 @@ const photo = (
   kind: 'vehicle-photograph',
   alt,
   ...(focus ? { focus } : {}),
-  caption: `${caption} — ${CREDIT}`,
+  caption: `${caption}. ${CREDIT}.`,
 });
 
 export const sian: SoldVehicle = {
@@ -112,7 +112,7 @@ export const sian: SoldVehicle = {
       ],
     },
     {
-      title: 'Powertrain — manufacturer figures',
+      title: 'Powertrain (manufacturer figures)',
       items: [
         '6.5-litre naturally aspirated V12, 785 cv',
         '48-volt electric motor in the gearbox, 34 cv, fed by a supercapacitor',
@@ -122,7 +122,7 @@ export const sian: SoldVehicle = {
       ],
     },
     {
-      title: 'Performance — manufacturer figures',
+      title: 'Performance (manufacturer figures)',
       items: ['Maximum speed above 350 km/h'],
     },
   ],
